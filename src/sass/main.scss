@@ -1,0 +1,861 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
+p {
+    margin-bottom: 0;
+}
+
+h2 {
+    margin-bottom: 0;
+}
+
+@mixin disFC {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ 
+.slider-logos {
+    width: 100%;
+    height: auto;
+    @include disFC();
+    &__logo-slider {
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        width: 80%;
+        padding: 10px 0;
+        &__slider-track {
+            display: flex;
+            align-items: center; // Asegura que las imágenes estén alineadas horizontalmente
+            width: calc(200px * 5); // Ajusta según el número de logos
+            animation: scroll 20s linear infinite;
+            gap: 20px;
+            &__slide {
+                width: 400px; // Ajusta el tamaño según necesites
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                &__img {
+                    max-width: 150px;
+                    height: auto;
+                    object-fit: contain;
+                }
+            }
+        }
+    }
+}
+@keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+}
+.navbarContainer {
+    background-color: rgb(27, 80, 156, 0.9);
+    width: 100%;
+}
+.homeContainer {
+    background-image: url('../assets/fondo_home_3.jpg');
+    background-size: cover; 
+    width: 100%;
+    height: 100vh;
+    &__gridOffer {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        &__offerContainer {
+            width: 100%;
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            padding: 10vh 0vh 0vh 10vh;
+            gap: 2vh;
+            &__offerUp {
+                font-weight: bold;
+                font-size: 60px;
+                color: white;
+            }
+            &__offerDown {
+                font-weight: 400;
+                color: white;
+                font-size: 40px;
+            }
+            &__btnContainer {
+                width: 100%;
+                padding-top: 4vh;
+                &__btn {
+                    background: none;
+                    color: white;
+                    border: 0.3vh solid white;
+                    padding: 2vh 4vh;
+                    font-weight: bold;
+                    letter-spacing: 0.2vh;
+                    text-decoration: none;
+                    &:hover {
+                        background-color: white;
+                        color: black;
+                        border: 0.3vh solid white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.categoryContainer {
+    width: 100%;
+    &__grid {
+        background-color: #1b509c;
+        background-color: white;
+        width: 100%;
+        @include disFC();
+        padding: 5vh 0vh;
+        &__catalog {
+            background-color: rgb(214, 213, 213);
+            width: 85%;
+            padding: 4vh 4vh;
+            border-radius: 5vh;
+            &__categorieContainer {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2vh;
+                &__title {
+                    width: 100%;
+                    display: flex;
+                    &__prop {
+                        font-size: 30px;
+                        text-transform: uppercase;
+                    }
+                }
+                &__productsContainer {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-around;
+                    flex-wrap: wrap;
+                    gap: 5vh;
+                    padding: 5vh 0vh;
+                }
+            }
+        }
+    }
+}
+
+.catalogContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    &__titleContainer {
+        background-color: #1b509c;
+        width: 100%;
+        &__title {
+            background-color: rgb(27, 80, 156, 0.9);
+            width: 100%;
+            display: flex;
+            justify-content: end;
+            padding: 2vh 0vh;
+            &__prop {
+                font-size: 40px;
+                color: white;
+                font-weight: bold;
+                padding-right: 2vh;
+            }
+        }
+    }
+    &__grid {
+        background-color: rgb(27, 80, 156, 0.9);
+        background-color: white;
+        width: 100%;
+        @include disFC();
+        padding: 5vh 0vh;
+        &__catalog {
+            background-color: rgb(214, 213, 213);
+            width: 90%;
+            padding: 4vh 4vh;
+            border-radius: 5vh;
+            &__categorieContainer {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2vh;
+                &__title {
+                    width: 100%;
+                    display: flex;
+                    &__prop {
+                        font-size: 30px;
+                        text-transform: uppercase;
+                    }
+                }
+                &__productsContainer {
+                    width: 80%;
+                    display: flex;
+                    justify-content: space-around;
+                    flex-wrap: wrap;
+                    gap: 5vh;
+                    padding: 5vh 0vh;
+                }
+            }
+        }
+    }
+}
+
+.itemProduct {
+    background-color: ghostwhite;
+    width: 300px;
+    height: 450px;
+    display: grid;
+    grid-template-rows: 6fr 1fr 1fr 1fr;
+    padding-bottom: 2vh;
+    border-radius: 2vh;
+    &__imgContainer {
+        width: 100%;
+        @include disFC();
+        overflow: hidden;
+        border-top-left-radius: 2vh;
+        border-top-right-radius: 2vh;
+        &__img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    &__titleContainer {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 20px;
+        }
+    }
+    &__descriptionContainer {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+            text-align: center;
+        }
+    }
+    &__priceContainer {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+        }
+    }
+    &__btnContainer {
+        width: 100%;
+        @include disFC();
+        &__btn {
+            background-color: #1b509c;
+            width: 50%;
+            color: white;
+            font-size: 16px;
+            padding: 0.5vh 0vh;
+            border-radius: 1vh;
+            text-decoration: none;
+            text-align: center;
+            border: 0.3vh solid black;
+            &:hover {
+                background-color: whitesmoke;
+                color: black;
+                border: 0.3vh solid black;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.itemDetailContainer {
+    background-color: white;
+    width: 100%;
+    height: 90vh;
+    @include disFC();
+    &__itemDetail {
+        background-color: #d6d5d5;
+        width: 70%;
+        height: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 5vh;
+        border-radius: 5vh;
+        &__imgContainer {
+            width: 100%;
+            @include disFC();
+            &__img {
+                width: 90%;
+                height: 500px;
+            }
+        }
+        &__infoContainer {
+            //background-color: saddlebrown;
+            @include disFC();
+            flex-direction: column;
+            &__info {
+                //background-color: darkcyan;
+                width: 70%;
+                padding: 2vh;
+                border: 0.3vh solid rgb(163, 163, 163);
+                border-radius: 1vh;
+                &__title {
+                    width: 100%;
+                    &__prop {
+                        text-align: center;
+                        font-size: 25px;
+                    }
+                }
+                &__description {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding-top: 4vh;
+                    &__label {
+                        font-size: 20px;
+                    }
+                    &__prop {
+                        font-size: 16px;
+                        padding-left: 2vh;
+                    }
+                }
+                &__price {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding-top: 2vh;
+                    &__label {
+                        font-size: 20px;
+                    }
+                    &__prop {
+                        font-size: 16px;
+                        padding-left: 2vh;
+                    }
+                }
+                &__count {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding-top: 2vh;
+                    gap: 1vh;
+                    &__quantityLabel {
+                        font-size: 20px;
+                        font-weight: normal;
+                    }
+                    &__plusMinus {
+                        background-color: #1b509c;
+                        width: 30px;
+                        height: 35px;
+                        font-size: 20px;
+                        color: white;
+                        border-color: black;
+                        border-radius: 0.5vh;
+                        cursor: pointer;
+                    }
+                }
+                &__btnAddToCart {
+                    width: 100%;
+                    @include disFC();
+                    padding-top: 4vh;
+                    &__prop {
+                        width: 60%;
+                        background-color: #1b509c;
+                        padding: 1vh;
+                        border-radius: 2vh;
+                        color: white;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.cartContainer {    
+    background-color: white;
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 5vh 0vh;
+    gap: 2vh;
+    &__title {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 40px;
+            color: black;
+        }
+    }
+    &__cart {
+        background-color: rgb(214, 213, 213);
+        width: 90%;
+        padding: 5vh;
+        border-radius: 5vh;
+        &__header{
+            background-color: #1b509c;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            padding: 1vh 0vh;
+            border-top-left-radius: 2vh;
+            border-top-right-radius: 2vh;
+            &__labelProp {
+                width: 100%;
+                @include disFC();
+                &__prop {
+                    font-size: 20px;
+                    color: white;
+                }
+            }
+        }
+        &__productsList {
+            background-color: whitesmoke;
+            width: 100%;
+            border-bottom-left-radius: 2vh;
+            border-bottom-right-radius: 2vh;
+        }
+        &__btnTotal {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding-top: 1vh;
+            &__btnContainer {
+                width: 100%;
+                &__btn {
+                    background-color: #1b509c;
+                    width: 150px;
+                    color: white;
+                    padding: 1vh;
+                    border-radius: 2vh;
+                    font-size: 16px;
+                    cursor: pointer;
+                }
+            }
+            &__totalContainer {
+                width: 100%;
+                display: flex;
+                justify-content: end;
+                &__total {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+}
+.noProductsContainer {
+    background-color: whitesmoke;
+    width: 100%;
+    height: 90vh;
+    @include disFC();
+    flex-direction: column;
+    gap: 2vh;
+    &__phrase {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 30px;
+            color: black;
+        }
+    }
+    &__link {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 30px;
+            text-decoration: none;
+            color: black;
+        }
+    }
+}
+.itemCart {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    padding: 1vh 0vh;
+    &__imgContainer {
+        width: 100%;
+        @include disFC();
+        &__img {
+            width: 20%;
+        }
+    }
+    &__title {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+            text-decoration: none;
+            color: black;
+        }
+    }
+    &__description {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 14px;
+            text-align: center;
+        }
+    }
+    &__quantity {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+        }
+    }
+    &__subtotal {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+        }
+    }
+    &__price {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            font-size: 16px;
+        }
+    }
+    &__btn {
+        width: 100%;
+        @include disFC();
+        &__prop {
+            background-color: #1b509c;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            border-radius: 1vh;
+        }
+    }
+}
+.aboutContainer {
+    background-image: url('../assets/fondo_sobre_nosotros_1.jpg');
+    background-size: cover; 
+    width: 100%;
+    height: 100vh;
+    &__phraseContainer {
+        width: 100%;
+        height: 90vh;
+        @include disFC();
+        &__phrase {
+            background-color: rgb(0, 0, 0, 0.5);
+            width: 60%;
+            font-size: 25px;
+            text-align: justify;
+            padding: 10vh;
+            color: white;
+            border-radius: 4vh;
+        }
+    }
+    &__imgContainer {
+        background-image: url('../assets/sobre_nosotros_fondo.jpg');
+        background-size: 1000px;
+    }
+}
+
+.contactContainer {
+    background-image: url('../assets/contact_fondo.jpg');
+    background-size: cover; 
+    background-color: white;
+    width: 100%;
+    height: 100vh;
+    &__title {
+        width: 100%;
+        @include disFC();
+        padding: 2vh 0vh;
+        &__prop {
+            font-size: 40px;
+            //font-weight: bold;
+        }
+    }
+    &__formMap {
+        width: 100%;
+        height: 70vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        &__formContainer {
+            width: 100%;
+            @include disFC();
+            &__form {
+                background-color: rgb(214, 213, 213);
+                width: 100%;
+                height: 70vh;
+                @include disFC();
+                flex-direction: column;
+                &__prop {
+                    background-color: rgb(0, 0, 0, 0.3);
+                    background-color: white;
+                    width: 70%;
+                    @include disFC();
+                    flex-direction: column;
+                    gap: 2vh;
+                    padding: 4vh;
+                    border-radius: 4vh;
+                    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
+                    &__title {
+                        width: 100%;
+                        @include disFC();
+                        &__prop {
+                            color: black;
+                            font-size: 22px;
+                        }
+                    }
+                    &__input {
+                        width: 100%;
+                        @include disFC();
+                        &__prop {
+                            background-color: white;
+                            width: 90%;
+                            height: 25px;
+                            border-radius: 1vh;
+                            font-size: 16px;
+                            padding: 1vh;
+                            color: black;
+                            border: 0.3vh solid black;
+                            }
+                            &__textArea {
+                            width: 90%;
+                            height: 80px;
+                            border-radius: 1vh;
+                            font-size: 16px;
+                            border: 0.3vh solid black;
+                            padding: 1vh;
+                            color: black;
+                        }
+                    }
+                    &__btn {
+                        width: 100%;
+                        @include disFC();
+                        &__prop {
+                            background-color: #1b509c;
+                            width: 50%;
+                            color: white;
+                            padding: 0.5vh 0vh;
+                            font-size: 20px;
+                            border-radius: 1vh;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+        &__mapContainer {
+            width: 100%;
+            @include disFC();
+            &__map {
+                background-color: rgb(214, 213, 213);
+                width: 100%;
+                height: 70vh;
+                @include disFC();
+                flex-direction: column;
+                gap: 2vh;
+                &__prop {
+                    background-color: white;
+                    width: 80%;
+                    height: 40vh;
+                    padding: 4vh;
+                    border: none;
+                }
+                &__address {
+                    width: 100%;
+                    text-align: center;
+                    color: black;
+                }
+            }
+        }
+    }
+}
+.loginContainer {
+    width: 100%;
+    height: 90vh;
+    display: grid;
+    grid-template-columns: 2fr 3.5fr;
+    &__formContainer {
+        //background-color: whitesmoke;
+        background-color: #d6d5d5;
+        width: 100%;
+        @include disFC();
+        &__form {
+            background-color: white;
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+            padding: 6vh 4vh;
+            border-radius: 2vh;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
+            &__title {
+                width: 100%;
+                @include disFC();
+                padding-bottom: 4vh;
+                &__prop {
+                    font-size: 30px;
+                }
+            }
+            &__input {
+                width: 100%;
+                display: flex;
+                &__prop {
+                    background-color: white;
+                    width: 90%;
+                    height: 20px;
+                    border-radius: 1vh;
+                    font-size: 16px;
+                    padding: 1vh;
+                    color: black;
+                    border: 0.3vh solid black;
+                }
+            }
+            &__btn {
+                width: 100%;
+                @include disFC();
+                padding-top: 2vh;
+                flex-direction: column;
+                gap: 1vh;
+                &__prop {
+                    background-color: #1b509c;
+                    width: 60%;
+                    color: white;
+                    padding: 1vh 0vh;
+                    font-size: 20px;
+                    border-radius: 1vh;
+                    cursor: pointer;
+                    text-decoration: none;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    &__logoContainer {
+        background-image: url('../assets/fondo_login.jpg');
+        background-size: cover; 
+        width: 100%;
+        @include disFC();
+        flex-direction: column;
+        gap: 10vh;
+        &__title {
+            width: 100%;
+            @include disFC();
+            &__prop {
+                font-size: 30px;
+            }
+        }
+        &__logo {
+            width: 100%;
+            @include disFC();
+            &__prop {
+                width: 30%;
+            }
+        }
+        &__phrase {
+            width: 100%;
+            @include disFC();
+            &__prop {
+                width: 50%;
+                font-size: 20px;
+                text-align: justify;
+            }
+        }
+    }
+}
+.footerContainer {
+    background-color: #1b509c;
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 8vh 0vh;
+    &__logoPhraseContainer {
+        width: 100%;
+        @include disFC();
+        &__logoPhrase {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+            &__logo {
+                width: 100%;
+                &__prop {
+                    width: 40%;
+                }
+            }
+            &__phrase {
+                width: 100%;
+                &__prop {
+                    text-align: justify;
+                    color: white;
+                }
+            }
+        }
+    }
+    &__faqContainer {
+        width: 100%;
+        @include disFC();
+        &__faq {
+            display: flex;
+            flex-direction: column;
+            &__title {
+                color: white;
+                font-size: 20px;
+                padding-bottom: 2vh;
+            }
+            &__links {
+                color: white;
+                text-decoration: none;
+                padding-top: 0.5vh;
+            }
+        }
+    }
+    &__contactContainer {
+        width: 100%;
+        @include disFC();
+        flex-direction: column;
+        &__contact {
+            display: flex;
+            flex-direction: column;
+            &__title {
+                width: 100%;
+                color: white;
+                padding-bottom: 2vh;
+                &__prop {
+                    font-size: 20px;
+                }
+            }
+            &__contactProps {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-self: center;
+                gap: 1vh;
+                &__prop {
+                    color: white;
+                }
+            }
+        }
+    }
+}
+
+.custom-toast .Toastify__progress-bar {
+    background-color: #1b509c !important; 
+}
+
+@import "header";
+
+@media (max-width: 480px) {
+.mainContainer {
+    width: 100%;
+}
+}
