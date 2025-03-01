@@ -2,7 +2,7 @@ import {useContext,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { toast } from 'react-toastify';
 
-const ItemCount = ({id, img, title,description,price,stock}) => {
+const ItemCount = ({id, images, title,description,price,stock}) => {
 
     const {cart, setCart} = useContext(CartContext);
     
@@ -51,7 +51,7 @@ const ItemCount = ({id, img, title,description,price,stock}) => {
 
             } else {
 
-                return [ ...currItems, {id, img, title,description, price, quantity: count} ]
+                return [ ...currItems, {id, img: images[0], title,description, price, quantity: count} ]
             }
 
             
@@ -82,6 +82,7 @@ const ItemCount = ({id, img, title,description,price,stock}) => {
         </div> 
 
         <div className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart'>
+            <button className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'>Comprar ahora</button>
             <button onClick={addToCart} className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'>Agregar al Carrito</button>
         </div>
     </>

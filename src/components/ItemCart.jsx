@@ -17,7 +17,6 @@ const ItemCart = ({id,title,description,quantity,img,price}) => {
             </div>
 
             <div className='itemCart__title'>
-                {/* <div className='itemCart__title__prop'>{title}</div> */}
                 <Link className='itemCart__title__prop' to={`/item/${id}`}>
                     {title} 
                 </Link>

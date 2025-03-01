@@ -1,14 +1,15 @@
 import React from 'react'
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
 import { Link } from 'react-router-dom';
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
 
 
-const ItemProduct = ({id,img,title,description,price}) => {
+
+const ItemProduct = ({id,images,title,description,price}) => {
 
     
     return (
@@ -18,7 +19,27 @@ const ItemProduct = ({id,img,title,description,price}) => {
             <div className="itemProduct">
 
                 <div className="itemProduct__imgContainer">
-                    <img src={img} alt="img_product" className='itemProduct__imgContainer__img' />
+
+                    {/* <img src={img} alt="img_product" className='itemProduct__imgContainer__img' /> */}
+
+                    <Swiper
+                        navigation
+                        pagination={{ clickable: true }}
+                        modules={[Navigation, Pagination]}
+                        className="w-full h-56"
+                    >
+                        {images.map((img, index) => (
+                        <SwiperSlide key={index}>
+                            <img
+                            src={img}
+                            alt={`Imagen ${index + 1} de ${title}`}
+                            //className="w-full h-full object-cover rounded-lg"
+                            className="itemProduct__imgContainer__img"
+                            />
+                        </SwiperSlide>
+                        ))}
+                    </Swiper>
+
                 </div>
 
                 <div className="itemProduct__titleContainer">

@@ -41,7 +41,7 @@ const Cart = () => {
                             </div>
 
                             <div className='cartContainer__cart__header__labelProp'>
-                                <div className='cartContainer__cart__header__labelProp__prop'>Título</div>
+                                <div className='cartContainer__cart__header__labelProp__prop'>Producto</div>
                             </div>
 
                             <div className='cartContainer__cart__header__labelProp'>
@@ -85,20 +85,62 @@ const Cart = () => {
 
                         </div>
 
-                        <div className='cartContainer__cart__btnTotal'>
+                        <div className='cartContainer__cart__btnContainer'>
+                            <button onClick={deleteAllItemCart} className='cartContainer__cart__btnContainer__btn'>Vaciar Carrito</button>
+                        </div>
 
-                            <div className='cartContainer__cart__btnTotal__btnContainer'>
-                                <button onClick={deleteAllItemCart} className='cartContainer__cart__btnTotal__btnContainer__btn'>Vaciar Carrito</button>
+                    </div>
+            
+                    <div className='cartContainer__accountSummaryContainer'>
+
+                        <div className='cartContainer__accountSummaryContainer__accountSummary'>
+                            
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__title'>
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__title__prop'>Resumen de compra</div>
                             </div>
 
-                            <div className='cartContainer__cart__btnTotal__totalContainer'>
-                                <div className='cartContainer__cart__btnTotal__totalContainer__total'>TOTAL: $ {total}</div>
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                {
+                                    cart.length == 1 ?
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Producto</div>
+                                    :
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Productos ({cart.length})</div>
+                                }
+
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__value'>$ {total}</div>
+
+                            </div>
+
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Envío</div>
+
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__value'>$ 0</div>
+
+                            </div>
+
+
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon'>
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop'>Ingresar código de cupón</div>
+                            </div>
+
+
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
+
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
+
+                            </div>
+
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
+                                <button className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>Continuar compra</button>
                             </div>
 
                         </div>
 
                     </div>
-            
 
                 </div> 
 
