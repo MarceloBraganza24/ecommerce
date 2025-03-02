@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 
 const NavBar = () => {
     const [mostrarMenu, setMostrarMenu] = useState(false);
-    const {qtyProducts} = useContext(CartContext)
+    const {cart} = useContext(CartContext)
+    const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
 
     const handleBtnShowCategories = () => {
         if(mostrarMenu) {
@@ -61,7 +62,7 @@ const NavBar = () => {
                                 <img className='header__rightMenu__menu__cart__logo__prop' src="/src/assets/cart.png" alt="" />
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
-                                <div className='header__rightMenu__menu__cart__number__prop'>{qtyProducts}</div>
+                                <div className='header__rightMenu__menu__cart__number__prop'>{totalQuantity}</div>
                             </div>
 
                         </div>

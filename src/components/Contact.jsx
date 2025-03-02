@@ -12,11 +12,10 @@ const Contact = () => {
 
         <>
 
+            <div className='navbarContainer'>
+                <NavBar/>
+            </div>
             <div className="contactContainer">
-
-                <div className='navbarContainer'>
-                    <NavBar/>
-                </div>
 
                 <div className='contactContainer__title'>
                     <div className='contactContainer__title__prop'>Contacto</div>

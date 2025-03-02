@@ -10,6 +10,7 @@ const Cart = () => {
     const {cart, deleteAllItemCart} = useContext(CartContext);
 
     const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
+    const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -102,10 +103,10 @@ const Cart = () => {
                             <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
 
                                 {
-                                    cart.length == 1 ?
+                                    totalQuantity == 1 ?
                                     <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Producto</div>
                                     :
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Productos ({cart.length})</div>
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Productos ({totalQuantity})</div>
                                 }
 
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__value'>$ {total}</div>

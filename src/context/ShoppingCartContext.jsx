@@ -7,8 +7,6 @@ export const ShoppingCartContext = ({children}) => {
 
     const [cart, setCart] = useState([])
 
-    const qtyProducts = cart.length;
-
     const deleteItemCart = (itemId) => {
         toast('Has eliminado un producto del carrito!', {
             position: "top-right",
@@ -42,7 +40,7 @@ export const ShoppingCartContext = ({children}) => {
 
     return (
 
-        <CartContext.Provider value={{cart, setCart, qtyProducts, deleteItemCart, deleteAllItemCart}}>
+        <CartContext.Provider value={{cart, setCart, deleteItemCart, deleteAllItemCart}}>
             {children}
         </CartContext.Provider>
 

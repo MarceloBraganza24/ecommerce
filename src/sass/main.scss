@@ -115,13 +115,11 @@ h2 {
 .categoryContainer {
     width: 100%;
     &__grid {
-        //background-color: #1b509c;
         background-color: rgb(214, 213, 213);
         width: 100%;
         @include disFC();
         padding: 5vh 0vh;
         &__catalog {
-            //background-color: rgb(27, 80, 156, 0.9);
             background-color: white;
             width: 85%;
             padding: 4vh 4vh;
@@ -178,7 +176,6 @@ h2 {
         }
     }
     &__grid {
-        background-color: rgb(27, 80, 156, 0.9);
         background-color: rgb(214, 213, 213);
         width: 100%;
         @include disFC();
@@ -186,7 +183,6 @@ h2 {
         &__catalog {
             background-color: white;
             width: 90%;
-            padding: 4vh 0vh;
             border-radius: 1vh;
             &__categorieContainer {
                 width: 100%;
@@ -195,7 +191,7 @@ h2 {
                 align-items: center;
                 gap: 2vh;
                 &__title {
-                    //background-color: rgb(214, 213, 213);
+                    background-color: rgb(214, 213, 213);
                     width: 100%;
                     display: flex;
                     &__prop {
@@ -215,34 +211,22 @@ h2 {
                         padding: 5vh;
                     }
                 }
+                &__btnMoreProducts {
+                    width: 100%;
+                    @include disFC();
+                    padding-bottom: 5vh;
+                    &__prop {
+                        font-size: 20px;
+                        color: black;
+                        &:hover {
+                            color: #1b509c;
+                        }
+                    }
+                }
             }
         }
     }
 }
-
-/* .swiper-button-prev,
-.swiper-button-next {
-  top: 50%; 
-  transform: translateY(-50%); // Centra verticalmente
-  width: 40px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 50%;
-}
-
-.swiper-button-prev {
-  left: -10px; // Ajusta la posición izquierda
-}
-
-.swiper-button-next {
-  right: -5px; // Ajusta la posición derecha
-}
-
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 20px;
-} */
 
 .itemProduct {
     background-color: ghostwhite;
@@ -250,9 +234,15 @@ h2 {
     height: 450px;
     display: grid;
     grid-template-rows: 6fr 1fr 1fr 1fr;
+    grid-template-rows: 300px 37px 37px 37px 37px;
     padding-bottom: 2vh;
     border-radius: 2vh;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
+    transition: transform 0.3s ease-in-out;
+    &:hover {
+        transform: scale(1.05);
+        cursor: pointer;
+    }
     &__imgContainer {
         width: 100%;
         @include disFC();
@@ -261,7 +251,6 @@ h2 {
         border-top-right-radius: 2vh;
         &__img {
             width: 100%;
-            height: 100%;
         }
     }
     &__titleContainer {
@@ -310,12 +299,12 @@ h2 {
 }
 
 .itemDetailContainer {
-    background-color: white;
+    background-color: #d6d5d5;
     width: 100%;
     height: 90vh;
     @include disFC();
     &__itemDetail {
-        background-color: #d6d5d5;
+        background-color: white;
         width: 80%;
         height: auto;
         display: grid;
@@ -326,28 +315,27 @@ h2 {
             width: 100%;
             @include disFC();
             flex-direction: column;
+            gap: 1vh;
             &__img {
                 background-color: whitesmoke;
-                width: 100%;
+                width: 80%;
                 @include disFC();
-                padding: 1vh 2vh;
+                overflow: hidden;
                 &__prop {
-                    width: 70%;
-                    height: 350px;
+                    width: 100%;
+                    height: 400px;
                 }
             }
             &__galery {
-                background-color: whitesmoke;
-                width: 100%;
+                width: 80%;
                 display: flex;
                 gap: 1vh;
-                padding: 1vh 2vh;
                 &__imgContainer {
                     width: 100%;
                     @include disFC();
                     &__prop {
-                        width: 100px;
-                        height: 100px;
+                        width: 60px;
+                        height: 60px;
                         cursor: pointer;
                         border: 0.3vh solid transparent;
                         border-radius: 1vh;
@@ -359,33 +347,48 @@ h2 {
             }
         }
         &__infoContainer {
-            //background-color: saddlebrown;
             @include disFC();
             flex-direction: column;
             &__info {
-                //background-color: darkcyan;
-                width: 70%;
-                padding: 2vh;
+                background-color: #d6d5d5;
+                width: 80%;
+                padding: 2vh 4vh;
                 border: 0.3vh solid rgb(163, 163, 163);
                 border-radius: 1vh;
+                &__stateContainer {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    &__state {
+                        font-size: 20px;
+                        border-right: 0.3vh solid gray;
+                        padding-right: 2vh;
+                    }
+                    &__salesQuantity {
+                        padding-left: 2vh;
+                        font-size: 16px;
+                    }
+                }
                 &__title {
                     width: 100%;
+                    padding-top: 1vh;
                     &__prop {
                         text-align: center;
-                        font-size: 25px;
+                        font-size: 30px;
                     }
                 }
                 &__description {
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    padding-top: 4vh;
+                    padding-top: 1vh;
                     &__label {
                         font-size: 20px;
                     }
                     &__prop {
-                        font-size: 16px;
-                        padding-left: 2vh;
+                        font-size: 20px;
+                        //text-align: justify;
+                        //padding-left: 2vh;
                     }
                 }
                 &__price {
@@ -397,8 +400,9 @@ h2 {
                         font-size: 20px;
                     }
                     &__prop {
-                        font-size: 16px;
-                        padding-left: 2vh;
+                        font-size: 35px;
+                        font-weight: bold;
+                        //padding-left: 2vh;
                     }
                 }
                 &__color {
@@ -408,14 +412,12 @@ h2 {
                     padding-top: 2vh;
                     gap: 2vh;
                     &__label {
-                        font-size: 20px;
+                        font-size: 18px;
                     }
                     &__select {
-                        //background-color: saddlebrown;
                         background: none;
                         border: none;
-                        //padding-left: 2vh;
-                        font-size: 18px;
+                        font-size: 20px;
                     }
                 }
                 &__count {
@@ -453,6 +455,21 @@ h2 {
                         color: white;
                         font-size: 16px;
                         cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
+                    &__propCart {
+                        width: 60%;
+                        background-color: #b2d2ff;
+                        padding: 1vh;
+                        border-radius: 0.5vh;
+                        color: #1b509c;
+                        font-size: 16px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #9fbbe2;
+                        }
                     }
                 }
             }
@@ -461,7 +478,7 @@ h2 {
 }
 
 .cartContainer {    
-    background-color: white;
+    background-color: rgb(214, 213, 213);
     width: 100%;
     height: auto;
     display: flex;
@@ -480,7 +497,7 @@ h2 {
         }
     }
     &__cart {
-        background-color: rgb(214, 213, 213);
+        background-color: white;
         width: 90%;
         padding: 5vh;
         border-radius: 2vh;
@@ -528,7 +545,7 @@ h2 {
         display: flex;
         justify-content: end;
         &__accountSummary {
-            background-color: rgb(214, 213, 213);
+            background-color: white;
             width: 25%;
             @include disFC();
             flex-direction: column;
@@ -569,6 +586,8 @@ h2 {
                 padding-top: 1vh;
                 &__prop {
                     font-size: 16px;
+                    color: #1b509c;
+                    text-decoration: underline;
                     cursor: pointer;
                 }
             }
@@ -682,14 +701,13 @@ h2 {
     background-image: url('../assets/fondo_sobre_nosotros.jpg');
     background-size: cover; 
     width: 100%;
-    height: 100vh;
+    height: 90vh;
     &__phraseContainer {
         width: 100%;
         height: 90vh;
         @include disFC();
         &__phrase {
             background-color: rgb(0, 0, 0, 0.7);
-            //background-color: rgb(27, 80, 156, 0.9);
             width: 60%;
             font-size: 25px;
             text-align: justify;
@@ -705,12 +723,14 @@ h2 {
 }
 
 .contactContainer {
-    background-image: url('../assets/contact_fondo.jpg');
+    background-image: url('../assets/fondo_contact.webP');
     background-size: cover; 
-    background-color: white;
     width: 100%;
-    height: 100vh;
+    height: 90vh;
+    @include disFC();
+    flex-direction: column;
     &__title {
+        background-color: rgb(0, 0, 0, 0.6);
         width: 100%;
         @include disFC();
         padding: 2vh 0vh;
@@ -718,6 +738,7 @@ h2 {
             font-size: 40px;
             font-family: "Montserrat", sans-serif;
             font-weight: bold;
+            color: white;
         }
     }
     &__formMap {
@@ -729,13 +750,12 @@ h2 {
             width: 100%;
             @include disFC();
             &__form {
-                background-color: rgb(214, 213, 213);
+                background-color: rgb(0, 0, 0, 0.6);
                 width: 100%;
                 height: 70vh;
                 @include disFC();
                 flex-direction: column;
                 &__prop {
-                    background-color: rgb(0, 0, 0, 0.3);
                     background-color: white;
                     width: 70%;
                     @include disFC();
@@ -795,7 +815,8 @@ h2 {
             width: 100%;
             @include disFC();
             &__map {
-                background-color: rgb(214, 213, 213);
+                background-color: rgb(214, 213, 213, 0.8);
+                background-color: rgb(0, 0, 0, 0.6);
                 width: 100%;
                 height: 70vh;
                 @include disFC();
@@ -811,7 +832,7 @@ h2 {
                 &__address {
                     width: 100%;
                     text-align: center;
-                    color: black;
+                    color: white;
                 }
             }
         }
@@ -823,7 +844,6 @@ h2 {
     display: grid;
     grid-template-columns: 2fr 3.5fr;
     &__formContainer {
-        //background-color: whitesmoke;
         background-color: #d6d5d5;
         width: 100%;
         @include disFC();

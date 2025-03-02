@@ -83,7 +83,7 @@ const ItemCount = ({id, images, title,description,price,stock}) => {
 
         <div className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart'>
             <button className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'>Comprar ahora</button>
-            <button onClick={addToCart} className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'>Agregar al Carrito</button>
+            <button onClick={addToCart} className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__propCart'>Agregar al Carrito</button>
         </div>
     </>
 
