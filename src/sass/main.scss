@@ -5,6 +5,7 @@
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
 p {
     margin-bottom: 0;
@@ -114,16 +115,17 @@ h2 {
 .categoryContainer {
     width: 100%;
     &__grid {
-        background-color: #1b509c;
-        background-color: white;
+        //background-color: #1b509c;
+        background-color: rgb(214, 213, 213);
         width: 100%;
         @include disFC();
         padding: 5vh 0vh;
         &__catalog {
-            background-color: rgb(214, 213, 213);
+            //background-color: rgb(27, 80, 156, 0.9);
+            background-color: white;
             width: 85%;
             padding: 4vh 4vh;
-            border-radius: 5vh;
+            border-radius: 1vh;
             &__categorieContainer {
                 width: 100%;
                 display: flex;
@@ -136,6 +138,7 @@ h2 {
                     &__prop {
                         font-size: 30px;
                         text-transform: uppercase;
+                        font-family: "Montserrat", sans-serif;
                     }
                 }
                 &__productsContainer {
@@ -170,20 +173,21 @@ h2 {
                 color: white;
                 font-weight: bold;
                 padding-right: 2vh;
+                font-family: "Montserrat", sans-serif;
             }
         }
     }
     &__grid {
         background-color: rgb(27, 80, 156, 0.9);
-        background-color: white;
+        background-color: rgb(214, 213, 213);
         width: 100%;
         @include disFC();
         padding: 5vh 0vh;
         &__catalog {
-            background-color: rgb(214, 213, 213);
+            background-color: white;
             width: 90%;
-            padding: 4vh 4vh;
-            border-radius: 5vh;
+            padding: 4vh 0vh;
+            border-radius: 1vh;
             &__categorieContainer {
                 width: 100%;
                 display: flex;
@@ -191,25 +195,54 @@ h2 {
                 align-items: center;
                 gap: 2vh;
                 &__title {
+                    //background-color: rgb(214, 213, 213);
                     width: 100%;
                     display: flex;
                     &__prop {
-                        font-size: 30px;
+                        padding: 1vh 2vh;
+                        font-size: 35px;
                         text-transform: uppercase;
+                        text-decoration: none;
+                        color: black;
+                        font-weight: bold;
+                        font-family: "Montserrat", sans-serif;
                     }
                 }
                 &__productsContainer {
-                    width: 80%;
-                    display: flex;
-                    justify-content: space-around;
-                    flex-wrap: wrap;
-                    gap: 5vh;
-                    padding: 5vh 0vh;
+                    width: 90%;
+                    &__swiper {
+                        width: 85%;
+                        padding: 5vh;
+                    }
                 }
             }
         }
     }
 }
+
+/* .swiper-button-prev,
+.swiper-button-next {
+  top: 50%; 
+  transform: translateY(-50%); // Centra verticalmente
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+}
+
+.swiper-button-prev {
+  left: -10px; // Ajusta la posición izquierda
+}
+
+.swiper-button-next {
+  right: -5px; // Ajusta la posición derecha
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 20px;
+} */
 
 .itemProduct {
     background-color: ghostwhite;
@@ -250,7 +283,7 @@ h2 {
         width: 100%;
         @include disFC();
         &__prop {
-            font-size: 16px;
+            font-size: 25px;
         }
     }
     &__btnContainer {
@@ -442,6 +475,8 @@ h2 {
         &__prop {
             font-size: 40px;
             color: black;
+            font-family: "Montserrat", sans-serif;
+            font-weight: bold;
         }
     }
     &__cart {
@@ -681,7 +716,8 @@ h2 {
         padding: 2vh 0vh;
         &__prop {
             font-size: 40px;
-            //font-weight: bold;
+            font-family: "Montserrat", sans-serif;
+            font-weight: bold;
         }
     }
     &__formMap {

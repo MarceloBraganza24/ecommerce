@@ -4,6 +4,12 @@ import ItemProduct from './ItemProduct';
 import { Link, useLocation } from "react-router-dom";
 import Footer from "./Footer";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination,Autoplay  } from "swiper/modules";
+
 const logos = [
     { id: 1, src: "/src/assets/logo_gucci.png", alt: "Gucci" },
     { id: 2, src: "/src/assets/logo_Chanel.png", alt: "Chanel" },
@@ -24,6 +30,8 @@ const products = [
     { id: 9, images: ["/src/assets/pollera_frunce_microfibra.jpg"], title: "Pollera frunce microfibra", description: '(disponible en negro blanco y rojo)', price: 16000, stock: 9, color: ["negro","blanco","rojo"], size: ["2","3"], category: 'polleras' },
     { id: 10, images: ["/src/assets/vestido_un_hombro.jpg"], title: "Vestido un hombro", description: 'Abertura en la cintura (disponible en negro)', price: 19500, stock: 6, color: ["negro"], size: ["1","2"], category: 'vestidos' },
     { id: 11, images: ["/src/assets/pollera_de_jean_cargo.jpg","/src/assets/pollera_de_jean_cargo_1.jpg"], title: "Pollera de jean cargo", description: '(disponible en talle 38 y 40)', price: 17500, stock: 8, color: ["único"], size: ["38","40"], category: 'polleras' },
+    { id: 12, images: ["/src/assets/bodies_especial.png"], title: "Body especial", description: '(disponible en talle 38 y 40)', price: 15500, stock: 3, color: ["blanco","rojo","negro"], size: ["38","40"], category: 'bodies' },
+    { id: 12, images: ["/src/assets/bodies_tradicional.png"], title: "Body tradicional", description: '(disponible en talle 38 y 40)', price: 12500, stock: 5, color: ["blanco","negro","marrón"], size: ["38","40"], category: 'bodies' },
 ];
 
 const groupedProducts = products.reduce((acc, product) => {
@@ -104,12 +112,40 @@ const Home = () => {
                             <div className='catalogContainer__grid__catalog__categorieContainer' key={category}>
 
                                 <div className='catalogContainer__grid__catalog__categorieContainer__title'>
-                                    <h2 className='catalogContainer__grid__catalog__categorieContainer__title__prop'>{category}</h2>
+                                    {/* <h2 className='catalogContainer__grid__catalog__categorieContainer__title__prop'>{category}</h2> */}
+                                    <Link className='catalogContainer__grid__catalog__categorieContainer__title__prop' to={`/category/${category}`}>
+                                        {category}
+                                    </Link>
                                 </div>
 
                                 <div className='catalogContainer__grid__catalog__categorieContainer__productsContainer'>
 
-                                    {items.map((product) => (
+                                    <Swiper
+                                        className="catalogContainer__grid__catalog__categorieContainer__productsContainer__swiper"
+                                        modules={[Navigation, Pagination, Autoplay]}
+                                        spaceBetween={100}
+                                        slidesPerView={3}
+                                        navigation
+                                        pagination={{ clickable: true }}
+                                        autoplay={{
+                                        delay: 3000, // Cambia de slide cada 3 segundos
+                                        disableOnInteraction: true, // Sigue moviéndose después de interacción
+                                        }}
+                                    >
+                                        {items.slice(0, 10).map((product) => (
+                                        <SwiperSlide key={product.id}>
+                                            <ItemProduct
+                                            id={product.id}
+                                            images={product.images}
+                                            title={product.title}
+                                            description={product.description}
+                                            price={product.price}
+                                            />
+                                        </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+
+                                    {/* {items.map((product) => (
                                         <ItemProduct
                                         id={product.id}
                                         images={product.images}
@@ -117,7 +153,7 @@ const Home = () => {
                                         description={product.description}
                                         price={product.price}
                                         />
-                                    ))}
+                                    ))} */}
 
                                 </div>
 
