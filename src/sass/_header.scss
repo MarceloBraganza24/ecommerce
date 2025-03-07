@@ -16,6 +16,11 @@
             @include disFC;
             &__logo {
                 width: 70%;
+                transition: transform 0.3s ease-in-out;
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
             }
         }
         &__menuContainer {
@@ -23,17 +28,27 @@
             height: auto;
             display: flex;
             align-items: center;
-            gap: 1vh;
+            gap: 2vh;
             padding-left: 5vh;
             &__item {
                 color: white;
                 font-size: 14px;
                 text-decoration: none;
+                transition: transform 0.3s ease-in-out;
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
             }
             &__categoriesSelect {
                 color: white;
                 font-size: 14px;
                 cursor: pointer;
+                transition: transform 0.3s ease-in-out;
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
             }
         }
     }
@@ -55,6 +70,11 @@
                 text-align: center;
                 align-self: center;
                 text-decoration: none;
+                transition: transform 0.3s ease-in-out;
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
             }
             &__cart {
                 width: 100%;
@@ -69,6 +89,11 @@
                     align-items: center;
                     &__prop {
                         width: 60%;
+                        transition: transform 0.3s ease-in-out;
+                        &:hover {
+                            transform: scale(1.1);
+                            cursor: pointer;
+                        }
                     }
                 }
                 &__number {
@@ -83,6 +108,11 @@
                         color: black;
                         padding: 1vh;
                         font-weight: bold;
+                        &:hover {
+                            background-color: black;
+                            color: white;
+                            //border: 0.3vh solid white;
+                        }
                     }
                 }
             }
@@ -99,7 +129,7 @@
     justify-content: space-around;
     padding: 2vh;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     &__btnCloseMenu {
         width: 100%;
         display: flex;

@@ -1,10 +1,20 @@
-import {useContext} from 'react'
+import {useContext,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom';
 
-const ItemCart = ({id,title,description,quantity,img,price}) => {
+const ItemCart = ({id,title,description,stock,quantity,img,price}) => {
 
-    const {deleteItemCart} = useContext(CartContext);
+    const {deleteItemCart,updateQuantity} = useContext(CartContext);
+
+    const increment = () => {
+        updateQuantity(id, quantity + 1);
+    }
+
+    const decrement = () => {
+        if (quantity > 1) {
+          updateQuantity(id, quantity - 1);
+        }
+    }
 
   return (
 
@@ -27,7 +37,13 @@ const ItemCart = ({id,title,description,quantity,img,price}) => {
             </div>
 
             <div className='itemCart__quantity'>
+                
+                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
+
                 <div className='itemCart__quantity'>{quantity}</div>
+
+                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button>
+
             </div>
 
             <div className='itemCart__price'>

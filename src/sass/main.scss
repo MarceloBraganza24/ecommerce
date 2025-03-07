@@ -391,6 +391,21 @@ h2 {
                         //padding-left: 2vh;
                     }
                 }
+                &__stock {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding-top: 2vh;
+                    &__label {
+                        font-size: 20px;
+                        font-weight: 600;
+                    }
+                    /* &__prop {
+                        font-size: 35px;
+                        font-weight: bold;
+                        //padding-left: 2vh;
+                    } */
+                }
                 &__price {
                     width: 100%;
                     display: flex;
@@ -439,6 +454,12 @@ h2 {
                         border-color: black;
                         border-radius: 0.5vh;
                         cursor: pointer;
+                    }
+                    &__availability {
+                        font-size: 16px;
+                        padding-left: 1vh;
+                        border-left: 0.3vh solid black;
+                        margin-left: 1vh;
                     }
                 }
                 &__btnAddToCart {
@@ -663,8 +684,11 @@ h2 {
         }
     }
     &__quantity {
-        width: 100%;
-        @include disFC();
+        width: 40%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        justify-self: center;
         &__prop {
             font-size: 16px;
         }

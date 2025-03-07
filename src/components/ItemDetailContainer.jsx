@@ -98,7 +98,6 @@ const ItemDetailContainer = () => {
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__description'>
-                                {/* <div className='itemDetailContainer__itemDetail__infoContainer__info__description__label'>Descripción:</div> */}
                                 <div className='itemDetailContainer__itemDetail__infoContainer__info__description__prop'>{productById.description}</div>
                             </div>
 
@@ -139,18 +138,15 @@ const ItemDetailContainer = () => {
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
-                                {/* <div className='itemDetailContainer__itemDetail__infoContainer__info__price__label'>Stock:</div>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>{productById.stock}</div> */}
                                 {
                                     productById.stock >= 1 ?
-                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__price__label'>Stock disponible</div>
+                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Stock disponible</div>
                                     :
-                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__price__label'>Sin stock</div>
+                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Sin stock</div>
                                 }
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
-                                {/* <div className='itemDetailContainer__itemDetail__infoContainer__info__price__label'>Precio:</div> */}
                                 <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>$ {productById.price}</div>
                             </div>
 

@@ -4,13 +4,33 @@ import { toast } from 'react-toastify';
 
 const ItemCount = ({id, images, title,description,price,stock}) => {
 
-    const {cart, setCart} = useContext(CartContext);
+    const {setCart} = useContext(CartContext);
     
     const [count, setCount] = useState(1);
+    const [ultimoToast, setUltimoToast] = useState(0);
+    const tiempoEspera = 2000;
 
     const increment = () => {
-        setCount(count + 1)
-    }
+        if (count < stock) {
+            setCount(count + 1);
+        } else {
+            const ahora = Date.now();
+            if (ahora - ultimoToast >= tiempoEspera) {
+                toast('No hay mas disponibilidad de la ingresada!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setUltimoToast(ahora); // Actualiza el tiempo del último toast
+            }
+        }
+    };
 
     const decrement = () => {
         setCount(count - 1)
@@ -54,8 +74,6 @@ const ItemCount = ({id, images, title,description,price,stock}) => {
                 return [ ...currItems, {id, img: images[0], title,description, price, quantity: count} ]
             }
 
-            
-
         })
 
     }
@@ -67,17 +85,19 @@ const ItemCount = ({id, images, title,description,price,stock}) => {
 
             <h2 className='itemDetailContainer__itemDetail__infoContainer__info__count__quantityLabel'>Cantidad:</h2>
 
-            {/* <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button> */}
+            <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
 
-            { count < stock ?
-                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button> : <button disabled className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
+            { stock > 0 ?
+                <div className='itemDetailContainer__itemDetail__infoContainer__info__count__prop'>{count}</div>
+                :
+                <div className='itemDetailContainer__itemDetail__infoContainer__info__count__prop'>0</div>
             }
-
-            <div className='itemDetailContainer__itemDetail__infoContainer__info__count__prop'>{count}</div>
 
             { count != 1 ?
                 <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button> : <button disabled className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button>
             }
+
+            <div className='itemDetailContainer__itemDetail__infoContainer__info__count__availability'>({stock} Disponibles)</div>
 
         </div> 
 

@@ -417,6 +417,21 @@ h2 {
 .itemDetailContainer__itemDetail__infoContainer__info__description__prop {
   font-size: 20px;
 }
+.itemDetailContainer__itemDetail__infoContainer__info__stock {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-top: 2vh;
+  /* &__prop {
+      font-size: 35px;
+      font-weight: bold;
+      //padding-left: 2vh;
+  } */
+}
+.itemDetailContainer__itemDetail__infoContainer__info__stock__label {
+  font-size: 20px;
+  font-weight: 600;
+}
 .itemDetailContainer__itemDetail__infoContainer__info__price {
   width: 100%;
   display: flex;
@@ -465,6 +480,12 @@ h2 {
   border-color: black;
   border-radius: 0.5vh;
   cursor: pointer;
+}
+.itemDetailContainer__itemDetail__infoContainer__info__count__availability {
+  font-size: 16px;
+  padding-left: 1vh;
+  border-left: 0.3vh solid black;
+  margin-left: 1vh;
 }
 .itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart {
   width: 100%;
@@ -711,10 +732,11 @@ h2 {
   text-align: center;
 }
 .itemCart__quantity {
-  width: 100%;
+  width: 40%;
   display: flex;
   justify-content: center;
   align-items: center;
+  justify-self: center;
 }
 .itemCart__quantity__prop {
   font-size: 16px;
@@ -1134,23 +1156,38 @@ h2 {
 }
 .header__logo-menu__logoContainer__logo {
   width: 70%;
+  transition: transform 0.3s ease-in-out;
+}
+.header__logo-menu__logoContainer__logo:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 .header__logo-menu__menuContainer {
   width: 100%;
   height: auto;
   display: flex;
   align-items: center;
-  gap: 1vh;
+  gap: 2vh;
   padding-left: 5vh;
 }
 .header__logo-menu__menuContainer__item {
   color: white;
   font-size: 14px;
   text-decoration: none;
+  transition: transform 0.3s ease-in-out;
+}
+.header__logo-menu__menuContainer__item:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 .header__logo-menu__menuContainer__categoriesSelect {
   color: white;
   font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+.header__logo-menu__menuContainer__categoriesSelect:hover {
+  transform: scale(1.1);
   cursor: pointer;
 }
 .header__rightMenu {
@@ -1173,6 +1210,11 @@ h2 {
   text-align: center;
   align-self: center;
   text-decoration: none;
+  transition: transform 0.3s ease-in-out;
+}
+.header__rightMenu__menu__item:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 .header__rightMenu__menu__cart {
   width: 100%;
@@ -1189,6 +1231,11 @@ h2 {
 }
 .header__rightMenu__menu__cart__logo__prop {
   width: 60%;
+  transition: transform 0.3s ease-in-out;
+}
+.header__rightMenu__menu__cart__logo__prop:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 .header__rightMenu__menu__cart__number {
   width: 100%;
@@ -1204,6 +1251,10 @@ h2 {
   padding: 1vh;
   font-weight: bold;
 }
+.header__rightMenu__menu__cart__number__prop:hover {
+  background-color: black;
+  color: white;
+}
 
 .categoriesContainer {
   background-color: rgba(0, 0, 0, 0.4);
@@ -1214,7 +1265,7 @@ h2 {
   justify-content: space-around;
   padding: 2vh;
   position: fixed;
-  z-index: 1;
+  z-index: 2;
 }
 .categoriesContainer__btnCloseMenu {
   width: 100%;
