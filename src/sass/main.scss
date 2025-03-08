@@ -387,8 +387,6 @@ h2 {
                     }
                     &__prop {
                         font-size: 20px;
-                        //text-align: justify;
-                        //padding-left: 2vh;
                     }
                 }
                 &__stock {
@@ -400,11 +398,6 @@ h2 {
                         font-size: 20px;
                         font-weight: 600;
                     }
-                    /* &__prop {
-                        font-size: 35px;
-                        font-weight: bold;
-                        //padding-left: 2vh;
-                    } */
                 }
                 &__price {
                     width: 100%;
@@ -417,7 +410,6 @@ h2 {
                     &__prop {
                         font-size: 35px;
                         font-weight: bold;
-                        //padding-left: 2vh;
                     }
                 }
                 &__color {
@@ -624,6 +616,8 @@ h2 {
                     border-radius: 0.5vh;
                     font-size: 16px;
                     cursor: pointer;
+                    text-align: center;
+                    text-decoration: none;
                 }
             }
         }
@@ -718,6 +712,193 @@ h2 {
             color: white;
             cursor: pointer;
             border-radius: 1vh;
+        }
+    }
+}
+.shippingContainer {
+    background-color: rgb(214, 213, 213);
+    width: 100%;
+    height: 90vh;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    &__deliveryMethodContainer {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding-top: 10vh;
+        &__title {
+            width: 70%;
+            &__prop {
+                font-size: 25px;
+                padding-left: 2vh;
+            }
+        }
+        &__deliveryMethod {
+            background-color: white;
+            width: 70%;
+            border-radius: 0.5vh;
+            padding: 2vh;
+            margin-top: 2vh;
+            &:hover {
+                cursor: pointer;
+                border: 0.2vh solid black;
+            }
+            &__grid {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 10% 70% 20%;
+                padding: 1vh 0vh;
+                &__radio {
+                    width: 100%;
+                    @include disFC();
+                }
+                &__option {
+                    width: 100%;
+                    font-size: 25px;
+                }
+                &__state {
+                    width: 100%;
+                    @include disFC();
+                }
+            }
+            &__addressContainer {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 10% 70% 20%;
+                padding: 1vh 0vh;
+                &__address {
+                    grid-column: 2/3;
+                }
+            }
+            &__editAddressContainer {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 10% 70% 20%;
+                padding-top: 1vh;
+                margin-top: 1vh;
+                border-top: 0.3vh solid rgb(214, 213, 213);
+                &__btn {
+                    grid-column: 2/3;
+                    &:hover {
+                        color: #124285;
+                    }
+                }
+            }
+        }
+        &__btnContinue {
+            width: 70%;
+            display: flex;
+            justify-content: end;
+            padding-top: 2vh;
+            &__prop {
+                background-color: #1b509c;
+                width: 20%;
+                color: white;
+                padding: 1vh;
+                border-radius: 0.5vh;
+                font-size: 16px;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: none;    
+            }
+        }
+    }
+    &__accountSummaryContainer {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        &__accountSummary {
+            background-color: white;
+            width: 85%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding-top: 10vh;
+            &__title {
+                width: 100%;
+                @include disFC();
+                padding: 1vh 0vh;
+                &__prop {
+                    width: 90%;
+                    font-size: 20px;
+                    text-align: center;
+                    border-bottom: 0.3vh solid rgb(214, 213, 213);
+                    padding-bottom: 1vh;
+                }
+            }
+            &__item {
+                width: 90%;
+                display: grid;
+                align-self: center;
+                grid-template-columns: 70% 30%;
+                border-bottom: 0.3vh solid rgb(214, 213, 213);
+                &__label {
+                    padding: 2vh;
+                }
+                &__value {
+                    text-align: end;
+                    padding: 2vh;
+                }
+            }
+        }
+    }
+}
+.deliveryAddressContainer {
+    width: 100%;
+    padding: 0.5vh 0vh;
+    display: flex;
+    gap: 1vh;
+    &__label {
+        padding-left: 2vh;
+    }
+    &__address {
+        font-weight: bold;
+        &:hover {
+            color: #124285;
+            cursor: pointer;
+        }
+    }
+    &__btnEdit {
+        width: 80px;
+        background-color: #1b509c;
+        color: white;
+        border-radius: 0.5vh;
+        font-size: 14px;
+        cursor: pointer;
+    }
+}
+.deliveryAddressContainerModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100vh;
+    @include disFC();
+    &__deliveryAddressContainer {
+        background-color: rgb(214, 213, 213);
+        width: 40%;
+        height: 40vh;
+        display: flex;
+        flex-direction: column;
+        border-radius: 1vh;
+        &__title {
+            width: 100%;
+            @include disFC();
+            padding: 1vh 0vh;
+            &__prop {
+                font-size: 20px;
+            }
+        }
+        &__input {
+            width: 100%;
+            @include disFC();
+            &__prop {
+                width: 80%;
+                height: 30px;
+            }
         }
     }
 }

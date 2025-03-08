@@ -422,11 +422,6 @@ h2 {
   display: flex;
   align-items: center;
   padding-top: 2vh;
-  /* &__prop {
-      font-size: 35px;
-      font-weight: bold;
-      //padding-left: 2vh;
-  } */
 }
 .itemDetailContainer__itemDetail__infoContainer__info__stock__label {
   font-size: 20px;
@@ -661,6 +656,8 @@ h2 {
   border-radius: 0.5vh;
   font-size: 16px;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
 }
 
 .noProductsContainer {
@@ -773,6 +770,208 @@ h2 {
   color: white;
   cursor: pointer;
   border-radius: 1vh;
+}
+
+.shippingContainer {
+  background-color: rgb(214, 213, 213);
+  width: 100%;
+  height: 90vh;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+.shippingContainer__deliveryMethodContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 10vh;
+}
+.shippingContainer__deliveryMethodContainer__title {
+  width: 70%;
+}
+.shippingContainer__deliveryMethodContainer__title__prop {
+  font-size: 25px;
+  padding-left: 2vh;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod {
+  background-color: white;
+  width: 70%;
+  border-radius: 0.5vh;
+  padding: 2vh;
+  margin-top: 2vh;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod:hover {
+  cursor: pointer;
+  border: 0.2vh solid black;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 10% 70% 20%;
+  padding: 1vh 0vh;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__grid__radio {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__grid__option {
+  width: 100%;
+  font-size: 25px;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__grid__state {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 10% 70% 20%;
+  padding: 1vh 0vh;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address {
+  grid-column: 2/3;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 10% 70% 20%;
+  padding-top: 1vh;
+  margin-top: 1vh;
+  border-top: 0.3vh solid rgb(214, 213, 213);
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn {
+  grid-column: 2/3;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn:hover {
+  color: #124285;
+}
+.shippingContainer__deliveryMethodContainer__btnContinue {
+  width: 70%;
+  display: flex;
+  justify-content: end;
+  padding-top: 2vh;
+}
+.shippingContainer__deliveryMethodContainer__btnContinue__prop {
+  background-color: #1b509c;
+  width: 20%;
+  color: white;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+.shippingContainer__accountSummaryContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.shippingContainer__accountSummaryContainer__accountSummary {
+  background-color: white;
+  width: 85%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1vh 0vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__title__prop {
+  width: 90%;
+  font-size: 20px;
+  text-align: center;
+  border-bottom: 0.3vh solid rgb(214, 213, 213);
+  padding-bottom: 1vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__item {
+  width: 90%;
+  display: grid;
+  align-self: center;
+  grid-template-columns: 70% 30%;
+  border-bottom: 0.3vh solid rgb(214, 213, 213);
+}
+.shippingContainer__accountSummaryContainer__accountSummary__item__label {
+  padding: 2vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__item__value {
+  text-align: end;
+  padding: 2vh;
+}
+
+.deliveryAddressContainer {
+  width: 100%;
+  padding: 0.5vh 0vh;
+  display: flex;
+  gap: 1vh;
+}
+.deliveryAddressContainer__label {
+  padding-left: 2vh;
+}
+.deliveryAddressContainer__address {
+  font-weight: bold;
+}
+.deliveryAddressContainer__address:hover {
+  color: #124285;
+  cursor: pointer;
+}
+.deliveryAddressContainer__btnEdit {
+  width: 80px;
+  background-color: #1b509c;
+  color: white;
+  border-radius: 0.5vh;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.deliveryAddressContainerModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.deliveryAddressContainerModal__deliveryAddressContainer {
+  background-color: rgb(214, 213, 213);
+  width: 40%;
+  height: 40vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1vh;
+}
+.deliveryAddressContainerModal__deliveryAddressContainer__title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1vh 0vh;
+}
+.deliveryAddressContainerModal__deliveryAddressContainer__title__prop {
+  font-size: 20px;
+}
+.deliveryAddressContainerModal__deliveryAddressContainer__input {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.deliveryAddressContainerModal__deliveryAddressContainer__input__prop {
+  width: 80%;
+  height: 30px;
 }
 
 .aboutContainer {
@@ -1254,6 +1453,21 @@ h2 {
 .header__rightMenu__menu__cart__number__prop:hover {
   background-color: black;
   color: white;
+}
+
+.headerPurchase {
+  background-color: rgba(27, 80, 156, 0.9);
+  width: 100%;
+  height: 10vh;
+  display: flex;
+  align-items: center;
+}
+.headerPurchase__logo {
+  width: 100%;
+}
+.headerPurchase__logo__prop {
+  width: 8%;
+  padding-left: 5vh;
 }
 
 .categoriesContainer {

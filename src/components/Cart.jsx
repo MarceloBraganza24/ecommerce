@@ -4,6 +4,7 @@ import ItemCart from './ItemCart';
 import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
 import Footer from './Footer';
+import DeliveryAddress from './DeliveryAddress';
 
 const Cart = () => {
 
@@ -22,6 +23,7 @@ const Cart = () => {
             <div className='navbarContainer'>
                 <NavBar/>
             </div>
+            <DeliveryAddress/>
             {
                 cart.length > 0 ? 
 
@@ -137,7 +139,9 @@ const Cart = () => {
                             </div>
 
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
-                                <button className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>Continuar compra</button>
+                                <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
+                                    Continuar compra
+                                </Link>
                             </div>
 
                         </div>

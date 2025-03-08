@@ -13,6 +13,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn.jsx';
+import Shipping from './components/Shipping.jsx';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                     <Route exact path="/cart" element={<Cart/>}/>
                     <Route exact path="/item/:id" element={<ItemDetailContainer/>}/>
                     <Route exact path="/category/:category" element={<CategoryContainer/>}/>
+                    <Route exact path="/shipping" element={<Shipping/>}/>
 
                 </Routes>
 
