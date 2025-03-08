@@ -934,46 +934,98 @@ h2 {
   cursor: pointer;
 }
 
-.deliveryAddressContainerModal {
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal__container {
   position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
-.deliveryAddressContainerModal__deliveryAddressContainer {
-  background-color: rgb(214, 213, 213);
-  width: 40%;
-  height: 40vh;
-  display: flex;
-  flex-direction: column;
-  border-radius: 1vh;
+.modal__container--show {
+  animation: fadeInScale 0.3s ease-out forwards;
+  visibility: visible;
 }
-.deliveryAddressContainerModal__deliveryAddressContainer__title {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1vh 0vh;
-}
-.deliveryAddressContainerModal__deliveryAddressContainer__title__prop {
+.modal__title {
   font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
-.deliveryAddressContainerModal__deliveryAddressContainer__input {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.modal__content {
+  margin-bottom: 20px;
 }
-.deliveryAddressContainerModal__deliveryAddressContainer__input__prop {
-  width: 80%;
-  height: 30px;
+.modal__button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.modal__button:hover {
+  background: #0056b3;
 }
 
+/* .deliveryAddressContainerModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100vh;
+    @include disFC();
+    &__deliveryAddressContainer {
+        background-color: rgb(214, 213, 213);
+        width: 40%;
+        height: 40vh;
+        display: flex;
+        flex-direction: column;
+        border-radius: 1vh;
+        &__btnCloseModal {
+            width: 100%;
+            display: flex;
+            justify-content: end;
+            padding: 1vh 0vh;
+            &__prop {
+                font-size: 20px;
+                padding-right: 1vh;
+                cursor: pointer;
+            }
+        }
+        &__title {
+            width: 100%;
+            @include disFC();
+            padding: 1vh 0vh;
+            &__prop {
+                font-size: 20px;
+            }
+        }
+        &__input {
+            width: 100%;
+            @include disFC();
+            &__prop {
+                width: 80%;
+                height: 30px;
+            }
+        }
+    }
+} */
 .aboutContainer {
   background-image: url("../assets/fondo_sobre_nosotros.jpg");
   background-size: cover;
