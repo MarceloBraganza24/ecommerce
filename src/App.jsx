@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SignIn from './components/SignIn.jsx';
 import Shipping from './components/Shipping.jsx';
+import DeliveryAddressModal from './components/DeliveryAddressModal.jsx';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
                     <Route exact path="/item/:id" element={<ItemDetailContainer/>}/>
                     <Route exact path="/category/:category" element={<CategoryContainer/>}/>
                     <Route exact path="/shipping" element={<Shipping/>}/>
+                    <Route exact path="/deliveryAddressModal" element={<DeliveryAddressModal/>}/>
 
                 </Routes>
 

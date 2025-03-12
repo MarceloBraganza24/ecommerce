@@ -911,7 +911,7 @@ h2 {
 
 .deliveryAddressContainer {
   width: 100%;
-  padding: 0.5vh 0vh;
+  padding: 1vh 0vh;
   display: flex;
   gap: 1vh;
 }
@@ -934,6 +934,12 @@ h2 {
   cursor: pointer;
 }
 
+/* .inputDeliveryAddressModal {
+    width: 800px;
+    height: 35px;
+    margin: 2vh;
+    //background-color: saddlebrown;
+} */
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -944,15 +950,36 @@ h2 {
     transform: scale(1);
   }
 }
-.modal__container {
+.modal {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* &__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  } */
+}
+.modal__container {
+  width: 40%;
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 5vh;
+  border-radius: 0.5vh;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -966,20 +993,50 @@ h2 {
   font-weight: bold;
   margin-bottom: 10px;
 }
+.modal__inputSearchLocation {
+  width: 100%;
+  height: 35px;
+}
 .modal__content {
   margin-bottom: 20px;
 }
+.modal__propLocation {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding: 1vh 0vh;
+  margin-top: 2vh;
+}
+.modal__propLocation__input {
+  width: 100%;
+  height: 35px;
+  font-size: 18px;
+  padding-left: 1vh;
+}
 .modal__button {
-  background: #007bff;
+  background-color: #1b509c;
   color: white;
   border: none;
-  padding: 10px 15px;
+  padding: 0vh 2vh;
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s;
 }
 .modal__button:hover {
-  background: #0056b3;
+  background-color: #356fc0;
+}
+.modal__buttonModal {
+  background-color: #1b509c;
+  color: white;
+  border: none;
+  padding: 1vh 2vh;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.modal__buttonModal:hover {
+  background-color: #356fc0;
 }
 
 /* .deliveryAddressContainerModal {
