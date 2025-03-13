@@ -70,7 +70,7 @@ const Shipping = () => {
                     </div>
 
                     <div className='shippingContainer__deliveryMethodContainer__btnContinue'>
-                        <Link to={'/'} className='shippingContainer__deliveryMethodContainer__btnContinue__prop'>
+                        <Link to={'/purchaseCompleted'} className='shippingContainer__deliveryMethodContainer__btnContinue__prop'>
                             Continuar
                         </Link>
                     </div>

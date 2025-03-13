@@ -3,6 +3,7 @@ import ItemProduct from './ItemProduct'
 import { useParams } from 'react-router-dom'
 import NavBar from './NavBar';
 import Footer from './Footer';
+import DeliveryAddress from './DeliveryAddress';
 
 const products = [
     { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
@@ -36,6 +37,7 @@ const CategoryContainer = () => {
             <div className='navbarContainer'>
                 <NavBar/>
             </div>
+            <DeliveryAddress/>
             <div className="categoryContainer__grid">
                                 
                 <div className="categoryContainer__grid__catalog">

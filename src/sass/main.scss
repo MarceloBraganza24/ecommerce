@@ -867,165 +867,143 @@ h2 {
         border-radius: 0.5vh;
         font-size: 14px;
         cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        &:hover {
+            background-color: #124285;
+        }
     }
 }
-/* .inputDeliveryAddressModal {
-    width: 800px;
-    height: 35px;
-    margin: 2vh;
-    //background-color: saddlebrown;
-} */
-@keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-.modal {
+.deliveryFormContainer {
+    background-color: rgb(214, 213, 213);
     width: 100%;
-    @include disFC();
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* &__container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-    } */
-    &__container {
-        // position: fixed;
-        // top: 50%;
-        // left: 50%;
-        // transform: translate(-50%, -50%);
-        width: 40%;
-        background: white;
-        padding: 5vh;
-        border-radius: 0.5vh;
-        // box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-    }
-    &__container--show {
-      animation: fadeInScale 0.3s ease-out forwards;
-      visibility: visible;
-    }
-    &__title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    &__inputSearchLocation {
-        width: 100%;
-        height: 35px;
-        //margin: 2vh;
-        //background-color: saddlebrown;
-    }
-    &__content {
-      margin-bottom: 20px;
-    }
-    &__propLocation {
-        width: 100%;
+    height: auto;
+    //@include disFC();
+    display: flex;
+    justify-content: center;
+    //padding: 4vh 0vh;
+    &__deliveryForm {
+        background-color: white;
+        width: 60%;
         display: flex;
         flex-direction: column;
-        //align-items: center;
-        gap: 1vh;
-        padding: 1vh 0vh;
-        margin-top: 2vh;
-        &__input {
+        //border-radius: 0.5vh;
+        padding: 4vh;
+        &__title{
             width: 100%;
-            height: 35px;
-            font-size: 18px;
+            @include disFC();
+            padding: 2vh 0vh;
+            &__prop {
+                font-size: 30px;
+            }
+        }
+        &__labelInputLoadStreet {
+            width: 100%;
+            @include disFC();
+            padding-bottom: 0.5vh;
+            &__prop {
+                font-size: 18px;
+            }
+        }
+        &__gridLabelInput {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4vh;
+            padding-top: 4vh;
+            &__labelInput {
+                //background-color: sandybrown;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                //align-self: center;
+                //justify-content: center;
+                //padding-top: 1vh;
+                gap: 1vh;
+                &__label {
+                    font-size: 18px;
+                }
+                &__labelContactData {
+                    font-size: 25px;
+                }
+                &__inputContainer {
+                    width: 100%;
+                   // @include disFC();
+                    &__input {
+                        width: 100%;
+                        height: 40px;
+                        padding-left: 1vh;
+                        font-size: 18px;
+                        border-radius: 0.5vh;
+                        border: 0.1vh solid black;
+                        &::placeholder {
+                            font-size: 16px;
+                            padding-left: 1vh;
+                        }
+                    }
+                    &__textArea {
+                        width: 100%;
+                        height: 100px;
+                        font-size: 16px;
+                        padding: 1vh;
+                        border-radius: 0.5vh;
+                        border: 0.1vh solid black;
+                        resize: none;
+                        &::placeholder {
+                            font-size: 16px;
+                            padding-left: 1vh;
+                        }
+                    }
+                }
+            }
+        }
+        &__inputStreet {
+            width: 80%;
+            height: 40px;
             padding-left: 1vh;
+            font-size: 18px;
+            display: flex;
+            justify-self: center;
+            border-radius: 0.5vh;
+            &::placeholder {
+                font-size: 20px;
+                padding-left: 1vh;
+            }
         }
-    }
-    &__button {
-        background-color: #1b509c;
-        color: white;
-        border: none;
-        padding: 0vh 2vh;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s;
-
-        &:hover {
-        background-color: #356fc0;
-        }
-    }
-    &__buttonModal {
-        background-color: #1b509c;
-        color: white;
-        border: none;
-        padding: 1vh 2vh;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s;
-        &:hover {
-        background-color: #356fc0;
-        }
-    }
-}
-  
-/* .deliveryAddressContainerModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgb(0, 0, 0, 0.3);
-    width: 100%;
-    height: 100vh;
-    @include disFC();
-    &__deliveryAddressContainer {
-        background-color: rgb(214, 213, 213);
-        width: 40%;
-        height: 40vh;
-        display: flex;
-        flex-direction: column;
-        border-radius: 1vh;
-        &__btnCloseModal {
+        &__btnContainer {
             width: 100%;
+            padding: 2vh 0vh;
             display: flex;
             justify-content: end;
-            padding: 1vh 0vh;
-            &__prop {
-                font-size: 20px;
-                padding-right: 1vh;
+            &__btn {
+                width: 20%;
+                background-color: #1b509c;
+                color: white;
+                padding: 1vh;
+                border-radius: 0.5vh;
+                font-size: 16px;
                 cursor: pointer;
-            }
-        }
-        &__title {
-            width: 100%;
-            @include disFC();
-            padding: 1vh 0vh;
-            &__prop {
-                font-size: 20px;
-            }
-        }
-        &__input {
-            width: 100%;
-            @include disFC();
-            &__prop {
-                width: 80%;
-                height: 30px;
+                &:hover {
+                    background-color: #124285;
+                }
             }
         }
     }
-} */
+}
+.purchaseCompletedContainer {
+    width: 100%;
+    height: 90vh;
+    @include disFC();
+    flex-direction: column;
+    &__msj {
+        font-size: 30px;
+    }
+    &__goCatalog {
+        padding-top: 1vh;
+        font-size: 25px;
+        color: black;
+    }
+}
 .aboutContainer {
     background-image: url('../assets/fondo_sobre_nosotros.jpg');
     background-size: cover; 
