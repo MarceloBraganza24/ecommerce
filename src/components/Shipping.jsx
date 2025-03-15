@@ -48,7 +48,10 @@ const Shipping = () => {
                         </div>
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer">
-                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn">Editar o elegir otro domicilio</div>
+                            {/* <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn">Editar o elegir otro domicilio</div> */}
+                            <Link to={"/deliveryForm"} className='shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn'>
+                                Editar o elegir otro domicilio
+                            </Link>
                         </div>
 
                     </div>
@@ -70,7 +73,7 @@ const Shipping = () => {
                     </div>
 
                     <div className='shippingContainer__deliveryMethodContainer__btnContinue'>
-                        <Link to={'/purchaseCompleted'} className='shippingContainer__deliveryMethodContainer__btnContinue__prop'>
+                        <Link to={'/paymentForm'} className='shippingContainer__deliveryMethodContainer__btnContinue__prop'>
                             Continuar
                         </Link>
                     </div>
@@ -92,13 +95,19 @@ const Shipping = () => {
                             {
                                 totalQuantity == 1 ?
                                 <>
-                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Producto</div>
+                                    {/* <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Producto</div> */}
+                                    <Link to={"/cart"} className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>
+                                        Producto
+                                    </Link>
                                     <div className="shippingContainer__accountSummaryContainer__accountSummary__item__value">$ {total}</div>
                                 </>
                                 :
                                 <>
-                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Productos ({totalQuantity})</div>
-                                <div className="shippingContainer__accountSummaryContainer__accountSummary__item__value">$ {total}</div>
+                                    {/* <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Productos ({totalQuantity})</div> */}
+                                    <Link to={"/cart"} className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>
+                                        Productos ({totalQuantity})
+                                    </Link>
+                                    <div className="shippingContainer__accountSummaryContainer__accountSummary__item__value">$ {total}</div>
                                 </>
                             }
 

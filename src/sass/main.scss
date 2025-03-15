@@ -780,6 +780,8 @@ h2 {
                 border-top: 0.3vh solid rgb(214, 213, 213);
                 &__btn {
                     grid-column: 2/3;
+                    text-decoration: none;
+                    color: black;
                     &:hover {
                         color: #124285;
                     }
@@ -836,6 +838,8 @@ h2 {
                 border-bottom: 0.3vh solid rgb(214, 213, 213);
                 &__label {
                     padding: 2vh;
+                    color: black;
+                    text-decoration: none;
                 }
                 &__value {
                     text-align: end;
@@ -985,6 +989,88 @@ h2 {
                 cursor: pointer;
                 &:hover {
                     background-color: #124285;
+                }
+            }
+        }
+    }
+}
+.paymentFormContainer {
+    background-color: rgb(214, 213, 213);
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    &__paymentForm {
+        background-color: white;
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0vh 5vh;
+        &__title {
+            width: 100%;
+            @include disFC();
+            padding-top: 4vh;
+            &__prop {
+                font-size: 30px;
+            }
+        }
+        &__form {
+            width: 80%;
+            @include disFC();
+            flex-direction: column;
+            &__gridLabelInput {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4vh;
+                padding-top: 4vh;
+                &__labelInput {
+                    //background-color: sandybrown;
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    //align-self: center;
+                    //justify-content: center;
+                    //padding-top: 1vh;
+                    gap: 1vh;
+                    &__label {
+                        font-size: 18px;
+                    }
+                    &__inputContainer {
+                        width: 100%;
+                       // @include disFC();
+                        &__input {
+                            width: 100%;
+                            height: 40px;
+                            padding-left: 1vh;
+                            font-size: 18px;
+                            border-radius: 0.5vh;
+                            border: 0.1vh solid black;
+                            &::placeholder {
+                                font-size: 16px;
+                                padding-left: 1vh;
+                            }
+                        }
+                    }
+                }
+                &__btn {
+                    grid-column: 2/3;
+                    display: flex;
+                    justify-content: end;
+                    &__prop {
+                        width: 40%;
+                        background-color: #1b509c;
+                        color: white;
+                        padding: 1vh;
+                        //justify-self: end;
+                        border-radius: 0.5vh;
+                        font-size: 16px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
                 }
             }
         }

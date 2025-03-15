@@ -18,7 +18,7 @@ const PurchaseCompleted = () => {
             <div className='purchaseCompletedContainer'>
 
                 <div className='purchaseCompletedContainer__msj'>Felicidades!</div>
-                <div className='purchaseCompletedContainer__msj'>Has completado la compra exitosamente!</div>
+                <div className='purchaseCompletedContainer__msj'>Has completado tu compra exitosamente!</div>
                 <Link to={"/#catalog"} className='purchaseCompletedContainer__goCatalog'>
                     Seguir comprando!
                 </Link>
