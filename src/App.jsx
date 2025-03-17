@@ -17,6 +17,7 @@ import Shipping from './components/Shipping.jsx';
 import DeliveryForm from './components/DeliveryForm.jsx';
 import PurchaseCompleted from './components/PurchaseCompleted.jsx';
 import PaymentForm from './components/PaymentForm.jsx';
+import CPanelProducts from './components/CPanelProducts.jsx';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
                     <Route exact path="/deliveryForm" element={<DeliveryForm/>}/>
                     <Route exact path="/purchaseCompleted" element={<PurchaseCompleted/>}/>
                     <Route exact path="/paymentForm" element={<PaymentForm/>}/>
+                    <Route exact path="/cpanel/:products" element={<CPanelProducts/>}/>
 
                 </Routes>
 

@@ -237,6 +237,7 @@ const PaymentForm = () => {
     const [cardExpirationYear, setCardExpirationYear] = useState('');
     const [securityCode, setSecurityCode] = useState('');
     const [docType, setDocType] = useState('');
+    const [docTypes, setDocTypes] = useState([]);
     const [docNumber, setDocNumber] = useState('');
   
     const [paymentMethodId, setPaymentMethodId] = useState('');
@@ -245,46 +246,117 @@ const PaymentForm = () => {
     const [selectedInstallment, setSelectedInstallment] = useState('');
   
     const [issuers, setIssuers] = useState([]);
+
+    const [loading, setLoading] = useState(false);
   
     const amount = totalAmount; // Monto total a pagar
   
     // Inicializamos MercadoPago SDK
     useEffect(() => {
-      const mpInstance = new window.MercadoPago('TEST-45f14b6b-51ab-458d-8e4b-6129dc586136', {
-        locale: 'es-AR'
-      });
-      setMp(mpInstance);
-  
-      // Cargamos los tipos de documento (DNI, etc.)
-      mpInstance.getIdentificationTypes().then(types => {
-        if (types.length > 0) setDocType(types[0].id);
-      });
+        const mpInstance = new window.MercadoPago('TEST-45f14b6b-51ab-458d-8e4b-6129dc586136', {
+            locale: 'es-AR'
+        });
+        setMp(mpInstance);
+
+        mpInstance.getIdentificationTypes().then(types => {
+            setDocTypes(types);
+            if (types.length > 0) setDocType(types[0].id);
+        });
     }, []);
+
+    const validateForm = () => {
+        const cardNumberRegex = /^[0-9]{13,19}$/;
+        const nameRegex = /^[A-Za-zÁÉÍÓÚÑáéíóúñ ]{3,50}$/;
+        const cvvRegex = /^[0-9]{3,4}$/;
+        const docNumberRegex = /^[0-9]{6,11}$/;
+      
+        if (!cardNumberRegex.test(cardNumber)) {
+          alert('Número de tarjeta inválido');
+          return false;
+        }
+      
+        if (!nameRegex.test(cardholderName)) {
+          alert('Nombre del titular inválido');
+          return false;
+        }
+      
+        const month = parseInt(cardExpirationMonth, 10);
+        if (!(month >= 1 && month <= 12)) {
+          alert('Mes de expiración inválido');
+          return false;
+        }
+      
+        const year = parseInt(cardExpirationYear, 10);
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+      
+        if (year < currentYear || year > currentYear + 20) {
+          alert('Año de expiración inválido');
+          return false;
+        }
+      
+        if (year === currentYear && month < currentMonth) {
+          alert('La tarjeta ya expiró');
+          return false;
+        }
+      
+        if (!cvvRegex.test(securityCode)) {
+          alert('Código de seguridad inválido');
+          return false;
+        }
+      
+        if (!['DNI', 'CUIT', 'CI'].includes(docType)) {
+          alert('Tipo de documento inválido');
+          return false;
+        }
+      
+        if (!docNumberRegex.test(docNumber)) {
+          alert('Número de documento inválido');
+          return false;
+        }
+      
+        if (issuers.length > 0 && issuerId === '') {
+          alert('Debes seleccionar el banco emisor');
+          return false;
+        }
+      
+        if (installments.length > 0 && selectedInstallment === '') {
+          alert('Debes seleccionar las cuotas');
+          return false;
+        }
+      
+        return true;
+    };
+      
+
+    const formatCardNumber = (value) => {
+        return value.replace(/\s/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+    };
   
     const handleCardNumberChange = async (e) => {
-      const value = e.target.value;
-      setCardNumber(value);
-  
-      if (value.length >= 6 && mp) {
-        const bin = value.slice(0, 6);
-  
-        try {
-          const { results } = await mp.getPaymentMethods({ bin });
-          const method = results[0];
-  
-          setPaymentMethodId(method.id);
-  
-          if (method.additional_info_needed.includes('issuer_id')) {
-            getIssuers(method.id, bin);
-          } else {
-            setIssuerId('');
-          }
-  
-          getInstallments(method.id, bin, amount);
-        } catch (error) {
-          console.error('Error al obtener métodos de pago:', error);
+        const value = e.target.value.replace(/\D/g, ''); // solo números
+        setCardNumber(formatCardNumber(value));
+    
+        if (value.length >= 6 && mp) {
+            const bin = value.slice(0, 6);
+    
+            try {
+            const { results } = await mp.getPaymentMethods({ bin });
+            const method = results[0];
+    
+            setPaymentMethodId(method.id);
+    
+            if (method.additional_info_needed.includes('issuer_id')) {
+                getIssuers(method.id, bin);
+            } else {
+                setIssuerId('');
+            }
+    
+            getInstallments(method.id, bin, amount);
+            } catch (error) {
+            console.error('Error al obtener métodos de pago:', error);
+            }
         }
-      }
     };
   
     const getIssuers = async (paymentMethodId, bin) => {
@@ -314,58 +386,78 @@ const PaymentForm = () => {
     };
   
     const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      try {
-        const cardData = {
-          cardNumber,
-          cardholderName,
-          cardExpirationMonth,
-          cardExpirationYear,
-          securityCode,
-          identificationType: docType,
-          identificationNumber: docNumber
-        };
-  
-        const { id: token } = await mp.createCardToken(cardData);
-  
-        // Payload para enviar al backend
-        const paymentData = {
-          token,
-          transaction_amount: amount,
-          description: 'Compra en mi tienda online',
-          installments: Number(selectedInstallment),
-          payment_method_id: paymentMethodId,
-          issuer_id: issuerId,
-          payer: {
-            email: 'cliente@email.com', // Email del cliente
-            identification: {
-              type: docType,
-              number: docNumber
-            }
-          },
-          items: cart
-        };
-  
-        // Enviás el pago al backend
-        const response = await fetch('http://localhost:3001/process-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(paymentData)
-        });
-  
-        const result = await response.json();
-  
-        if (result.status === 'approved') {
-          alert('¡Pago exitoso! 🎉');
-        } else {
-          alert('Pago rechazado ❌');
+        e.preventDefault();
+        if (loading) return;
+        setLoading(true);
+
+        if (!cardExpirationMonth || !cardExpirationYear || !securityCode || !cardNumber) {
+            alert('Por favor completá todos los datos.');
+            return;
+        }
+
+        if (!validateForm()) {
+            return; // Corta el flujo si hay algún error
+        }
+
+        let token = null;
+        try {
+            const tokenResult = await mp.createCardToken(cardData);
+            token = tokenResult.id;
+        } catch (tokenError) {
+            console.error('Error creando el token de la tarjeta:', tokenError);
+            alert('Error con los datos de la tarjeta. Revisá los campos.');
+            return;
         }
   
-      } catch (error) {
-        console.error('Error al procesar el pago:', error);
-        alert('Error en el pago ❌');
-      }
+        try {
+            const cardData = {
+            cardNumber,
+            cardholderName,
+            cardExpirationMonth,
+            cardExpirationYear,
+            securityCode,
+            identificationType: docType,
+            identificationNumber: docNumber
+            };
+    
+            /* const { id: token } = await mp.createCardToken(cardData); */
+    
+            // Payload para enviar al backend
+            const paymentData = {
+            token,
+            transaction_amount: amount,
+            description: 'Compra Ecommerce',
+            installments: Number(selectedInstallment),
+            payment_method_id: paymentMethodId,
+            issuer_id: issuerId,
+            payer: {
+                email: 'marceebraga@gmail.com', // Email del cliente
+                identification: {
+                type: docType,
+                number: docNumber
+                }
+            },
+            items: cart
+            };
+    
+            // Enviás el pago al backend
+            const response = await fetch('http://localhost:3001/process-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData)
+            });
+    
+            const result = await response.json();
+    
+            if (result.status === 'approved') {
+            alert('¡Pago exitoso! 🎉');
+            } else {
+            alert('Pago rechazado ❌');
+            }
+        } catch (error) {
+            console.error('Error al procesar el pago:', error);
+            alert('Error en el pago ❌');
+        }
     };
 
     return (
@@ -388,7 +480,7 @@ const PaymentForm = () => {
 
                     <div className="paymentFormContainer__paymentForm__form">
 
-                        <form id="form-checkout"className="paymentFormContainer__paymentForm__form__gridLabelInput">
+                        <form id="form-checkout" onSubmit={handleSubmit} className="paymentFormContainer__paymentForm__form__gridLabelInput">
 
                             <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
                                 <label className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label'>Número de tarjeta</label>
@@ -400,6 +492,7 @@ const PaymentForm = () => {
                                     onChange={handleCardNumberChange}
                                     maxLength={16}
                                     required
+                                    placeholder='Número de tarjeta'
                                 />
                                 </div>
                             </div>
@@ -413,6 +506,7 @@ const PaymentForm = () => {
                                     value={cardholderName}
                                     onChange={e => setCardholderName(e.target.value)}
                                     required
+                                    placeholder='Nombre del titular'
                                     />
                                 </div>
                             </div>
@@ -421,12 +515,13 @@ const PaymentForm = () => {
                                 <label className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label'>Mes de expiración</label>
                                 <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
                                     <input
-                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input'
+                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__inputShort'
                                     type="text"
                                     value={cardExpirationMonth}
                                     onChange={e => setCardExpirationMonth(e.target.value)}
                                     maxLength={2}
                                     required
+                                    placeholder='Mes'
                                     />
                                 </div>
                             </div>
@@ -435,12 +530,13 @@ const PaymentForm = () => {
                                 <label className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label'>Año de expiración</label>
                                 <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
                                     <input
-                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input'
+                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__inputShort'
                                     type="text"
                                     value={cardExpirationYear}
                                     onChange={e => setCardExpirationYear(e.target.value)}
                                     maxLength={4}
                                     required
+                                    placeholder='Año'
                                     />
                                 </div>
                             </div>
@@ -449,12 +545,13 @@ const PaymentForm = () => {
                                 <label className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label'>Código de seguridad</label>
                                 <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
                                     <input
-                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input'
+                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__inputShort'
                                     type="text"
                                     value={securityCode}
                                     onChange={e => setSecurityCode(e.target.value)}
                                     maxLength={4}
                                     required
+                                    placeholder='Código'
                                     />
                                 </div>
                             </div>
@@ -462,10 +559,15 @@ const PaymentForm = () => {
                             <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
                                 <label className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label'>Tipo de documento</label>
                                 <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input' value={docType} onChange={e => setDocType(e.target.value)} required>
-                                        <option value="DNI">DNI</option>
-                                        <option value="CUIT">CUIT</option>
-                                        <option value="CI">CI</option>
+                                    <select
+                                        className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input'
+                                        value={docType}
+                                        onChange={e => setDocType(e.target.value)}
+                                        required
+                                        >
+                                        {docTypes.map((type) => (
+                                            <option key={type.id} value={type.id}>{type.name}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
@@ -479,6 +581,7 @@ const PaymentForm = () => {
                                         value={docNumber}
                                         onChange={e => setDocNumber(e.target.value)}
                                         required
+                                        placeholder='Número de documento'
                                     />
                                 </div>
                             </div>
@@ -523,210 +626,18 @@ const PaymentForm = () => {
                             <div></div>
                             
                             <div className="paymentFormContainer__paymentForm__form__gridLabelInput__btn">
-                                <button className='paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop' type="submit" style={styles.button}>Pagar ${amount}</button>
-                            </div>
-
-                            {/* {installments.length > 0 && (
-                                <div style={styles.field}>
-                                    <label>Cuotas</label>
-                                    <select
-                                    value={selectedInstallment}
-                                    onChange={e => setSelectedInstallment(e.target.value)}
-                                    required
+                                {/* <button className='paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop' type="submit" style={styles.button}>Pagar ${amount}</button> */}
+                                <button
+                                    className='paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop'
+                                    type="submit"
+                                    style={styles.button}
+                                    disabled={loading}
                                     >
-                                    {installments.map((installment, index) => (
-                                        <option key={index} value={installment.installments}>
-                                        {installment.recommended_message}
-                                        </option>
-                                    ))}
-                                    </select>
-                                </div>
-                            )} */}
-
-
-                            {/* <div style={styles.field}>
-                                <label>Número de tarjeta</label>
-                                <input
-                                    type="text"
-                                    value={cardNumber}
-                                    onChange={handleCardNumberChange}
-                                    maxLength={16}
-                                    required
-                                />
-                            </div> */}
-
-                            {/* <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__cardholderEmail" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Email</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" type="email" id="form-checkout__cardholderEmail" />
-                                </div>
+                                    {loading ? 'Procesando...' : `Pagar $${amount}`}
+                                </button>
                             </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__cardNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Número de la tarjeta</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__cardNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__expirationDate" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Fecha de vencimiento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__expirationDate" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__securityCode" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Código de seguridad</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__securityCode" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__installments" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Cuotas</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select id="form-checkout__installments" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input"></select>
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__identificationType" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Tipo de documento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select id="form-checkout__identificationType" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input"></select>
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__identificationNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Número de documento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" type="text" id="form-checkout__identificationNumber" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__issuer" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Banco emisor</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" id="form-checkout__issuer"></select>
-                                </div>
-                            </div> */}
-
-                            {/* <div></div> */}
-                            
-                            {/* <div className="paymentFormContainer__paymentForm__form__gridLabelInput__btn">
-                                <button className="paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop" type="submit">Pagar</button>
-                            </div> */}
 
                         </form>
-
-                        {/* <form onSubmit={handleSubmit} className="checkout-form" style={styles.form}>
-
-                            <div style={styles.field}>
-                                <label>Número de tarjeta</label>
-                                <input
-                                    type="text"
-                                    value={cardNumber}
-                                    onChange={handleCardNumberChange}
-                                    maxLength={16}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.field}>
-                                <label>Nombre del titular</label>
-                                <input
-                                    type="text"
-                                    value={cardholderName}
-                                    onChange={e => setCardholderName(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.row}>
-                                <div style={styles.field}>
-                                    <label>Mes de expiración</label>
-                                    <input
-                                    type="text"
-                                    value={cardExpirationMonth}
-                                    onChange={e => setCardExpirationMonth(e.target.value)}
-                                    maxLength={2}
-                                    required
-                                    />
-                                </div>
-
-                                <div style={styles.field}>
-                                    <label>Año de expiración</label>
-                                    <input
-                                    type="text"
-                                    value={cardExpirationYear}
-                                    onChange={e => setCardExpirationYear(e.target.value)}
-                                    maxLength={4}
-                                    required
-                                    />
-                                </div>
-                            </div>
-
-                            <div style={styles.field}>
-                                <label>Código de seguridad</label>
-                                <input
-                                    type="text"
-                                    value={securityCode}
-                                    onChange={e => setSecurityCode(e.target.value)}
-                                    maxLength={4}
-                                    required
-                                />
-                            </div>
-
-                            <div style={styles.field}>
-                                <label>Tipo de documento</label>
-                                <select value={docType} onChange={e => setDocType(e.target.value)} required>
-                                    <option value="DNI">DNI</option>
-                                    <option value="CUIT">CUIT</option>
-                                    <option value="CI">CI</option>
-                                </select>
-                            </div>
-
-                            <div style={styles.field}>
-                                <label>Número de documento</label>
-                                <input
-                                    type="text"
-                                    value={docNumber}
-                                    onChange={e => setDocNumber(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            {issuers.length > 0 && (
-                            <div style={styles.field}>
-                                <label>Banco emisor</label>
-                                <select value={issuerId} onChange={e => setIssuerId(e.target.value)} required>
-                                {issuers.map(issuer => (
-                                    <option key={issuer.id} value={issuer.id}>{issuer.name}</option>
-                                ))}
-                                </select>
-                            </div>
-                            )}
-
-                            {installments.length > 0 && (
-                            <div style={styles.field}>
-                                <label>Cuotas</label>
-                                <select
-                                value={selectedInstallment}
-                                onChange={e => setSelectedInstallment(e.target.value)}
-                                required
-                                >
-                                {installments.map((installment, index) => (
-                                    <option key={index} value={installment.installments}>
-                                    {installment.recommended_message}
-                                    </option>
-                                ))}
-                                </select>
-                            </div>
-                            )}
-
-                            <button type="submit" style={styles.button}>Pagar ${amount}</button>
-
-                        </form> */}
 
                     </div>
 

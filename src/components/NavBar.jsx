@@ -3,23 +3,46 @@ import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom'
 
 const NavBar = () => {
-    const [mostrarMenu, setMostrarMenu] = useState(false);
+    const [showHMenuOptions, setShowHMenuOptions] = useState(false);
+    const [showCategories, setShowCategories] = useState(false);
     const {cart} = useContext(CartContext)
     const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
 
-    const handleBtnShowCategories = () => {
-        if(mostrarMenu) {
-            setMostrarMenu(false)
+    const handleBtnShowHMenuOptions = () => {
+
+        if(showHMenuOptions) {
+            setShowHMenuOptions(false)
         } else {
-            setMostrarMenu(true)
+            if(showCategories) {
+                setShowCategories(false)
+            }
+            setShowHMenuOptions(true)
+        }
+
+    }
+
+    const handleBtnShowCategories = () => {
+        if(showCategories) {
+            setShowCategories(false)
+        } else {
+            if(showHMenuOptions) {
+                setShowHMenuOptions(false)
+            }
+            setShowCategories(true)
         }
     }
 
     useEffect(() => {
-        const handleScroll = () => setMostrarMenu(false);
-        window.addEventListener("scroll", handleScroll);
+        const handleScrollShowHMenuOptions = () => setShowHMenuOptions(false);
+
+        const handleScrollShowCategories = () => setShowCategories(false);
+        window.addEventListener("scroll", handleScrollShowCategories);
+        window.addEventListener("scroll", handleScrollShowHMenuOptions);
     
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScrollShowCategories);
+            window.removeEventListener("scroll", handleScrollShowHMenuOptions);
+        } 
     }, []);
 
     return (
@@ -28,6 +51,14 @@ const NavBar = () => {
             <div className='header'>
 
                 <div className='header__logo-menu'>
+
+                    <div className='header__logo-menu__hMenuContainer'>
+                        <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
+                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                        </div>
+                    </div>
 
                     <Link to={"/"} className='header__logo-menu__logoContainer'>
                         <img className='header__logo-menu__logoContainer__logo' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
@@ -76,19 +107,29 @@ const NavBar = () => {
                 </div>
                 
             </div>   
+            
+            {
+                showHMenuOptions &&
+                <div className='hMenuOptionsContainer'>
+                    <div className='hMenuOptionsContainer__btnCloseMenu'>
+                        <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
+                    </div>
+                    <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
+                </div>
+            }
 
             {
-                mostrarMenu &&
+                showCategories &&
                 <div className='categoriesContainer'>
                     <div className='categoriesContainer__btnCloseMenu'>
-                        <div onClick={()=>setMostrarMenu(false)} className='categoriesContainer__btnCloseMenu__btn'>X</div>
+                        <div onClick={()=>setShowCategories(false)} className='categoriesContainer__btnCloseMenu__btn'>X</div>
                     </div>
-                    <Link to={`/category/${'bodies'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- BODIES</Link>
-                    <Link to={`/category/${'shorts'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- SHORTS</Link>
-                    <Link to={`/category/${'tops'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- TOPS</Link>
-                    <Link to={`/category/${'vestidos'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- VESTIDOS</Link>
-                    <Link to={`/category/${'polleras'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- POLLERAS</Link>
-                    <Link to={`/category/${'cintos'}`} onClick={()=>setMostrarMenu(false)} className='categoriesContainer__category'>- CINTOS</Link>
+                    <Link to={`/category/${'bodies'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- BODIES</Link>
+                    <Link to={`/category/${'shorts'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- SHORTS</Link>
+                    <Link to={`/category/${'tops'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- TOPS</Link>
+                    <Link to={`/category/${'vestidos'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- VESTIDOS</Link>
+                    <Link to={`/category/${'polleras'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- POLLERAS</Link>
+                    <Link to={`/category/${'cintos'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- CINTOS</Link>
                 </div>
             }
 
