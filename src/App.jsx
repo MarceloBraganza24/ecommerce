@@ -18,6 +18,7 @@ import DeliveryForm from './components/DeliveryForm.jsx';
 import PurchaseCompleted from './components/PurchaseCompleted.jsx';
 import PaymentForm from './components/PaymentForm.jsx';
 import CPanelProducts from './components/CPanelProducts.jsx';
+import { IsLoggedInContext } from './context/IsLoggedContext.jsx';
 
 function App() {
 
@@ -25,29 +26,33 @@ function App() {
 
         <BrowserRouter>
 
-            <ShoppingCartContext>
+            <IsLoggedInContext>
 
-                <Routes>
+                <ShoppingCartContext>
 
-                    <Route exact path="/" element={<Home/>}/>
-                    <Route exact path="/about" element={<About/>}/>
-                    <Route exact path="/contact" element={<Contact/>}/>
-                    <Route exact path="/logIn" element={<Login/>}/>
-                    <Route exact path="/signIn" element={<SignIn/>}/>
-                    <Route exact path="/cart" element={<Cart/>}/>
-                    <Route exact path="/item/:id" element={<ItemDetailContainer/>}/>
-                    <Route exact path="/category/:category" element={<CategoryContainer/>}/>
-                    <Route exact path="/shipping" element={<Shipping/>}/>
-                    <Route exact path="/deliveryForm" element={<DeliveryForm/>}/>
-                    <Route exact path="/purchaseCompleted" element={<PurchaseCompleted/>}/>
-                    <Route exact path="/paymentForm" element={<PaymentForm/>}/>
-                    <Route exact path="/cpanel/:products" element={<CPanelProducts/>}/>
+                    <Routes>
 
-                </Routes>
+                        <Route exact path="/" element={<Home/>}/>
+                        <Route exact path="/about" element={<About/>}/>
+                        <Route exact path="/contact" element={<Contact/>}/>
+                        <Route exact path="/logIn" element={<Login/>}/>
+                        <Route exact path="/signIn" element={<SignIn/>}/>
+                        <Route exact path="/cart" element={<Cart/>}/>
+                        <Route exact path="/item/:id" element={<ItemDetailContainer/>}/>
+                        <Route exact path="/category/:category" element={<CategoryContainer/>}/>
+                        <Route exact path="/shipping" element={<Shipping/>}/>
+                        <Route exact path="/deliveryForm" element={<DeliveryForm/>}/>
+                        <Route exact path="/purchaseCompleted" element={<PurchaseCompleted/>}/>
+                        <Route exact path="/paymentForm" element={<PaymentForm/>}/>
+                        <Route exact path="/cpanel/:products" element={<CPanelProducts/>}/>
 
-                <ToastContainer />
+                    </Routes>
 
-            </ShoppingCartContext>
+                    <ToastContainer />
+
+                </ShoppingCartContext>
+                
+            </IsLoggedInContext>
 
         </BrowserRouter>
         

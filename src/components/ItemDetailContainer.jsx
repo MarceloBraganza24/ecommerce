@@ -1,9 +1,12 @@
-import {useEffect,useState} from 'react'
+import {useEffect,useState,useContext} from 'react'
 import NavBar from './NavBar'
 import { useParams } from 'react-router-dom'
 import ItemCount from './ItemCount';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
+import {IsLoggedContext} from '../context/IsLoggedContext';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'
 
 const products = [
     { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
@@ -23,6 +26,12 @@ const products = [
 
 
 const ItemDetailContainer = () => {
+    const navigate = useNavigate();
+    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
+    const [user, setUser] = useState('');
+    //const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const productById = products.find((product) => product.id == id)
     const [selectedImage, setSelectedImage] = useState(productById.images[0]);
@@ -45,6 +54,46 @@ const ItemDetailContainer = () => {
     };
 
     useEffect(() => {
+        const getCookie = (name) => {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+            }
+            return "";
+        };
+        const cookieValue = getCookie('TokenJWT');
+        const fetchUser = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+                const data = await response.json();
+                if(data.error === 'jwt expired') {
+                logout();
+                navigate("/login");
+                } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    setIsLoading(false)
+                }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+            };
+        fetchUser();
+        if(cookieValue) {
+            login()
+            } else {
+            logout()
+        }
         window.scrollTo(0, 0);
     }, []);
 
@@ -52,7 +101,7 @@ const ItemDetailContainer = () => {
 
         <>
             <div className='navbarContainer'>
-                <NavBar/>
+                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
             </div>
             <DeliveryAddress/>
             <div className='itemDetailContainer'>

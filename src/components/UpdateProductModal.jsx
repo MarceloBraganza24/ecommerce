@@ -3,18 +3,18 @@ import React, {useState,useEffect} from 'react'
 
 const UpdateProductModal = ({product,setShowUpdateModal}) => {
     
+    console.log(product)
+    const [images, setImages] = useState([]);
     const [title, setTitle] = useState(`${product.title}`);
     const [description, setDescription] = useState(`${product.description}`);
     const [price, setPrice] = useState(`${product.price}`);
     const [stock, setStock] = useState(`${product.stock}`);
 
-    const [size, setSize] = useState('');
-    const [sizes, setSizes] = useState([]);
-    console.log(sizes)
-    const [color, setColor] = useState('');
-    const [colors, setColors] = useState([]);
-    console.log(colors)
-    const [state, setState] = useState('');
+    const [size, setSize] = useState(product.size.join(','));
+    //const [sizes, setSizes] = useState([]);
+    const [color, setColor] = useState(product.color.join(','));
+    //const [colors, setColors] = useState([]);
+    const [state, setState] = useState(`${product.state}`);
     
     const [category, setCategory] = useState(`${product.category}`);
 
@@ -41,52 +41,46 @@ const UpdateProductModal = ({product,setShowUpdateModal}) => {
     const handleInputSize = (e) => {
         const value = e.target.value;
         setSize(value);
-
-        // Paso 1: Lo partimos por comas
-        const arrayStrings = value.split(',');
-
-        // Paso 2: Convertimos cada string a número
+        /* const arrayStrings = value.split(',');
         const arrayNumeros = arrayStrings
-        .map(item => item.trim()) // quitamos espacios por si acaso
-        .filter(item => item !== '') // sacamos vacíos si hay doble coma
+        .map(item => item.trim())
+        .filter(item => item !== '')
         .map(item => Number(item));
-
-        // Guardamos el array de números
-        setSizes(arrayNumeros);
+        setSizes(arrayNumeros); */
     }
 
     const handleInputColor = (e) => {
         const value = e.target.value;
         setColor(value);
-
-        // Paso 1: Lo partimos por comas
-        const arrayStrings = value.split(',');
-
-        // Paso 2: Convertimos cada string a número
+        /* const arrayStrings = value.split(',');
         const arrayNumeros = arrayStrings
-        .map(item => item.trim()) // quitamos espacios por si acaso
-        .filter(item => item !== '') // sacamos vacíos si hay doble coma
+        .map(item => item.trim()) 
+        .filter(item => item !== '')
         .map(item => item);
-
-        // Guardamos el array de números
-        setColors(arrayNumeros);
+        setColors(arrayNumeros); */
     }
 
     const handleInputCategory = (e) => {
         setCategory(e.target.value)
     }
-
-    useEffect(() => {
-
-        /* product.size.forEach(size => {
-            setSizes(size)
-        }) */
-
-    },[])
-
+    
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
+    
+    const handleBtnSaveChanges = () => {
+        const product = {
+            title,
+            description,
+            price,
+            stock,
+            size,
+            color,
+            state,
+            category
+        }
+        console.log(product)
+    }
 
     return (
         
@@ -116,7 +110,6 @@ const UpdateProductModal = ({product,setShowUpdateModal}) => {
                                         src={img}
                                         alt={`Miniatura ${index + 1}`}
                                         className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__imgContainer__prop'
-                                        onClick={() => setSelectedImage(img)}
                                         />
                                     </div>
                                 ))}
@@ -182,7 +175,7 @@ const UpdateProductModal = ({product,setShowUpdateModal}) => {
 
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Estado</div>
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
-                                <input className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop' placeholder='Estado' type="text" value={state} onChange={handleInputState} />
+                                <input className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop' placeholder='Estado' type="text" value={capitalizeFirstLetter(state)} onChange={handleInputState} />
                             </div>
 
                         </div>
@@ -191,9 +184,13 @@ const UpdateProductModal = ({product,setShowUpdateModal}) => {
 
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Categoría</div>
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
-                                <input className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop' placeholder='Categoría' type="text" value={category} onChange={handleInputCategory} />
+                                <input className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop' placeholder='Categoría' type="text" value={capitalizeFirstLetter(category)} onChange={handleInputCategory} />
                             </div>
 
+                        </div>
+
+                        <div className='updateProductModalContainer__updateProductModal__propsContainer__btnContainer'>
+                            <button onClick={handleBtnSaveChanges} className='updateProductModalContainer__updateProductModal__propsContainer__btnContainer__btn'>Guardar cambios</button>
                         </div>
 
                     </div>

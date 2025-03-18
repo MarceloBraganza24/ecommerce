@@ -1,6 +1,10 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect,useContext} from 'react'
 import NavBar from './NavBar'
+import { useNavigate } from 'react-router-dom'
 import ItemCPanelProduct from './ItemCPanelProduct';
+import CreateProductModal from './CreateProductModal';
+import {IsLoggedContext} from '../context/IsLoggedContext';
+import { toast } from 'react-toastify';
 
 const products = [
     { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
@@ -19,10 +23,17 @@ const products = [
 ];
 
 const CPanelProducts = () => {
+    const navigate = useNavigate();
+    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
+    const [user, setUser] = useState('');
+    //const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
+    const [showCreateProductModal, setShowCreateProductModal] = useState(false);
 
-    function filtrarPorTitle(valorIngresado) {
+    /* function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
         const objetosFiltrados = products.filter(objeto => {
             const nombreMinusculas = objeto.title.toLowerCase();
@@ -30,18 +41,87 @@ const CPanelProducts = () => {
         });
         return objetosFiltrados;
     }
-    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
+    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts); */
 
     const handleInputFilteredProducts = (e) => {
         const value = e.target.value;
         setInputFilteredProducts(value)
     }
 
+    useEffect(() => {
+        async function fetchProductsData() {
+            try {
+                const response = await fetch(`http://localhost:8081/api/products`)
+                const productsAll = await response.json();
+                if(!response.ok) {
+                    toast('No se pudieron obtener los productos, contacte al administrador', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                        className: "custom-toast",
+                    });
+                } else { 
+                    setProducts(productsAll.data)
+                }
+            } catch (error) {
+                console.error('Error al obtener datos:', error);
+            } finally {
+                setIsLoadingProducts(false);
+            }
+        }
+        fetchProductsData();
+        const getCookie = (name) => {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+            }
+            return "";
+        };
+        const cookieValue = getCookie('TokenJWT');
+        const fetchUser = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+                const data = await response.json();
+                if(data.error === 'jwt expired') {
+                    logout();
+                    navigate("/login");
+                } else {
+                    const user = data.data
+                    if(user) {
+                        setUser(user)
+                        setIsLoading(false)
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        fetchUser();
+        if(cookieValue) {
+            login()
+        } else {
+            logout()
+        }
+    }, []);
+
     return (
 
         <>
             <div className='navbarContainer'>
-                <NavBar/>
+                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
             </div>
             <div className='cPanelProductsContainer'>
                 
@@ -54,11 +134,11 @@ const CPanelProducts = () => {
                 </div>
 
                 <div className='cPanelProductsContainer__btnCreateProduct'>
-                    <button className='cPanelProductsContainer__btnCreateProduct__btn'>Crear producto</button>
+                    <button onClick={()=>setShowCreateProductModal(true)} className='cPanelProductsContainer__btnCreateProduct__btn'>Crear producto</button>
                 </div>
 
                 <div className='cPanelProductsContainer__quantityProducts'>
-                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {objetosFiltrados.length}</div>        
+                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {products.length}</div>        
                 </div>
 
                 <div className='cPanelProductsContainer__headerTableContainer'>
@@ -70,9 +150,6 @@ const CPanelProducts = () => {
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Descripción</div>
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Precio</div>
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Stock</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Talle</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Color</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Estado</div>
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Categoría</div>
 
                     </div>
@@ -82,7 +159,7 @@ const CPanelProducts = () => {
 
                 <div className="cPanelProductsContainer__productsTable">
 
-                    {objetosFiltrados.map((product) => (
+                    {products.map((product) => (
                         <>
                             <ItemCPanelProduct
                             product={product}
@@ -93,7 +170,13 @@ const CPanelProducts = () => {
 
                 </div>
 
-            </div>        
+            </div>  
+            
+            {
+                showCreateProductModal &&
+                <CreateProductModal
+                setShowCreateProductModal={setShowCreateProductModal}/>      
+            }
         
         </>
 

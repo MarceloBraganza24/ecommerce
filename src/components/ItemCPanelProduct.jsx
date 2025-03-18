@@ -29,7 +29,7 @@ const ItemCPanelProduct = ({product}) => {
                     <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{product.stock}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
+                {/* <div className="cPanelProductsContainer__productsTable__itemContainer__item">
                     <div className="cPanelProductsContainer__productsTable__itemContainer__item__labelLong">{product.size.join(',')}</div>
                 </div>
                 
@@ -39,7 +39,7 @@ const ItemCPanelProduct = ({product}) => {
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
                     <div className="cPanelProductsContainer__productsTable__itemContainer__item__labelLong">{product.state.join(',')}</div>
-                </div>
+                </div> */}
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
                     <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{product.category}</div>

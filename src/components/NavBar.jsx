@@ -2,7 +2,7 @@ import {useContext,useState,useEffect} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom'
 
-const NavBar = () => {
+const NavBar = ({isLoggedIn,isLoading}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
     const {cart} = useContext(CartContext)
@@ -34,11 +34,9 @@ const NavBar = () => {
 
     useEffect(() => {
         const handleScrollShowHMenuOptions = () => setShowHMenuOptions(false);
-
         const handleScrollShowCategories = () => setShowCategories(false);
         window.addEventListener("scroll", handleScrollShowCategories);
         window.addEventListener("scroll", handleScrollShowHMenuOptions);
-    
         return () => {
             window.removeEventListener("scroll", handleScrollShowCategories);
             window.removeEventListener("scroll", handleScrollShowHMenuOptions);
@@ -53,11 +51,16 @@ const NavBar = () => {
                 <div className='header__logo-menu'>
 
                     <div className='header__logo-menu__hMenuContainer'>
-                        <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
-                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
-                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
-                            <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
-                        </div>
+                        {
+                            isLoading ?
+                            <div>Cargando</div>
+                            :
+                            <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
+                                <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                                <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                                <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
+                            </div>
+                        }
                     </div>
 
                     <Link to={"/"} className='header__logo-menu__logoContainer'>
@@ -97,16 +100,24 @@ const NavBar = () => {
                             </div>
 
                         </div>
-
-                        <Link to={"/logIn"} className='header__rightMenu__menu__item'>
-                            LOG IN
-                        </Link>
+                        {
+                            isLoading ?
+                            <div className='header__rightMenu__menu__item'>Cargando</div>
+                            : isLoggedIn ?
+                            <Link to={"/logIn"} className='header__rightMenu__menu__item'>
+                                LOG OUT
+                            </Link>
+                            :
+                            <Link to={"/logIn"} className='header__rightMenu__menu__item'>
+                                LOG IN
+                            </Link>
+                        }
 
                     </div>
 
                 </div>
                 
-            </div>   
+            </div>
             
             {
                 showHMenuOptions &&
