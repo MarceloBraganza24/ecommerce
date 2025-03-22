@@ -106,8 +106,8 @@ const Home = () => {
                 const user = data.data
                 if(user) {
                     setUser(user)
-                    setIsLoading(false)
                 }
+                setIsLoading(false)
               }
             } catch (error) {
               console.error('Error:', error);
@@ -137,7 +137,11 @@ const Home = () => {
 
             <div className="homeContainer">
 
-                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
+                <NavBar
+                isLoading={isLoading}
+                isLoggedIn={user.isLoggedIn}
+                role={user.role}
+                />
 
                 <div className="homeContainer__gridOffer">
 

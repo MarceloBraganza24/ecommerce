@@ -137,6 +137,10 @@
                     }
                 }
             }
+            &__spinner {
+                width: 100%;
+                @include disFC;
+            }
         }
     }
 }

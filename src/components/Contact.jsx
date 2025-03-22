@@ -40,8 +40,8 @@ const Contact = () => {
                 const user = data.data
                 if(user) {
                     setUser(user)
-                    setIsLoading(false)
                 }
+                setIsLoading(false)
                 }
             } catch (error) {
                 console.error('Error:', error);

@@ -44,14 +44,14 @@ const Cart = () => {
                 const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
                 const data = await response.json();
                 if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
+                    logout();
+                    navigate("/login");
                 } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
+                    const user = data.data
+                    if(user) {
+                        setUser(user)
+                    }
                     setIsLoading(false)
-                }
                 }
             } catch (error) {
                 console.error('Error:', error);

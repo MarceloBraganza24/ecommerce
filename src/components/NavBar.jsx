@@ -1,8 +1,9 @@
 import {useContext,useState,useEffect} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom'
+import Spinner from './Spinner';
 
-const NavBar = ({isLoggedIn,isLoading}) => {
+const NavBar = ({isLoggedIn,isLoading,role}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
     const {cart} = useContext(CartContext)
@@ -53,8 +54,9 @@ const NavBar = ({isLoggedIn,isLoading}) => {
                     <div className='header__logo-menu__hMenuContainer'>
                         {
                             isLoading ?
-                            <div>Cargando</div>
+                            <Spinner/>
                             :
+                            role == 'admin' &&
                             <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
@@ -102,7 +104,9 @@ const NavBar = ({isLoggedIn,isLoading}) => {
                         </div>
                         {
                             isLoading ?
-                            <div className='header__rightMenu__menu__item'>Cargando</div>
+                            <div className='header__rightMenu__menu__spinner'>
+                                <Spinner/>
+                            </div>
                             : isLoggedIn ?
                             <Link to={"/logIn"} className='header__rightMenu__menu__item'>
                                 LOG OUT

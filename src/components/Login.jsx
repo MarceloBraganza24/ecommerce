@@ -86,6 +86,7 @@ const Login = () => {
                     draggable: true,
                     progress: undefined,
                     theme: "dark",
+                    className: "custom-toast",
                 });
                 login();
             }
@@ -99,6 +100,7 @@ const Login = () => {
                     draggable: true,
                     progress: undefined,
                     theme: "dark",
+                    className: "custom-toast",
                 });
             }
         } catch (error) {

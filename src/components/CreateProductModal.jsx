@@ -1,255 +1,314 @@
-import React, {useState,useEffect} from 'react'
+import React, {useState,useRef,useEffect} from 'react'
+import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
-
-const CreateProductModal = ({setShowCreateProductModal}) => {
-
+const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
+    const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState({
         images: [],
         title: '',
         description: '',
         price: '',
         stock: '',
-        size: [],
-        color: [],
-        category: ''
+        category: '',
+        camposDinamicos: [] // Acá van los campos extra
     });
+    const [nuevoCampo, setNuevoCampo] = useState({ key: '', value: '' });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-    
-        // Validaciones en tiempo real
-        if (name === 'state') {
-          // Solo letras y espacios
-          const regex = /^[a-zA-Z\s]*$/;
-          if (!regex.test(value)) return; // Ignora si no cumple
-        }
-    
-        if (name === 'price' || name === 'stock') {
-          // Solo números positivos
-          const regex = /^[0-9]*$/;
-          if (!regex.test(value)) return; // Ignora si no cumple
-        }
-    
-        setProduct({ ...product, [name]: value });
+    const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            product.images.forEach(imagen => URL.revokeObjectURL(imagen));
+        };
+    }, [product.images]);
+
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
     };
-
-    const handleImageChange = async (e) => {
+    
+    const handleImagenesChange = async (e) => {
         const files = Array.from(e.target.files);
     
-        if (files.length > 6) {
-          alert('Máximo 6 imágenes');
-          e.target.value = '';
-          return;
-        }
+        const totalImages = product.images.length + files.length;
     
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        const maxFileSize = 2 * 1024 * 1024; // 2MB
-        const minWidth = 500;
-        const minHeight = 500;
-        const maxWidth = 5000;
-        const maxHeight = 5000;
+        if (totalImages > 6) {
+            toast(`Máximo 6 imágenes`, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
     
         const processedImages = [];
     
         for (let file of files) {
-          if (!allowedTypes.includes(file.type)) {
-            alert(`El archivo ${file.name} no es un tipo de imagen permitido (JPG, PNG, WEBP).`);
-            e.target.value = '';
-            return;
-          }
-    
-          if (file.size > maxFileSize) {
-            alert(`El archivo ${file.name} supera el tamaño máximo de 2MB.`);
-            e.target.value = '';
-            return;
-          }
-    
-          // Validación de dimensiones
-          const imageDimensions = await getImageDimensions(file);
-    
-          if (
-            imageDimensions.width < minWidth ||
-            imageDimensions.height < minHeight ||
-            imageDimensions.width > maxWidth ||
-            imageDimensions.height > maxHeight
-          ) {
-            alert(`El archivo ${file.name} no cumple con las dimensiones mínimas/máximas (${minWidth}x${minHeight} - ${maxWidth}x${maxHeight} px).`);
-            e.target.value = '';
-            return;
-          }
-    
-          // Comprimir la imagen
-          const compressedImage = await compressImage(file, 0.7); // 70% calidad (podés ajustar)
-          processedImages.push(compressedImage);
-        }
-    
-        setProduct({ ...product, images: processedImages });
-    };
-    
-      // Función para obtener dimensiones de una imagen
-    const getImageDimensions = (file) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          const objectUrl = URL.createObjectURL(file);
-    
-          img.onload = () => {
-            resolve({ width: img.width, height: img.height });
-            URL.revokeObjectURL(objectUrl);
-          };
-    
-          img.onerror = () => {
-            reject(new Error('Error al cargar la imagen para obtener dimensiones.'));
-          };
-    
-          img.src = objectUrl;
-        });
-    };
-    
-      // Función para comprimir una imagen usando Canvas
-    const compressImage = (file, quality = 0.7) => {
-        return new Promise((resolve, reject) => {
-          const img = new Image();
-          const objectUrl = URL.createObjectURL(file);
-    
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-    
-            // Opcional: podés cambiar el tamaño del canvas si querés redimensionar
-            canvas.width = img.width;
-            canvas.height = img.height;
-    
-            ctx.drawImage(img, 0, 0);
-    
-            // Elegir el formato de salida (mantenemos el original si es posible)
-            let outputFormat = 'image/jpeg';
-            if (file.type === 'image/png') outputFormat = 'image/png';
-            if (file.type === 'image/webp') outputFormat = 'image/webp';
-    
-            canvas.toBlob(
-              (blob) => {
-                if (blob) {
-                  const compressedFile = new File([blob], file.name, {
-                    type: outputFormat,
-                    lastModified: Date.now()
-                  });
-                  resolve(compressedFile);
-                } else {
-                  reject(new Error('Error al comprimir la imagen.'));
-                }
-                URL.revokeObjectURL(objectUrl);
-              },
-              outputFormat,
-              quality // Calidad de la compresión (0.0 - 1.0)
+            const isDuplicate = product.images.some(imagen => 
+                imagen.name === file.name &&
+                imagen.lastModified === file.lastModified &&
+                imagen.size === file.size
             );
-          };
     
-          img.onerror = () => {
-            reject(new Error('Error al cargar la imagen para comprimir.'));
-          };
+            if (isDuplicate) {
+                toast(`La imagen ${file.name} ya ha sido cargada.`, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                continue; // Salta al siguiente archivo
+            }
     
-          img.src = objectUrl;
-        });
+            processedImages.push(file);
+        }
+    
+        if (processedImages.length === 0) {
+            return;
+        }
+    
+        setProduct(prev => ({
+            ...prev,
+            images: [...prev.images, ...processedImages]
+        }));
+    
+        // Limpia el input file para permitir seleccionar la misma imagen otra vez si se elimina antes
+        e.target.value = '';
+    };
+
+    const handleRemoveImagen = (index) => {
+        const nuevasImagenes = [...product.images];
+        nuevasImagenes.splice(index, 1);
+        setProduct(prev => ({
+            ...prev,
+            images: nuevasImagenes
+        }));
+    };
+
+    const handleAddCampo = () => {
+        const keyTrimmed = nuevoCampo.key.trim();
+        const valueTrimmed = nuevoCampo.value.trim();
+
+        const regex = /^[A-Za-z0-9 ]+$/;
+        if (!regex.test(keyTrimmed) || !regex.test(valueTrimmed)) {
+            toast('Los campos solo deben contener letras, números y espacios.', {
+              position: "top-right",
+              autoClose: 2000,
+              theme: "dark",
+              className: "custom-toast",
+            });
+            return;
+        }
+
+        const existe = product.camposDinamicos.some(campo => 
+            campo.key.toLowerCase() === keyTrimmed.toLowerCase()
+        );
+    
+        if (!keyTrimmed || !valueTrimmed) {
+            toast('Los dos campos son requeridos', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+    
+        if (existe) {
+            toast(`El campo "${keyTrimmed}" ya existe`, {
+              position: "top-right",
+              autoClose: 2000,
+              theme: "dark",
+              className: "custom-toast",
+            });
+            return;
+        }
+    
+        const nuevo = {
+            key: keyTrimmed,
+            value: valueTrimmed
+        };
+    
+        setProduct(prev => ({
+            ...prev,
+            camposDinamicos: [...prev.camposDinamicos, nuevo]
+        }));
+    
+        setNuevoCampo({ key: '', value: '' });
     };
     
-    const validateForm = () => {
-        const { title, description, price, stock, category, images } = product;
-    
-        // Validar campos vacíos
-        if (!title.trim() || !description.trim() || !price || !stock || !category.trim()) {
-          alert('Por favor, completa todos los campos.');
-          return false;
-        }
-        
-        // Validar price y stock (números mayores a 0)
-        if (Number(price) <= 0 || Number(stock) < 0) {
-          alert('El precio debe ser mayor a 0 y el stock no puede ser negativo.');
-          return false;
-        }
-    
-        // Validar imágenes
-        if (images.length === 0) {
-          alert('Debes subir al menos una imagen.');
-          return false;
-        }
-    
-        return true;
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
-        // FormData para enviar imágenes
+    
+        if (!product.title.trim() || !product.description.trim() || !product.price.trim() || !product.stock.trim() || !product.category.trim()) {
+            toast('Debes completar todos los campos', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+
+        if (!product.images.length) {
+            toast('Debes incluir al menos una imagen', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+    
         const formData = new FormData();
         formData.append('title', product.title);
         formData.append('description', product.description);
         formData.append('price', product.price);
         formData.append('stock', product.stock);
-        formData.append('size', product.size);
-        formData.append('color', product.color);
-        formData.append('state', product.state);
         formData.append('category', product.category);
     
-        product.size.forEach((size, index) => {
-          formData.append('size', size);
+        const propiedades = {};
+        product.camposDinamicos.forEach(campo => {
+            propiedades[campo.key] = campo.value;
         });
-
-        product.images.forEach((image, index) => {
-          formData.append('images', image);
+    
+        formData.append('propiedades', JSON.stringify(propiedades));
+    
+        product.images.forEach(imagen => {
+            formData.append('images', imagen);
         });
-
-        /* const productt = {
-            images: ["uploads/1742271397903-images.jpg","uploads/1231742271397903-images.jpg"],
-            title: "akmsasd",
-            description: "asdsakms",
-            price: 1000,
-            stock: 3,
-            size: ["2","3"],
-            color: ["negro","marron"],
-            state: "nuevo",
-            category: "remera",
-        } */
-
+    
+        setLoading(true);
+    
         try {
-            /* const res = await fetch('http://localhost:8081/api/products/', {
+            const res = await fetch('http://localhost:8081/api/products/', {
                 method: 'POST',
-                body: JSON.stringify({
-                    images: product.images,
-                    title: product.title,
-                    description: product.description,
-                    price: product.price,
-                    size: product.size,
-                    color: product.color,
-                    state: product.state,
-                    category: product.category
-                })
+                body: formData
             });
-        
-            const data = await res.json(); */
-            console.log(product);
-        
-            /* if (res.ok) {
-                alert('Producto cargado con éxito');
+    
+            const data = await res.json();
+            if (res.ok) {
+                toast('Has ingresado el producto con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
                 setProduct({
                     images: [],
                     title: '',
                     description: '',
                     price: '',
                     stock: '',
-                    size: '',
-                    color: '',
-                    category: ''
+                    category: '',
+                    camposDinamicos: []
                 });
+                fetchProducts();
             } else {
-                alert('Error al cargar el producto');
-            } */
+                toast('No se ha podido ingresar el producto, intente nuevamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            setLoading(false);
         }
     };
-        
+    
+
+    const handleClickUpload = () => {
+        fileInputRef.current.click(); // Abre el diálogo de selección de archivos
+    };
+
+    const handleEliminarCampo = (index) => {
+        const nuevosCampos = product.camposDinamicos.filter((_, i) => i !== index);
+    
+        setProduct(prev => ({
+            ...prev,
+            camposDinamicos: nuevosCampos
+        }));
+    };
+
+    const handleValueChange = (index, newValue) => {
+        const regex = /^[A-Za-z0-9 ]*$/;
+        if (!regex.test(newValue)) {
+            toast('Solo se permiten letras, números y espacios.', {
+              position: "top-right",
+              autoClose: 2000,
+              theme: "dark",
+              className: "custom-toast",
+            });
+            return;
+        }
+
+        if (newValue.length > 100) {
+            toast('Máximo 100 caracteres en el valor del campo.', {
+              position: "top-right",
+              autoClose: 2000,
+              theme: "dark",
+              className: "custom-toast",
+            });
+            return;
+        }
+
+        const nuevosCampos = [...product.camposDinamicos];
+        nuevosCampos[index].value = newValue;
+    
+        setProduct(prev => ({
+            ...prev,
+            camposDinamicos: nuevosCampos
+        }));
+    };
+
+    const handleChangeNuevoCampo = (e) => {
+        const { name, value } = e.target;
+
+        const regex = /^[A-Za-z0-9 ]*$/;
+        if (!regex.test(value)) {
+            toast('Solo se permiten letras, números y espacios.', {
+              position: "top-right",
+              autoClose: 2000,
+              theme: "dark",
+              className: "custom-toast",
+            });
+            return;
+        }
+
+        const maxLength = name === 'key' ? 50 : 100;
+        if (value.length > maxLength) {
+          toast(`Máximo ${maxLength} caracteres en el campo "${name}"`, {
+            position: "top-right",
+            autoClose: 2000,
+            theme: "dark",
+            className: "custom-toast",
+          });
+          return;
+        }
+    
+        setNuevoCampo(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     return (
-        
+
         <>
 
             <div className='createProductModalContainer'>
@@ -262,19 +321,49 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                     <div className='createProductModalContainer__createProductModal__propsContainer'>
 
-                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
+                        <div className='createProductModalContainer__createProductModal__propsContainer__propProductImage'>
 
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Imágenes</div>
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages'>
-                                <input
-                                    type="file"
-                                    name="images"
-                                    onChange={handleImageChange}
-                                    multiple
-                                    accept=".jpg, .jpeg, .png, .webp"
-                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__btn"
-                                />
-                                <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__maxLabel'>(Max 6)</div>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProductImage__label'>Imágenes</div>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages'>
+                                <div className='createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg'>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        ref={fileInputRef}
+                                        onChange={handleImagenesChange}
+                                        className="mb-2"
+                                        style={{display:'none'}}
+                                    />
+                                    {product.images.map((img, index) => (
+                                        <div key={index} className="createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveImagen(index)}
+                                                className="createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete"
+                                                >
+                                                ×
+                                            </button>
+                                            <img
+                                                src={URL.createObjectURL(img)}
+                                                alt={`preview-${index}`}
+                                                className="createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__prop"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className='createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount'>
+                                    <button
+                                        type="button"
+                                        onClick={handleClickUpload}
+                                        className="createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount__btn"
+                                        >
+                                        Agregar Imágenes
+                                    </button>
+                                    <p className="createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__loadingCount">
+                                        {product.images.length}/6 imágen{product.images.length !== 1 ? 'es' : ''} cargada{product.images.length !== 1 ? 's' : ''}.
+                                    </p>
+                                </div>
                             </div>
 
                         </div>
@@ -283,7 +372,15 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Título</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Título' type="text" name='title' value={product.title} onChange={handleChange} />
+                                <input
+                                    name='title'
+                                    placeholder='Título'
+                                    type="text"
+                                    value={product.title}
+                                    onChange={(e) => setProduct({ ...product, title: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                    required
+                                />
                             </div>
 
                         </div>
@@ -292,7 +389,15 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Descripción</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Descripción' type="text" name='description' value={product.description} onChange={handleChange} />
+                                <input
+                                    name='description'
+                                    placeholder='Descripción'
+                                    type="text"
+                                    value={product.description}
+                                    onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                    required
+                                />
                             </div>
 
                         </div>
@@ -301,7 +406,15 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Precio</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__propShort' placeholder='Precio' type="text" name='price' value={product.price} onChange={handleChange} />
+                                <input
+                                    name='price'
+                                    placeholder='Precio'
+                                    type="number"
+                                    value={product.price}
+                                    onChange={(e) => setProduct({ ...product, price: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__propShort"
+                                    required
+                                />
                             </div>
 
                         </div>
@@ -310,34 +423,15 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Stock</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__propShort' placeholder='Stock' type="text" name='stock' value={product.stock} onChange={handleChange} />
-                            </div>
-
-                        </div>
-
-                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
-
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Talle</div>
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Valores separados por comas (38,40)' type="text" name='size' value={product.size} onChange={handleChange} />
-                            </div>
-
-                        </div>
-
-                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
-
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Color</div>
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Valores separados por comas (Blanco,Negro)' type="text" name='color' value={product.color} onChange={handleChange} />
-                            </div>
-
-                        </div>
-
-                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
-
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Estado</div>
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Estado' type="text" name='state' value={product.state} onChange={handleChange} />
+                                <input
+                                    name='stock'
+                                    placeholder='Stock'
+                                    type="number"
+                                    value={product.stock}
+                                    onChange={(e) => setProduct({ ...product, stock: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__propShort"
+                                    required
+                                />
                             </div>
 
                         </div>
@@ -346,26 +440,100 @@ const CreateProductModal = ({setShowCreateProductModal}) => {
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Categoría</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
-                                <input className='createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop' placeholder='Categoría' type="text" name='category' value={product.category} onChange={handleChange} />
+                                <input
+                                    name='category'
+                                    placeholder='Categoría'
+                                    type="text"
+                                    value={product.category}
+                                    onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+                        {product.camposDinamicos.map((campo, index) => (
+                            <div key={index} className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
+
+                                <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>{capitalizeFirstLetter(campo.key)}</div>
+                                <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
+                                    <input
+                                        name={campo.key}
+                                        placeholder={campo.key}
+                                        type="text"
+                                        value={campo.value}
+                                        onChange={(e) => handleValueChange(index, e.target.value)}
+                                        className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                        required
+                                    />
+                                    <button
+                                    type="button"
+                                    onClick={() => handleEliminarCampo(index)} // Función para eliminar este campo
+                                    className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__btn"
+                                    style={{marginLeft:'2vh'}}
+                                    >
+                                    X
+                                    </button>
+                                </div>
+
+                            </div>
+                        ))}
+
+                        <div className='createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer'>
+
+                            <div className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__label">Agregar nuevo campo</div>
+                            <div className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn">
+                                <input
+                                    type="text"
+                                    name="key"
+                                    placeholder="Nombre del campo (ej: color)"
+                                    value={nuevoCampo.key}
+                                    onChange={handleChangeNuevoCampo}
+                                    className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__input"
+                                />
+                                <input
+                                    type="text"
+                                    name="value"
+                                    placeholder="Valor (ej: rojo)"
+                                    value={nuevoCampo.value}
+                                    onChange={handleChangeNuevoCampo}
+                                    className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__input"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleAddCampo}
+                                    className="createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__btn"
+                                >
+                                    +
+                                </button>
                             </div>
 
                         </div>
 
                         <div className='createProductModalContainer__createProductModal__propsContainer__btnContainer'>
-                            <button onClick={handleSubmit} className='createProductModalContainer__createProductModal__propsContainer__btnContainer__btn'>Guardar</button>
+                            <button disabled={loading} onClick={handleSubmit} className='createProductModalContainer__createProductModal__propsContainer__btnContainer__btn'>
+                                {/* {loading ? 'Guardando...' : 'Guardar'} */}
+                                {loading ? (
+                                    <>
+                                        Guardando <Spinner />
+                                    </>
+                                ) : (
+                                    'Guardar'
+                                )}
+                            </button>
                         </div>
 
                     </div>
 
                 </div>
-
-            </div>
+                
+            </div>       
         
         </>
 
     )
 
 }
-
 
 export default CreateProductModal

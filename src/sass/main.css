@@ -14,6 +14,23 @@ h2 {
   margin-bottom: 0;
 }
 
+.spinner {
+  border: 5px solid white;
+  border-top: 5px solid #0e3061;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .slider-logos {
   width: 100%;
   height: auto;
@@ -322,7 +339,7 @@ h2 {
 }
 .updateProductModalContainer__updateProductModal__propsContainer {
   background-color: white;
-  width: 80%;
+  width: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -330,9 +347,114 @@ h2 {
   flex-direction: column;
   padding: 2vh;
 }
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage {
+  width: 90%;
+  height: 110px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-self: center;
+  border-bottom: 0.3vh solid whitesmoke;
+  padding: 1vh 0vh;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__label {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 0.3vh solid whitesmoke;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1vh;
+  overflow: auto;
+  scrollbar-width: none;
+  padding-left: 2vh;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages ::-webkit-scrollbar {
+  display: none;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg {
+  width: 100%;
+  display: flex;
+  gap: 1vh;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete {
+  background-color: #0e3061;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.3vh 0vh;
+  cursor: pointer;
+  color: white;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__prop {
+  width: 50px;
+  height: 50px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__maxLabel {
+  display: flex;
+  align-self: center;
+  font-size: 12px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount__btn {
+  display: flex;
+  align-self: center;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #1b509c;
+  color: white;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount__btn:hover {
+  background-color: #124285;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__galeryImages__loadingCount {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 2vh;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__prop {
+  width: 80%;
+  height: 40px;
+  padding-left: 1vh;
+  font-size: 18px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__prop::-moz-placeholder {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__prop::placeholder {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__propShort {
+  width: 20%;
+  height: 40px;
+  font-size: 18px;
+  text-align: center;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__propShort::-moz-placeholder {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProductImage__input__propShort::placeholder {
+  font-size: 14px;
+}
 .updateProductModalContainer__updateProductModal__propsContainer__propProduct {
   width: 90%;
-  height: 70px;
+  height: 60px;
   display: grid;
   grid-template-columns: 1fr 3fr;
   align-self: center;
@@ -349,6 +471,7 @@ h2 {
 .updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages {
   width: 100%;
   display: flex;
+  flex-direction: column;
   gap: 1vh;
   overflow: auto;
   scrollbar-width: none;
@@ -357,7 +480,11 @@ h2 {
 .updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages ::-webkit-scrollbar {
   display: none;
 }
-.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__imgContainer__btnDelete {
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg {
+  width: 100%;
+  display: flex;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete {
   background-color: #0e3061;
   width: 100%;
   display: flex;
@@ -365,7 +492,7 @@ h2 {
   align-items: center;
   padding: 0.3vh 0vh;
 }
-.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__imgContainer__btnDelete__prop {
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete__prop {
   background-color: white;
   color: black;
   padding: 0.3vh 0.5vh;
@@ -374,9 +501,23 @@ h2 {
   cursor: pointer;
   text-align: center;
 }
-.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__imgContainer__prop {
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__prop {
   width: 50px;
   height: 50px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__btn {
+  display: flex;
+  align-self: center;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__propProduct__galeryImages__maxLabel {
+  display: flex;
+  align-self: center;
+  font-size: 14px;
 }
 .updateProductModalContainer__updateProductModal__propsContainer__propProduct__input {
   width: 100%;
@@ -408,6 +549,40 @@ h2 {
 .updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__propShort::placeholder {
   font-size: 14px;
 }
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__label {
+  font-size: 20px;
+  padding: 1vh 0vh;
+  text-align: center;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__inputsBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__inputsBtn__input {
+  height: 40px;
+  padding-left: 1vh;
+  font-size: 18px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__inputsBtn__input::-moz-placeholder {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__inputsBtn__input::placeholder {
+  font-size: 14px;
+}
+.updateProductModalContainer__updateProductModal__propsContainer__addNewFieldContainer__inputsBtn__btn {
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
 .updateProductModalContainer__updateProductModal__propsContainer__btnContainer {
   width: 100%;
   display: flex;
@@ -416,6 +591,11 @@ h2 {
 }
 .updateProductModalContainer__updateProductModal__propsContainer__btnContainer__btn {
   width: 30%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2vh;
   background-color: #1b509c;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -460,7 +640,7 @@ h2 {
 }
 .createProductModalContainer__createProductModal__propsContainer {
   background-color: white;
-  width: 80%;
+  width: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -468,9 +648,114 @@ h2 {
   flex-direction: column;
   padding: 2vh;
 }
+.createProductModalContainer__createProductModal__propsContainer__propProductImage {
+  width: 90%;
+  height: 110px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-self: center;
+  border-bottom: 0.3vh solid whitesmoke;
+  padding: 1vh 0vh;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__label {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 0.3vh solid whitesmoke;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1vh;
+  overflow: auto;
+  scrollbar-width: none;
+  padding-left: 2vh;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages ::-webkit-scrollbar {
+  display: none;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg {
+  width: 100%;
+  display: flex;
+  gap: 1vh;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete {
+  background-color: #0e3061;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.3vh 0vh;
+  cursor: pointer;
+  color: white;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__imgContainer__prop {
+  width: 50px;
+  height: 50px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__galeryBtnMaxImg__maxLabel {
+  display: flex;
+  align-self: center;
+  font-size: 12px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount__btn {
+  display: flex;
+  align-self: center;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #1b509c;
+  color: white;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__btnAddImageLoadingCount__btn:hover {
+  background-color: #124285;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__galeryImages__loadingCount {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 2vh;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__prop {
+  width: 80%;
+  height: 40px;
+  padding-left: 1vh;
+  font-size: 18px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__prop::-moz-placeholder {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__prop::placeholder {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__propShort {
+  width: 20%;
+  height: 40px;
+  font-size: 18px;
+  text-align: center;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__propShort::-moz-placeholder {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProductImage__input__propShort::placeholder {
+  font-size: 14px;
+}
 .createProductModalContainer__createProductModal__propsContainer__propProduct {
   width: 90%;
-  height: 70px;
+  height: 60px;
   display: grid;
   grid-template-columns: 1fr 3fr;
   align-self: center;
@@ -487,6 +772,7 @@ h2 {
 .createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages {
   width: 100%;
   display: flex;
+  flex-direction: column;
   gap: 1vh;
   overflow: auto;
   scrollbar-width: none;
@@ -495,7 +781,11 @@ h2 {
 .createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages ::-webkit-scrollbar {
   display: none;
 }
-.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__imgContainer__btnDelete {
+.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg {
+  width: 100%;
+  display: flex;
+}
+.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete {
   background-color: #0e3061;
   width: 100%;
   display: flex;
@@ -503,7 +793,7 @@ h2 {
   align-items: center;
   padding: 0.3vh 0vh;
 }
-.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__imgContainer__btnDelete__prop {
+.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__btnDelete__prop {
   background-color: white;
   color: black;
   padding: 0.3vh 0.5vh;
@@ -512,7 +802,7 @@ h2 {
   cursor: pointer;
   text-align: center;
 }
-.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__imgContainer__prop {
+.createProductModalContainer__createProductModal__propsContainer__propProduct__galeryImages__galeryBtnMaxImg__imgContainer__prop {
   width: 50px;
   height: 50px;
 }
@@ -560,6 +850,40 @@ h2 {
 .createProductModalContainer__createProductModal__propsContainer__propProduct__input__propShort::placeholder {
   font-size: 14px;
 }
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__label {
+  font-size: 20px;
+  padding: 1vh 0vh;
+  text-align: center;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__input {
+  height: 40px;
+  padding-left: 1vh;
+  font-size: 18px;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__input::-moz-placeholder {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__input::placeholder {
+  font-size: 14px;
+}
+.createProductModalContainer__createProductModal__propsContainer__addNewFieldContainer__inputsBtn__btn {
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
 .createProductModalContainer__createProductModal__propsContainer__btnContainer {
   width: 100%;
   display: flex;
@@ -568,6 +892,11 @@ h2 {
 }
 .createProductModalContainer__createProductModal__propsContainer__btnContainer__btn {
   width: 30%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2vh;
   background-color: #1b509c;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -2115,6 +2444,12 @@ h2 {
 .header__rightMenu__menu__cart__number__prop:hover {
   background-color: black;
   color: white;
+}
+.header__rightMenu__menu__spinner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .headerPurchase {

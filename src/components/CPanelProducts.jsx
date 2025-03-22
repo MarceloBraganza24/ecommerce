@@ -6,7 +6,7 @@ import CreateProductModal from './CreateProductModal';
 import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 
-const products = [
+/* const products = [
     { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
     { id: 2, images: ["/src/assets/body_lentejuelas.jpg"], title: "Body lentejuelas", description: '(disponible en cobre y plateado)', price: 16000, stock: 2, color: ["cobre","plateado"], size: ["2","3"], category: 'bodies', state: ["nuevo"] },
     { id: 3, images: ["/src/assets/body_bretel.jpg"], title: "Body bretel", description: 'Escote pinzado con abertura microfibra (disponible en negro)', price: 14800, stock: 10, color: ["negro"], size: ["3"], category: 'bodies', state: ["nuevo"] },
@@ -20,20 +20,20 @@ const products = [
     { id: 11, images: ["/src/assets/pollera_de_jean_cargo.jpg","/src/assets/pollera_de_jean_cargo_1.jpg"], title: "Pollera de jean cargo", description: '(disponible en talle 38 y 40)', price: 17500, stock: 8, color: ["único"], size: ["38","40"], category: 'polleras', state: ["nuevo"] },
     { id: 12, images: ["/src/assets/bodies_especial.png"], title: "Body especial", description: '(disponible en talle 38 y 40)', price: 15500, stock: 3, color: ["blanco","rojo","negro"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
     { id: 12, images: ["/src/assets/bodies_tradicional.png"], title: "Body tradicional", description: '(disponible en talle 38 y 40)', price: 12500, stock: 5, color: ["blanco","negro","marrón"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-];
+]; */
 
 const CPanelProducts = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
-    //const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
 
-    /* function filtrarPorTitle(valorIngresado) {
+    function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
         const objetosFiltrados = products.filter(objeto => {
             const nombreMinusculas = objeto.title.toLowerCase();
@@ -41,18 +41,27 @@ const CPanelProducts = () => {
         });
         return objetosFiltrados;
     }
-    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts); */
+    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
+
+    //console.log(objetosFiltrados)
 
     const handleInputFilteredProducts = (e) => {
         const value = e.target.value;
         setInputFilteredProducts(value)
     }
 
+    const fetchProducts = async () => {
+        const response = await fetch(`http://localhost:8081/api/products`)
+        const productsAll = await response.json();
+        setProducts(productsAll.data.docs)
+    };
+
     useEffect(() => {
         async function fetchProductsData() {
             try {
                 const response = await fetch(`http://localhost:8081/api/products`)
                 const productsAll = await response.json();
+                //console.log(productsAll.data)
                 if(!response.ok) {
                     toast('No se pudieron obtener los productos, contacte al administrador', {
                         position: "top-right",
@@ -66,7 +75,7 @@ const CPanelProducts = () => {
                         className: "custom-toast",
                     });
                 } else { 
-                    setProducts(productsAll.data)
+                    setProducts(productsAll.data.docs)
                 }
             } catch (error) {
                 console.error('Error al obtener datos:', error);
@@ -102,8 +111,8 @@ const CPanelProducts = () => {
                     const user = data.data
                     if(user) {
                         setUser(user)
-                        setIsLoading(false)
                     }
+                    setIsLoading(false)
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -121,7 +130,11 @@ const CPanelProducts = () => {
 
         <>
             <div className='navbarContainer'>
-                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
+                <NavBar
+                isLoading={isLoading}
+                isLoggedIn={user.isLoggedIn}
+                role={user.role}
+                />
             </div>
             <div className='cPanelProductsContainer'>
                 
@@ -138,31 +151,35 @@ const CPanelProducts = () => {
                 </div>
 
                 <div className='cPanelProductsContainer__quantityProducts'>
-                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {products.length}</div>        
+                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {objetosFiltrados.length}</div>        
                 </div>
 
-                <div className='cPanelProductsContainer__headerTableContainer'>
+                {
+                    objetosFiltrados.length != 0 &&
+                    <div className='cPanelProductsContainer__headerTableContainer'>
 
-                    <div className="cPanelProductsContainer__headerTableContainer__headerTable">
+                        <div className="cPanelProductsContainer__headerTableContainer__headerTable">
 
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Imagen</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Título</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Descripción</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Precio</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Stock</div>
-                        <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Categoría</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Imagen</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Título</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Descripción</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Precio</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Stock</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Categoría</div>
+
+                        </div>
 
                     </div>
-
-                </div>
+                }
 
 
                 <div className="cPanelProductsContainer__productsTable">
 
-                    {products.map((product) => (
+                    {objetosFiltrados.map((product) => (
                         <>
                             <ItemCPanelProduct
                             product={product}
+                            fetchProducts={fetchProducts}
                             />
                             
                         </>
@@ -175,6 +192,7 @@ const CPanelProducts = () => {
             {
                 showCreateProductModal &&
                 <CreateProductModal
+                fetchProducts={fetchProducts}
                 setShowCreateProductModal={setShowCreateProductModal}/>      
             }
         
