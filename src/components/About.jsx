@@ -11,7 +11,44 @@ const About = () => {
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/categories');
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.data); 
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -49,6 +86,7 @@ const About = () => {
             }
         };
         fetchUser();
+        fetchCategories();
         if(cookieValue) {
             login()
             } else {
@@ -62,7 +100,12 @@ const About = () => {
         <>
 
             <div className='navbarContainer'>
-                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
+                <NavBar
+                isLoading={isLoading}
+                isLoggedIn={user.isLoggedIn}
+                role={user.role}
+                categories={categories}
+                />
             </div>
             <div className="aboutContainer">
 

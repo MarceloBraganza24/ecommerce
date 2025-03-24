@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination,Autoplay  } from "swiper/modules";
+import BtnGoUp from "./BtnGoUp";
 
 const logos = [
     { id: 1, src: "/src/assets/logo_gucci.png", alt: "Gucci" },
@@ -20,7 +21,7 @@ const logos = [
     { id: 5, src: "/src/assets/logo_Prada.png", alt: "Prada" },
 ];
 
-const products = [
+/* const products = [
     { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
     { id: 2, images: ["/src/assets/body_lentejuelas.jpg"], title: "Body lentejuelas", description: '(disponible en cobre y plateado)', price: 16000, stock: 2, color: ["cobre","plateado"], size: ["2","3"], category: 'bodies', state: ["nuevo"] },
     { id: 3, images: ["/src/assets/body_bretel.jpg"], title: "Body bretel", description: 'Escote pinzado con abertura microfibra (disponible en negro)', price: 14800, stock: 10, color: ["negro"], size: ["3"], category: 'bodies', state: ["nuevo"] },
@@ -34,23 +35,67 @@ const products = [
     { id: 11, images: ["/src/assets/pollera_de_jean_cargo.jpg","/src/assets/pollera_de_jean_cargo_1.jpg"], title: "Pollera de jean cargo", description: '(disponible en talle 38 y 40)', price: 17500, stock: 8, color: ["único"], size: ["38","40"], category: 'polleras', state: ["nuevo"] },
     { id: 12, images: ["/src/assets/bodies_especial.png"], title: "Body especial", description: '(disponible en talle 38 y 40)', price: 15500, stock: 3, color: ["blanco","rojo","negro"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
     { id: 12, images: ["/src/assets/bodies_tradicional.png"], title: "Body tradicional", description: '(disponible en talle 38 y 40)', price: 12500, stock: 5, color: ["blanco","negro","marrón"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-];
+]; */
 
-const groupedProducts = products.reduce((acc, product) => {
+/* const groupedProducts = products.reduce((acc, product) => {
     acc[product.category] = acc[product.category] || [];
     acc[product.category].push(product);
     return acc;
-}, {});
+}, {}); */
 
 const Home = () => {
+    const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
-    const [products, setProducts] = useState('');
+    const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [categories, setCategories] = useState([]);
     
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const groupedProducts = products.reduce((acc, product) => {
+        acc[product.category] = acc[product.category] || [];
+        acc[product.category].push(product);
+        return acc;
+    }, {});
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/categories');
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.data); 
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     useEffect(() => {
         async function fetchProductsData() {
@@ -70,7 +115,7 @@ const Home = () => {
                         className: "custom-toast",
                     });
                 } else { 
-                    setProducts(productsAll.data)
+                    setProducts(productsAll.data.docs)
                 }
             } catch (error) {
                 console.error('Error al obtener datos:', error);
@@ -114,11 +159,22 @@ const Home = () => {
             }
           };
         fetchUser();
+        fetchCategories();
         if(cookieValue) {
             login()
           } else {
             logout()
         }
+        const toggleVisibility = () => {
+            if (window.scrollY > 300) {
+              setIsVisible(true);
+            } else {
+              setIsVisible(false);
+            }
+        };
+      
+        window.addEventListener('scroll', toggleVisibility);
+        return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
     useEffect(() => {
@@ -131,9 +187,20 @@ const Home = () => {
         }
     }, [location]);
 
+    const scrollToTop = () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+    };
+
     return (
 
         <>
+            <BtnGoUp
+            isVisible={isVisible}
+            scrollToTop={scrollToTop}
+            />
 
             <div className="homeContainer">
 
@@ -141,6 +208,7 @@ const Home = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
+                categories={categories}
                 />
 
                 <div className="homeContainer__gridOffer">
@@ -189,54 +257,68 @@ const Home = () => {
                     
                     <div className="catalogContainer__grid__catalog">
 
-                        {Object.entries(groupedProducts).map(([category, items]) => (
+                        {
+                            products.length ?
+                        
+                            Object.entries(groupedProducts).map(([category, items]) => (
 
-                            <div className='catalogContainer__grid__catalog__categorieContainer' key={category}>
+                                <div className='catalogContainer__grid__catalog__categorieContainer' key={category}>
 
-                                <div className='catalogContainer__grid__catalog__categorieContainer__title'>
-                                    <Link className='catalogContainer__grid__catalog__categorieContainer__title__prop' to={`/category/${category}`}>
-                                        {category}
+                                    <div className='catalogContainer__grid__catalog__categorieContainer__title'>
+                                        <Link className='catalogContainer__grid__catalog__categorieContainer__title__prop' to={`/category/${category}`}>
+                                            {category}
+                                        </Link>
+                                    </div>
+
+                                    <div className='catalogContainer__grid__catalog__categorieContainer__productsContainer'>
+
+                                        <Swiper
+                                            className="catalogContainer__grid__catalog__categorieContainer__productsContainer__swiper"
+                                            modules={[Navigation, Pagination, Autoplay]}
+                                            spaceBetween={100}
+                                            slidesPerView={3}
+                                            navigation
+                                            pagination={{ clickable: true }}
+                                            autoplay={{
+                                            delay: 3000, // Cambia de slide cada 3 segundos
+                                            disableOnInteraction: true, // Sigue moviéndose después de interacción
+                                            }}
+                                        >
+                                            {items.slice(0, 10).map((product) => (
+                                            <SwiperSlide key={product.id}>
+                                                <ItemProduct
+                                                id={product.id}
+                                                images={product.images}
+                                                title={product.title}
+                                                description={product.description}
+                                                price={product.price}
+                                                />
+                                            </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+
+                                    </div>
+
+                                    <div className="catalogContainer__grid__catalog__categorieContainer__btnMoreProducts">
+                                        <Link className='catalogContainer__grid__catalog__categorieContainer__btnMoreProducts__prop' to={`/category/${category}`}>
+                                            Ver más
+                                        </Link>
+                                    </div>
+
+                                </div>
+
+                            ))
+                            :
+                            <>
+                                <div className="catalogContainer__grid__catalog__nonProductsLabel">Aún no existen productos</div>
+                                {
+                                    user.role == 'admin' &&
+                                    <Link className='catalogContainer__grid__catalog__goCpanelLink' to={`/cpanel/products`}>
+                                        Ir a cpanel
                                     </Link>
-                                </div>
-
-                                <div className='catalogContainer__grid__catalog__categorieContainer__productsContainer'>
-
-                                    <Swiper
-                                        className="catalogContainer__grid__catalog__categorieContainer__productsContainer__swiper"
-                                        modules={[Navigation, Pagination, Autoplay]}
-                                        spaceBetween={100}
-                                        slidesPerView={3}
-                                        navigation
-                                        pagination={{ clickable: true }}
-                                        autoplay={{
-                                        delay: 3000, // Cambia de slide cada 3 segundos
-                                        disableOnInteraction: true, // Sigue moviéndose después de interacción
-                                        }}
-                                    >
-                                        {items.slice(0, 10).map((product) => (
-                                        <SwiperSlide key={product.id}>
-                                            <ItemProduct
-                                            id={product.id}
-                                            images={product.images}
-                                            title={product.title}
-                                            description={product.description}
-                                            price={product.price}
-                                            />
-                                        </SwiperSlide>
-                                        ))}
-                                    </Swiper>
-
-                                </div>
-
-                                <div className="catalogContainer__grid__catalog__categorieContainer__btnMoreProducts">
-                                    <Link className='catalogContainer__grid__catalog__categorieContainer__btnMoreProducts__prop' to={`/category/${category}`}>
-                                        Ver más
-                                    </Link>
-                                </div>
-
-                            </div>
-
-                        ))}
+                                }
+                            </>
+                        }
                         
                     </div>
 

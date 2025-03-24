@@ -14,7 +14,21 @@ p {
 h2 {
     margin-bottom: 0;
 }
-
+.btnGoUp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 5;
+    background-color: #0e3061;
+    color: white;
+    padding: 0.5vh 2vh 1.5vh 2vh;
+    border-radius: 50%;
+    font-size: 30px;
+    transition: transform 0.3s ease;
+    &:hover {
+        transform: scale(1.2);
+    }
+}
 .spinner {
     border: 5px solid white;
     border-top: 5px solid #0e3061; 
@@ -75,6 +89,107 @@ h2 {
 .navbarContainer {
     background-color: rgb(27, 80, 156, 0.9);
     width: 100%;
+}
+.cPanelContainer {
+    background-color: rgb(214, 213, 213);
+    width: 100%;
+    height: 90vh;
+    //@include disFC();
+    display: flex;
+    flex-direction: column;
+    &__title {
+        width: 100%;
+        @include disFC();
+        padding: 4vh 0vh 2vh 0vh;
+        &__prop {
+            font-size: 35px;
+        }
+    }
+    &__existingCategories {
+        background-color: white;
+        width: 100%;
+        padding: 4vh 0vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1vh;
+        border-bottom: 0.3vh solid grey;
+        &__title {
+            font-size: 20px;
+            padding-left: 2vh;
+        }
+        &__withOutCategoriesLabel {
+            padding-left: 2vh;
+            font-size: 16px;
+        }
+        &__itemCategory {
+            width: 20%;
+            &__category {
+                display: grid;
+                grid-template-columns: 3fr 1fr;
+                padding-top: 1vh;
+                &__name {
+                    font-size: 18px;
+                    text-align: center;
+                    align-self: center;
+                }
+                &__btn {
+                    background-color: #1b509c;
+                    padding: 1vh;
+                    border-radius: 0.5vh;
+                    color: white;
+                    font-size: 14px;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #124285;
+                    }
+                }
+            }
+        }
+    }
+    &__newCategoryForm {
+        background-color: white;
+        width: 100%;
+        padding: 4vh 0vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1vh;
+        &__title {
+            font-size: 20px;
+            padding-left: 2vh;
+        }
+        &__form {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            padding-left: 2vh;
+            &__input {
+                width: 80%;
+                height: 20px;
+                border-radius: 1vh;
+                font-size: 20px;
+                padding: 1vh;
+                color: black;
+                border: 0.3vh solid black;
+                &::placeholder {
+                    font-size: 18px;
+                }
+                //padding-left: 2vh;
+            }
+            &__btn {
+                width: 40%;
+                background-color: #1b509c;
+                padding: 0.5vh;
+                border-radius: 0.5vh;
+                color: white;
+                font-size: 16px;
+                cursor: pointer;
+                &:hover {
+                    background-color: #124285;
+                }
+            }
+        }
+    }
 }
 .homeContainer {
     background-image: url('../assets/fondo_home_3.jpg');
@@ -280,6 +395,25 @@ h2 {
                         background-color: #0e3061;
                     }
                 }
+            }
+        }
+    }
+    &__btnsPagesContainer {
+        width: 100%;
+        display: flex;
+        gap: 2vh;
+        align-items: center;
+        justify-content: center;
+        padding: 2vh 0vh;
+        &__btn {
+            background-color: #124285;
+            color: white;
+            padding: 1vh 3vh;
+            border-radius: 0.5vh;
+            text-align: center;
+            cursor: pointer;
+            &:hover {
+                background-color: #0e3061;
             }
         }
     }
@@ -924,6 +1058,21 @@ h2 {
                     }
                 }
             }
+            &__nonProductsLabel {
+                font-size: 25px;
+                text-align: center;
+                padding-top: 2vh;
+            }
+            &__goCpanelLink {
+                display: flex;
+                padding-bottom: 2vh;
+                justify-self: center;
+                font-size: 20px;
+                color: black;
+                &:hover {
+                    color: #1b509c;
+                }
+            }
         }
     }
 }
@@ -1112,19 +1261,19 @@ h2 {
                         font-weight: bold;
                     }
                 }
-                &__color {
+                &__campoExtra {
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    padding-top: 2vh;
                     gap: 2vh;
+                    padding-top: 2vh;
                     &__label {
-                        font-size: 18px;
+                        font-size: 20px;
                     }
                     &__select {
                         background: none;
+                        font-size: 16px;
                         border: none;
-                        font-size: 20px;
                     }
                 }
                 &__count {

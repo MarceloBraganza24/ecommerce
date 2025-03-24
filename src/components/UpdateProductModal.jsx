@@ -5,13 +5,14 @@ import Spinner from './Spinner';
 const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        title: product.title || '',
-        description: product.description || '',
-        price: product.price || 0,
-        stock: product.stock || 0,
-        category: product.category || '',
-        images: product.images || [],
-        camposDinamicos: product.camposExtras || {}
+        title: '',
+        description: '',
+        price: 0,
+        stock: 0,
+        state: '',
+        category: '',
+        images: [],
+        camposDinamicos: {}
     });
 
     const [nuevoCampo, setNuevoCampo] = useState({ key: '', value: '' });
@@ -19,21 +20,41 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
     const fileInputRef = useRef(null);
 
     useEffect(() => {
+
         if (product) {
-          const imagenesDelBackend = product.images.map((imgPath) => {
-            const cleanedPath = imgPath.replace(/\\/g, '/'); // Normaliza la ruta a UNIX style
-            return {
-              type: 'backend',
-              name: cleanedPath.split('/').pop(), // Si necesitás el nombre solo
-              url: `http://localhost:8081/${cleanedPath}` // Ruta correcta
-            };
-          });
+            const imagenesDelBackend = product.images.map((imgPath) => {
+                const cleanedPath = imgPath.replace(/\\/g, '/'); // Normaliza la ruta a UNIX style
+                return {
+                type: 'backend',
+                name: cleanedPath.split('/').pop(), // Si necesitás el nombre solo
+                url: `http://localhost:8081/${cleanedPath}` // Ruta correcta
+                };
+            });
       
-          setFormData((prev) => ({
-            ...prev,
-            images: imagenesDelBackend
-          }));
+            setFormData((prev) => ({
+                ...prev,
+                images: imagenesDelBackend
+            }));
+            
+            const camposExtras = product.camposExtras || {};
+            const camposDinamicosNormalizados = Object.entries(camposExtras).reduce((acc, [key, value]) => {
+                acc[key.toLowerCase()] = value;
+                return acc;
+            }, {});
+        
+            setFormData({
+                title: product.title || '',
+                description: product.description || '',
+                price: product.price || 0,
+                stock: product.stock || 0,
+                state: product.state || '',
+                category: product.category || '',
+                images: imagenesDelBackend || [],
+                camposDinamicos: camposDinamicosNormalizados
+            });
         }
+
+
     }, [product]);
 
     const capitalizeFirstLetter = (text) => {
@@ -81,66 +102,11 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
         });
     };
 
-    const handleImagenesChange = async (e) => {
-        const files = Array.from(e.target.files);
-    
-        const totalImages = formData.images.length + files.length;
-    
-        if (totalImages > 6) {
-            toast(`Máximo 6 imágenes`, {
-                position: 'top-right',
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'dark',
-                className: 'custom-toast',
-            });
-            return;
-        }
-    
-        const processedImages = [];
-    
-        for (let file of files) {
-            const isDuplicate = formData.images.some((imagen) => imagen === file.name); // Compara el nombre de archivo
-    
-            if (isDuplicate) {
-                toast(`La imagen ${file.name} ya ha sido cargada.`, {
-                    position: 'top-right',
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'dark',
-                    className: 'custom-toast',
-                });
-                continue; // Si es un duplicado, no la agrega
-            }
-    
-            processedImages.push(file); // Si no es duplicado, la agrega a processedImages
-        }
-    
-        if (processedImages.length === 0) {
-            return; // Si no hay imágenes nuevas, no hace nada
-        }
-    
-        setFormData((prev) => ({
-            ...prev,
-            images: [...prev.images, ...processedImages],
-        }));
-    
-        e.target.value = ''; // Limpiar el input después de cargar las imágenes
-    };
-
     const handleAddCampo = () => {
         const keyTrimmed = nuevoCampo.key.trim();
         const valueTrimmed = nuevoCampo.value.trim();
     
-        const regex = /^[A-Za-z0-9 ]+$/;
+        const regex = /^[A-Za-z0-9 ,]+$/;
         if (!regex.test(keyTrimmed) || !regex.test(valueTrimmed)) {
             toast('Los campos solo deben contener letras, números y espacios.', {
               position: "top-right",
@@ -191,7 +157,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!formData.title.trim() || !formData.description.trim() || !formData.price || !formData.stock || !formData.category.trim()) {
+        if (!formData.title.trim() || !formData.description.trim() || !formData.price || !formData.stock || !formData.state.trim() || !formData.category.trim()) {
             toast('Debes completar todos los campos', {
                 position: "top-right",
                 autoClose: 2000,
@@ -216,6 +182,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
         formToSend .append('description', formData.description);
         formToSend .append('price', formData.price);
         formToSend .append('stock', formData.stock);
+        formToSend .append('state', formData.state);
         formToSend .append('category', formData.category);
 
         // En el frontend, convierte el objeto a JSON
@@ -227,7 +194,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
         // Imágenes nuevas (solo los File)
         formData.images.forEach((img) => {
             if (img.type === 'file') {
-            formToSend.append('images', img.file);
+                formToSend.append('images', img.file);
             }
         });
         
@@ -254,15 +221,6 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                /* setFormData({
-                    images: [],
-                    title: '',
-                    description: '',
-                    price: '',
-                    stock: '',
-                    category: '',
-                    camposDinamicos: []
-                }); */
                 fetchProducts();
                 setShowUpdateModal(false)
             } else {
@@ -307,7 +265,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
     };
 
     const handleValueChange = (index, newValue) => {
-        const regex = /^[A-Za-z0-9 ]*$/;
+        const regex = /^[A-Za-z0-9 ,]*$/;
         if (!regex.test(newValue)) {
             toast('Solo se permiten letras, números y espacios.', {
               position: "top-right",
@@ -340,7 +298,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
     const handleChangeNuevoCampo = (e) => {
         const { name, value } = e.target;
 
-        const regex = /^[A-Za-z0-9 ]*$/;
+        const regex = /^[A-Za-z0-9 ,]*$/;
         if (!regex.test(value)) {
             toast('Solo se permiten letras, números y espacios.', {
               position: "top-right",
@@ -499,6 +457,23 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
 
                         <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct'>
 
+                            <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Estado</div>
+                            <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
+                                <input
+                                    name='state'
+                                    placeholder='Estado (ej: nuevo,usado)'
+                                    type="text"
+                                    value={formData.state}
+                                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                    className="updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop"
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+                        <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct'>
+
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Categoría</div>
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
                                 <input
@@ -520,11 +495,9 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
                                 <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>{capitalizeFirstLetter(key)}</div>
                                 <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
                                     <input
-                                        //name={campo.key}
                                         placeholder={key}
                                         type="text"
                                         value={value}
-                                        //onChange={(e) => handleValueChange(index, e.target.value)}
                                         onChange={(e) => {
                                             const updatedCamposDinamicos = {
                                                 ...formData.camposDinamicos,

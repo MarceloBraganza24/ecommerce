@@ -2,7 +2,7 @@ import React, {useState,useRef,useEffect} from 'react'
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
-const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
+const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}) => {
     const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState({
         images: [],
@@ -10,12 +10,24 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
         description: '',
         price: '',
         stock: '',
+        state: '',
         category: '',
         camposDinamicos: [] // Acá van los campos extra
     });
     const [nuevoCampo, setNuevoCampo] = useState({ key: '', value: '' });
+    //console.log(categories)
 
     const fileInputRef = useRef(null);
+
+    /* useEffect(() => {
+        // Verifica que haya categorías y asigna la primera categoría al estado
+        if (categories.length > 0) {
+          setProduct((prevState) => ({
+            ...prevState,
+            category: categories[0]._id, // Se selecciona la primera categoría por defecto
+          }));
+        }
+    }, [categories]); */
 
     useEffect(() => {
         return () => {
@@ -100,7 +112,7 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
         const keyTrimmed = nuevoCampo.key.trim();
         const valueTrimmed = nuevoCampo.value.trim();
 
-        const regex = /^[A-Za-z0-9 ]+$/;
+        const regex = /^[A-Za-z0-9 ,]+$/;
         if (!regex.test(keyTrimmed) || !regex.test(valueTrimmed)) {
             toast('Los campos solo deben contener letras, números y espacios.', {
               position: "top-right",
@@ -152,8 +164,23 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        if (!product.title.trim() || !product.description.trim() || !product.price.trim() || !product.stock.trim() || !product.category.trim()) {
-            toast('Debes completar todos los campos', {
+        if (
+            !product.title.trim() ||
+            !product.description.trim() ||
+            !product.state.trim() ||
+            !product.price || isNaN(product.price) || Number(product.price) <= 0 ||
+            !product.stock || isNaN(product.stock) || Number(product.stock) < 0
+        ) {
+            toast('Debes completar todos los campos correctamente', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+        if(!product.category) {
+            toast('Debes seleccionar una categoría', {
                 position: "top-right",
                 autoClose: 2000,
                 theme: "dark",
@@ -177,6 +204,7 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
         formData.append('description', product.description);
         formData.append('price', product.price);
         formData.append('stock', product.stock);
+        formData.append('state', product.state);
         formData.append('category', product.category);
     
         const propiedades = {};
@@ -216,6 +244,7 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
                     camposDinamicos: []
                 });
                 fetchProducts();
+                setShowCreateProductModal(false);
             } else {
                 toast('No se ha podido ingresar el producto, intente nuevamente', {
                     position: "top-right",
@@ -246,7 +275,7 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
     };
 
     const handleValueChange = (index, newValue) => {
-        const regex = /^[A-Za-z0-9 ]*$/;
+        const regex = /^[A-Za-z0-9 ,]*$/;
         if (!regex.test(newValue)) {
             toast('Solo se permiten letras, números y espacios.', {
               position: "top-right",
@@ -279,7 +308,7 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
     const handleChangeNuevoCampo = (e) => {
         const { name, value } = e.target;
 
-        const regex = /^[A-Za-z0-9 ]*$/;
+        const regex = /^[A-Za-z0-9 ,]*$/;
         if (!regex.test(value)) {
             toast('Solo se permiten letras, números y espacios.', {
               position: "top-right",
@@ -438,17 +467,39 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
 
                         <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
 
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Categoría</div>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Estado</div>
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
                                 <input
-                                    name='category'
-                                    placeholder='Categoría'
+                                    name='state'
+                                    placeholder='Estado (ej: nuevo,usado)'
                                     type="text"
+                                    value={product.state}
+                                    onChange={(e) => setProduct({ ...product, state: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
+
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Categoría</div>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
+                                <select
+                                    name='category'
                                     value={product.category}
                                     onChange={(e) => setProduct({ ...product, category: e.target.value })}
                                     className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
                                     required
-                                />
+                                >
+                                    <option value="">Selecciona una categoría</option>
+                                    {categories.map((category) => (
+                                        <option key={category._id} value={category.name}>
+                                            {capitalizeFirstLetter(category.name)}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                         </div>
@@ -513,7 +564,6 @@ const CreateProductModal = ({setShowCreateProductModal,fetchProducts}) => {
 
                         <div className='createProductModalContainer__createProductModal__propsContainer__btnContainer'>
                             <button disabled={loading} onClick={handleSubmit} className='createProductModalContainer__createProductModal__propsContainer__btnContainer__btn'>
-                                {/* {loading ? 'Guardando...' : 'Guardar'} */}
                                 {loading ? (
                                     <>
                                         Guardando <Spinner />

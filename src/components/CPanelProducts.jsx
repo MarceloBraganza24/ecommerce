@@ -27,8 +27,18 @@ const CPanelProducts = () => {
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
+    //console.log(products)
+    const [pageInfo, setPageInfo] = useState({
+        page: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        nextPage: null,
+        prevPage: null
+    });   
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [categories, setCategories] = useState([]);
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
@@ -50,16 +60,60 @@ const CPanelProducts = () => {
         setInputFilteredProducts(value)
     }
 
-    const fetchProducts = async () => {
-        const response = await fetch(`http://localhost:8081/api/products`)
+    const fetchProducts = async (page = 1) => {
+        const response = await fetch(`http://localhost:8081/api/products?page=${page}`)
         const productsAll = await response.json();
         setProducts(productsAll.data.docs)
+        setPageInfo({
+            page: productsAll.data.page,
+            totalPages: productsAll.data.totalPages,
+            hasNextPage: productsAll.data.hasNextPage,
+            hasPrevPage: productsAll.data.hasPrevPage,
+            nextPage: productsAll.data.nextPage,
+            prevPage: productsAll.data.prevPage
+        });
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/categories');
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.data); 
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
     };
 
     useEffect(() => {
-        async function fetchProductsData() {
+        async function fetchProductsData(page = 1) {
             try {
-                const response = await fetch(`http://localhost:8081/api/products`)
+                const response = await fetch(`http://localhost:8081/api/products?page=${page}`)
                 const productsAll = await response.json();
                 //console.log(productsAll.data)
                 if(!response.ok) {
@@ -76,6 +130,14 @@ const CPanelProducts = () => {
                     });
                 } else { 
                     setProducts(productsAll.data.docs)
+                    setPageInfo({
+                        page: productsAll.data.page,
+                        totalPages: productsAll.data.totalPages,
+                        hasNextPage: productsAll.data.hasNextPage,
+                        hasPrevPage: productsAll.data.hasPrevPage,
+                        nextPage: productsAll.data.nextPage,
+                        prevPage: productsAll.data.prevPage
+                    });
                 }
             } catch (error) {
                 console.error('Error al obtener datos:', error);
@@ -119,6 +181,7 @@ const CPanelProducts = () => {
             }
         };
         fetchUser();
+        fetchCategories();
         if(cookieValue) {
             login()
         } else {
@@ -134,6 +197,7 @@ const CPanelProducts = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
+                categories={categories}
                 />
             </div>
             <div className='cPanelProductsContainer'>
@@ -187,11 +251,30 @@ const CPanelProducts = () => {
 
                 </div>
 
+                <div className='cPanelProductsContainer__btnsPagesContainer'>
+                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                        disabled={!pageInfo.hasPrevPage}
+                        onClick={() => fetchProducts(pageInfo.prevPage)}
+                        >
+                        Anterior
+                    </button>
+                    
+                    <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+
+                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                        disabled={!pageInfo.hasNextPage}
+                        onClick={() => fetchProducts(pageInfo.nextPage)}
+                        >
+                        Siguiente
+                    </button>
+                </div>
+
             </div>  
             
             {
                 showCreateProductModal &&
                 <CreateProductModal
+                categories={categories}
                 fetchProducts={fetchProducts}
                 setShowCreateProductModal={setShowCreateProductModal}/>      
             }

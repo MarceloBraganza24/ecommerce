@@ -11,7 +11,10 @@ import { Navigation, Pagination } from "swiper/modules";
 
 const ItemProduct = ({id,images,title,description,price}) => {
 
-    
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
     return (
 
         <>
@@ -31,7 +34,8 @@ const ItemProduct = ({id,images,title,description,price}) => {
                         {images.map((img, index) => (
                         <SwiperSlide key={index}>
                             <img
-                            src={img}
+                            //src={img}
+                            src={`http://localhost:8081/${img}`}
                             alt={`Imagen ${index + 1} de ${title}`}
                             //className="w-full h-full object-cover rounded-lg"
                             className="itemProduct__imgContainer__img"
@@ -43,11 +47,11 @@ const ItemProduct = ({id,images,title,description,price}) => {
                 </div>
 
                 <div className="itemProduct__titleContainer">
-                    <div className="itemProduct__titleContainer__prop">{title}</div>
+                    <div className="itemProduct__titleContainer__prop">{capitalizeFirstLetter(title)}</div>
                 </div>
 
                 <div className="itemProduct__descriptionContainer">
-                    <div className="itemProduct__descriptionContainer__prop">{description}</div>
+                    <div className="itemProduct__descriptionContainer__prop">{capitalizeFirstLetter(description)}</div>
                 </div>
 
                 <div className="itemProduct__priceContainer">

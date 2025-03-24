@@ -8,39 +8,29 @@ import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
 
-const products = [
-    { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
-    { id: 2, images: ["/src/assets/body_lentejuelas.jpg"], title: "Body lentejuelas", description: '(disponible en cobre y plateado)', price: 16000, stock: 2, color: ["cobre","plateado"], size: ["2","3"], category: 'bodies', state: ["nuevo"] },
-    { id: 3, images: ["/src/assets/body_bretel.jpg"], title: "Body bretel", description: 'Escote pinzado con abertura microfibra (disponible en negro)', price: 14800, stock: 10, color: ["negro"], size: ["3"], category: 'bodies', state: ["nuevo"] },
-    { id: 4, images: ["/src/assets/cintos_elastizados_dorados.jpg"], title: "Cintos elastizados", description: 'Dorados', price: 6000, stock: 5, color: ["único"], size: ["único"], category: 'cintos', state: ["nuevo"] },
-    { id: 5, images: ["/src/assets/cintos_elastizados_plateados.webP"], title: "Cintos elastizados", description: 'Plateados', price: 7000, stock: 6, color: ["único"], size: ["único"], category: 'cintos', state: ["nuevo"] },
-    { id: 6, images: ["/src/assets/short_jean_1.webP","/src/assets/short_jean_2.webP","/src/assets/short_jean_3.webP","/src/assets/short_jean_1.webP","/src/assets/short_jean_2.webP","/src/assets/short_jean_3.webP"], title: "Short jean", description: 'Comodidad y estilo en un solo short. Perfecto para cualquier ocasión. ¡Combínalo como quieras!', price: 10000, stock: 1, color: ["único"], size: ["40"], category: 'shorts', state: ["nuevo"] },
-    { id: 7, images: ["/src/assets/top_push_up_lentejuelas.jpg"], title: "Top push up", description: 'Lazo en la espalda para atar (disponible en plateado)', price: 12000, stock: 12, color: ["plateado"], size: ["único"], category: 'tops', state: ["nuevo"] },
-    { id: 8, images: ["/src/assets/bando_de_lentejuelas.jpg"], title: "Bando de lentejuelas", description: '(disponible los tres colores)', price: 14000, stock: 4, color: ["negro","rojo","plateado"], size: ["1","2","3"], category: 'tops', state: ["nuevo"] },
-    { id: 9, images: ["/src/assets/pollera_frunce_microfibra.jpg"], title: "Pollera frunce microfibra", description: '(disponible en negro blanco y rojo)', price: 16000, stock: 9, color: ["negro","blanco","rojo"], size: ["2","3"], category: 'polleras', state: ["nuevo"] },
-    { id: 10, images: ["/src/assets/vestido_un_hombro.jpg"], title: "Vestido un hombro", description: 'Abertura en la cintura (disponible en negro)', price: 19500, stock: 6, color: ["negro"], size: ["1","2"], category: 'vestidos', state: ["nuevo"] },
-    { id: 11, images: ["/src/assets/pollera_de_jean_cargo.jpg","/src/assets/pollera_de_jean_cargo_1.jpg"], title: "Pollera de jean cargo", description: '(disponible en talle 38 y 40)', price: 17500, stock: 0, color: ["único"], size: ["38","40"], category: 'polleras', state: ["usado"] },
-    { id: 12, images: ["/src/assets/bodies_especial.png"], title: "Body especial", description: '(disponible en talle 38 y 40)', price: 15500, stock: 3, color: ["blanco","rojo","negro"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-    { id: 12, images: ["/src/assets/bodies_tradicional.png"], title: "Body tradicional", description: '(disponible en talle 38 y 40)', price: 12500, stock: 5, color: ["blanco","negro","marrón"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-];
-
-
 const ItemDetailContainer = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
-    //const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const productById = products.find((product) => product.id == id)
-    const [selectedImage, setSelectedImage] = useState(productById.images[0]);
-    const [colorSelectedOption, setColorSelectedOption] = useState("");
-    const [sizeSelectedOption, setSizeSelectedOption] = useState("");
+    console.log(productById)
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedOptions, setSelectedOptions] = useState({});
+    const [categories, setCategories] = useState([]);
 
-    
     const [zoomActive, setZoomActive] = useState(false);
     const [zoomPosition, setZoomPosition] = useState({ x: "50%", y: "50%" });
+
+    const handleSelectChange = (key, value) => {
+        setSelectedOptions((prev) => ({
+            ...prev,
+            [key]: value
+        }));
+    };
 
     const handleMouseMove = (e) => {
         const { left, top, width, height } = e.target.getBoundingClientRect();
@@ -54,6 +44,74 @@ const ItemDetailContainer = () => {
     };
 
     useEffect(() => {
+        if (productById) {
+          setSelectedImage(`http://localhost:8081/${productById.images[0]}`);
+        }
+    }, [productById]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/categories');
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.data); 
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    useEffect(() => {
+        async function fetchProductsData() {
+            try {
+                const response = await fetch(`http://localhost:8081/api/products`)
+                const productsAll = await response.json();
+                if(!response.ok) {
+                    toast('No se pudieron obtener los productos, contacte al administrador', {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                        className: "custom-toast",
+                    });
+                } else { 
+                    setProducts(productsAll.data.docs)
+                }
+            } catch (error) {
+                console.error('Error al obtener datos:', error);
+            } finally {
+                setIsLoadingProducts(false);
+            }
+        }
+        fetchProductsData();
         const getCookie = (name) => {
             const cookieName = name + "=";
             const decodedCookie = decodeURIComponent(document.cookie);
@@ -89,6 +147,7 @@ const ItemDetailContainer = () => {
             }
             };
         fetchUser();
+        fetchCategories();
         if(cookieValue) {
             login()
             } else {
@@ -101,7 +160,12 @@ const ItemDetailContainer = () => {
 
         <>
             <div className='navbarContainer'>
-                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
+                <NavBar
+                isLoading={isLoading}
+                categories={categories}
+                isLoggedIn={user.isLoggedIn}
+                role={user.role}
+                />
             </div>
             <DeliveryAddress/>
             <div className='itemDetailContainer'>
@@ -116,15 +180,15 @@ const ItemDetailContainer = () => {
 
                         <div className='itemDetailContainer__itemDetail__imgContainer__galery'>
 
-                            {productById.images.slice(0, 6).map((img, index) => (
+                            {productById?.images.slice(0, 6).map((img, index) => (
 
                                 <div className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer'>
                                     <img
                                     key={index}
-                                    src={img}
+                                    src={`http://localhost:8081/${img}`}
                                     alt={`Miniatura ${index + 1}`}
                                     className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer__prop'
-                                    onClick={() => setSelectedImage(img)}
+                                    onClick={() => setSelectedImage(`http://localhost:8081/${img}`)}
                                     />
                                 </div>
 
@@ -140,57 +204,21 @@ const ItemDetailContainer = () => {
                         <div className='itemDetailContainer__itemDetail__infoContainer__info'>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById.state}`)}</div>
+                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
                                 <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+250 ventas</div>
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__title__prop'>{productById.title}</div>
+                                <div className='itemDetailContainer__itemDetail__infoContainer__info__title__prop'>{capitalizeFirstLetter(`${productById?.title}`)}</div>
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__description'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__description__prop'>{productById.description}</div>
-                            </div>
-
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__color'>
-
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__color__label'>Color:</div>
-                                <select
-                                    id="colores"
-                                    value={colorSelectedOption}
-                                    onChange={(e) => setColorSelectedOption(e.target.value)}
-                                    className="itemDetailContainer__itemDetail__infoContainer__info__color__select"
-                                >
-                                    {productById.color.map((color, index) => (
-                                    <option key={index} value={color}>
-                                        {capitalizeFirstLetter(color)}
-                                    </option>
-                                    ))}
-                                </select>
-
-                            </div>
-
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__color'>
-
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__color__label'>Talle:</div>
-                                <select
-                                    id="colores"
-                                    value={sizeSelectedOption}
-                                    onChange={(e) => setSizeSelectedOption(e.target.value)}
-                                    className="itemDetailContainer__itemDetail__infoContainer__info__color__select"
-                                >
-                                    {productById.size.map((size, index) => (
-                                    <option key={index} value={size}>
-                                        {capitalizeFirstLetter(size)}
-                                    </option>
-                                    ))}
-                                </select>
-
+                                <div className='itemDetailContainer__itemDetail__infoContainer__info__description__prop'>{capitalizeFirstLetter(`${productById?.description}`)}</div>
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
                                 {
-                                    productById.stock >= 1 ?
+                                    productById?.stock >= 1 ?
                                     <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Stock disponible</div>
                                     :
                                     <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Sin stock</div>
@@ -198,16 +226,48 @@ const ItemDetailContainer = () => {
                             </div>
 
                             <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>$ {productById.price}</div>
+                                <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>$ {productById?.price}</div>
                             </div>
 
+                            {
+                                productById?.camposExtras &&
+                                Object.entries(productById.camposExtras).map(([key, value], index) => {
+                                    const opciones = value.split(',').map(op => op.trim()); // Generamos el array de opciones
+
+                                    return (
+                                    <div key={index} className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra'>
+                                        <label 
+                                        className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__label'
+                                        htmlFor={`campoExtra-${index}`}
+                                        >
+                                        {capitalizeFirstLetter(key)}:
+                                        </label>
+
+                                        <select
+                                        id={`campoExtra-${index}`}
+                                        className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__select'
+                                        value={selectedOptions[key] || ''} // valor seleccionado o vacío
+                                        onChange={(e) => handleSelectChange(key, e.target.value)}
+                                        >
+                                        {/* <option value="" disabled>Seleccione una opción</option> */}
+                                        {opciones.map((opcion, i) => (
+                                            <option key={i} value={opcion}>
+                                            {capitalizeFirstLetter(opcion)}
+                                            </option>
+                                        ))}
+                                        </select>
+                                    </div>
+                                    );
+                                })
+                            }
+
                             <ItemCount 
-                            id={productById.id}
-                            images={productById.images}
-                            title={productById.title}
-                            description={productById.description}
-                            price={productById.price}
-                            stock={productById.stock}
+                            id={productById?.id}
+                            images={productById?.images}
+                            title={productById?.title}
+                            description={productById?.description}
+                            price={productById?.price}
+                            stock={productById?.stock}
                             />
 
                         </div>

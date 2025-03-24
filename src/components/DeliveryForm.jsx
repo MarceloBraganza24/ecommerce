@@ -13,6 +13,7 @@ const DeliveryForm = () => {
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
 
     const inputRef = useRef(null)
     const { isLoaded } = useJsApiLoader({
@@ -32,6 +33,41 @@ const DeliveryForm = () => {
     const [phone, setPhone] = useState('')
 
     //console.log(isLoaded)
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/categories');
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.data); 
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     const handleOnPlacesChanged = () => {
         let address = inputRef.current.getPlaces()
@@ -132,6 +168,7 @@ const DeliveryForm = () => {
             }
             };
         fetchUser();
+        fetchCategories();
         if(cookieValue) {
             login()
             } else {
@@ -145,7 +182,12 @@ const DeliveryForm = () => {
         <>
 
             <div className='navbarContainer'>
-                <NavBar isLoading={isLoading} isLoggedIn={user.isLoggedIn}/>
+                <NavBar
+                isLoading={isLoading}
+                categories={categories}
+                isLoggedIn={user.isLoggedIn}
+                role={user.role}
+                />
             </div>
             <DeliveryAddress/>
 

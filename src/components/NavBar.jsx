@@ -3,7 +3,7 @@ import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 
-const NavBar = ({isLoggedIn,isLoading,role}) => {
+const NavBar = ({isLoggedIn,categories,isLoading,role}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
     const {cart} = useContext(CartContext)
@@ -130,10 +130,11 @@ const NavBar = ({isLoggedIn,isLoading,role}) => {
                         <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
                     </div>
                     <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
+                    <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Panel de control</Link>
                 </div>
             }
 
-            {
+            {/* {
                 showCategories &&
                 <div className='categoriesContainer'>
                     <div className='categoriesContainer__btnCloseMenu'>
@@ -146,6 +147,37 @@ const NavBar = ({isLoggedIn,isLoading,role}) => {
                     <Link to={`/category/${'polleras'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- POLLERAS</Link>
                     <Link to={`/category/${'cintos'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- CINTOS</Link>
                 </div>
+            } */}
+
+            {
+                showCategories && (
+                    <div className='categoriesContainer'>
+                    <div className='categoriesContainer__btnCloseMenu'>
+                        <div
+                        onClick={() => setShowCategories(false)}
+                        className='categoriesContainer__btnCloseMenu__btn'
+                        >
+                        X
+                        </div>
+                    </div>
+
+                        {categories && categories.length > 0 ? (
+                            categories.map((category) => (
+                            <Link
+                                key={category._id}
+                                to={`/category/${category.name.toLowerCase()}`}
+                                onClick={() => setShowCategories(false)}
+                                className="categoriesContainer__category"
+                            >
+                                - {category.name.toUpperCase()}
+                            </Link>
+                            ))
+                        ) : (
+                            <p>No hay categorías disponibles</p>
+                        )}
+
+                    </div>
+                )
             }
 
         </>
