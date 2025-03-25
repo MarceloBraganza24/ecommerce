@@ -17,7 +17,7 @@ const ItemDetailContainer = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const productById = products.find((product) => product.id == id)
-    console.log(productById)
+    console.log(products)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
@@ -103,7 +103,7 @@ const ItemDetailContainer = () => {
                         className: "custom-toast",
                     });
                 } else { 
-                    setProducts(productsAll.data.docs)
+                    setProducts(productsAll.data)
                 }
             } catch (error) {
                 console.error('Error al obtener datos:', error);

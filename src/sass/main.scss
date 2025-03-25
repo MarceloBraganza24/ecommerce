@@ -122,11 +122,17 @@ h2 {
             font-size: 16px;
         }
         &__itemCategory {
-            width: 20%;
+            width: 60%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1vh;
+            padding-left: 1vh;
             &__category {
+                background-color: #9fbbe2;
                 display: grid;
                 grid-template-columns: 3fr 1fr;
-                padding-top: 1vh;
+                padding: 1vh;
+                border-radius: 1vh;
                 &__name {
                     font-size: 18px;
                     text-align: center;
@@ -274,6 +280,21 @@ h2 {
                     flex-wrap: wrap;
                     gap: 5vh;
                     padding: 5vh 0vh;
+                    &__nonProductsYet {
+                        width: 100%;
+                        @include disFC();
+                        flex-direction: column;
+                        &__label {
+                            font-size: 20px;
+                        }
+                        &__link {
+                            font-size: 20px;
+                            color: black;
+                            &:hover {
+                                color: #0e3061;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -928,6 +949,30 @@ h2 {
                         }
                     }
                 }
+                &__select {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    //align-items: center;
+                    padding-left: 2vh;
+                    flex-direction: column;
+                    &__prop {
+                        width: 80%;
+                        height: 40px;
+                        padding-left: 1vh;
+                        font-size: 18px;
+                        &::placeholder {
+                            font-size: 14px;
+                        }
+                    }
+                    &__addCategoryLink {
+                        color: black;
+                        //padding-top: 0.5vh;
+                        &:hover {
+                            color: #0e3061;
+                        }
+                    }
+                }
             }
             &__addNewFieldContainer {
                 width: 100%;
@@ -1009,15 +1054,49 @@ h2 {
             }
         }
     }
+    &__inputSearchProduct {
+        width: 100%;
+        @include disFC();
+        padding: 2vh 0vh;
+        flex-direction: column;
+        gap: 1vh;
+        &__searchProductsLabel {
+            font-size: 25px;
+        }
+        &__input {
+            width: 50%;
+            height: 35px;
+            border-radius: 0.5vh;
+            text-align: center;
+            font-size: 22px;
+            &::placeholder {
+                text-align: center;
+                font-size: 18px;
+            }
+        }
+    }
     &__grid {
         background-color: rgb(214, 213, 213);
         width: 100%;
         @include disFC();
-        padding: 5vh 0vh;
+        //padding: 5vh 0vh 0vh 0vh;
         &__catalog {
             background-color: white;
             width: 90%;
             border-radius: 1vh;
+            &__isLoadingLabel {
+                width: 100%;
+                @include disFC();
+                padding: 4vh 0vh;
+            }
+            &__filteredProductsList {
+                width: 100%;
+                display: flex;
+                justify-content: space-evenly;
+                flex-wrap: wrap;
+                gap: 10vh;
+                padding: 5vh 0vh;
+            }
             &__categorieContainer {
                 width: 100%;
                 display: flex;
@@ -1138,8 +1217,8 @@ h2 {
             text-align: center;
             border: 0.3vh solid black;
             &:hover {
-                background-color: whitesmoke;
-                color: black;
+                background-color: #306dc4;
+                color: white;
                 border: 0.3vh solid black;
                 cursor: pointer;
             }

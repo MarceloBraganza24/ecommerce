@@ -13,6 +13,10 @@ const CPanel = () => {
     const [categoryName, setCategoryName] = useState('');
     const [categories, setCategories] = useState([]);
 
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
     const fetchCategories = async () => {
         try {
             const response = await fetch('http://localhost:8081/api/categories');
@@ -127,18 +131,24 @@ const CPanel = () => {
 
         // Enviar la nueva categoría al backend (puedes usar fetch o axios)
         try {
-            const category = {
-                name: categoryName,
-                category_datetime
-            }
             const response = await fetch('http://localhost:8081/api/categories', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                //body: JSON.stringify({ name: categoryName, category_datetime: category_datetime}),
-                body: JSON.stringify(category),
+                body: JSON.stringify({ name: categoryName, category_datetime: category_datetime}),
             });
-
-            if (response.ok) {
+            const data = await response.json();
+            if(data.error === 'There is already a category with that name') {
+                toast('Ya existe una categoría con ese nombre!', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            } else if (response.ok) {
                 toast('Categoría creada con éxito', {
                     position: "top-right",
                     autoClose: 2000,
@@ -152,7 +162,7 @@ const CPanel = () => {
                 });
                 setCategoryName('');
                 fetchCategories()
-            } else {
+            } /* else {
                 toast('Error al crear la categoría', {
                     position: "top-right",
                     autoClose: 2000,
@@ -164,7 +174,7 @@ const CPanel = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-            }
+            } */
         } catch (error) {
             toast('Error en la conexión', {
                 position: "top-right",
@@ -255,7 +265,7 @@ const CPanel = () => {
                         <ul className='cPanelContainer__existingCategories__itemCategory'>
                             {categories.map((category) => (
                                 <li className='cPanelContainer__existingCategories__itemCategory__category' key={category._id}>
-                                    <span className='cPanelContainer__existingCategories__itemCategory__category__name'>{category.name}</span>
+                                    <span className='cPanelContainer__existingCategories__itemCategory__category__name'>{capitalizeFirstLetter(category.name)}</span>
                                     <button className='cPanelContainer__existingCategories__itemCategory__category__btn' onClick={() => handleDeleteCategory(category._id)}>
                                         Eliminar
                                     </button>

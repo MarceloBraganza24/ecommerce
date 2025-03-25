@@ -12,6 +12,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination,Autoplay  } from "swiper/modules";
 import BtnGoUp from "./BtnGoUp";
+import Spinner from "./Spinner";
 
 const logos = [
     { id: 1, src: "/src/assets/logo_gucci.png", alt: "Gucci" },
@@ -21,32 +22,20 @@ const logos = [
     { id: 5, src: "/src/assets/logo_Prada.png", alt: "Prada" },
 ];
 
-/* const products = [
-    { id: 1, images: ["/src/assets/body_micromorley.jpg"], title: "Body micromorley", description: '(disponible en blanco y rojo)', price: 15500, stock: 5, color: ["blanco","rojo"], size: ["1","2","3"], category: 'bodies', state: ["nuevo"] },
-    { id: 2, images: ["/src/assets/body_lentejuelas.jpg"], title: "Body lentejuelas", description: '(disponible en cobre y plateado)', price: 16000, stock: 2, color: ["cobre","plateado"], size: ["2","3"], category: 'bodies', state: ["nuevo"] },
-    { id: 3, images: ["/src/assets/body_bretel.jpg"], title: "Body bretel", description: 'Escote pinzado con abertura microfibra (disponible en negro)', price: 14800, stock: 10, color: ["negro"], size: ["3"], category: 'bodies', state: ["nuevo"] },
-    { id: 4, images: ["/src/assets/cintos_elastizados_dorados.jpg"], title: "Cintos elastizados", description: 'Dorados', price: 6000, stock: 5, color: ["único"], size: ["único"], category: 'cintos', state: ["nuevo"] },
-    { id: 5, images: ["/src/assets/cintos_elastizados_plateados.webP"], title: "Cintos elastizados", description: 'Plateados', price: 7000, stock: 6, color: ["único"], size: ["único"], category: 'cintos', state: ["nuevo"] },
-    { id: 6, images: ["/src/assets/short_jean_1.webP","/src/assets/short_jean_2.webP","/src/assets/short_jean_3.webP","/src/assets/short_jean_1.webP","/src/assets/short_jean_2.webP","/src/assets/short_jean_3.webP"], title: "Short jean", description: 'Blanco ( disponible en talle 40)', price: 10000, stock: 1, color: ["único"], size: ["40"], category: 'shorts', state: ["nuevo"] },
-    { id: 7, images: ["/src/assets/top_push_up_lentejuelas.jpg"], title: "Top push up", description: 'Lazo en la espalda para atar (disponible en plateado)', price: 12000, stock: 12, color: ["plateado"], size: ["único"], category: 'tops', state: ["nuevo"] },
-    { id: 8, images: ["/src/assets/bando_de_lentejuelas.jpg"], title: "Bando de lentejuelas", description: '(disponible los tres colores)', price: 14000, stock: 4, color: ["negro","rojo","plateado"], size: ["1","2","3"], category: 'tops', state: ["nuevo"] },
-    { id: 9, images: ["/src/assets/pollera_frunce_microfibra.jpg"], title: "Pollera frunce microfibra", description: '(disponible en negro blanco y rojo)', price: 16000, stock: 9, color: ["negro","blanco","rojo"], size: ["2","3"], category: 'polleras', state: ["nuevo"] },
-    { id: 10, images: ["/src/assets/vestido_un_hombro.jpg"], title: "Vestido un hombro", description: 'Abertura en la cintura (disponible en negro)', price: 19500, stock: 6, color: ["negro"], size: ["1","2"], category: 'vestidos', state: ["nuevo"] },
-    { id: 11, images: ["/src/assets/pollera_de_jean_cargo.jpg","/src/assets/pollera_de_jean_cargo_1.jpg"], title: "Pollera de jean cargo", description: '(disponible en talle 38 y 40)', price: 17500, stock: 8, color: ["único"], size: ["38","40"], category: 'polleras', state: ["nuevo"] },
-    { id: 12, images: ["/src/assets/bodies_especial.png"], title: "Body especial", description: '(disponible en talle 38 y 40)', price: 15500, stock: 3, color: ["blanco","rojo","negro"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-    { id: 12, images: ["/src/assets/bodies_tradicional.png"], title: "Body tradicional", description: '(disponible en talle 38 y 40)', price: 12500, stock: 5, color: ["blanco","negro","marrón"], size: ["38","40"], category: 'bodies', state: ["nuevo"] },
-]; */
-
-/* const groupedProducts = products.reduce((acc, product) => {
-    acc[product.category] = acc[product.category] || [];
-    acc[product.category].push(product);
-    return acc;
-}, {}); */
-
 const Home = () => {
+    const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
+    const [paginatedProducts, setPaginatedProducts] = useState([]);
+    const [pageInfo, setPageInfo] = useState({
+        page: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        nextPage: null,
+        prevPage: null
+    });  
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [categories, setCategories] = useState([]);
@@ -55,6 +44,22 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const handleInputFilteredProducts = (e) => {
+        const value = e.target.value;
+        setInputFilteredProducts(value)
+    }
+
+    function filtrarPorTitle(valorIngresado) {
+        const valorMinusculas = valorIngresado.toLowerCase();
+        const objetosFiltrados = paginatedProducts.filter(objeto => {
+            const nombreMinusculas = objeto.title.toLowerCase();
+            return nombreMinusculas.includes(valorMinusculas);
+        });
+        return objetosFiltrados;
+    }
+    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
+    //console.log(objetosFiltrados)
+    
     const groupedProducts = products.reduce((acc, product) => {
         acc[product.category] = acc[product.category] || [];
         acc[product.category].push(product);
@@ -97,33 +102,48 @@ const Home = () => {
         }
     };
 
-    useEffect(() => {
-        async function fetchProductsData() {
-            try {
-                const response = await fetch(`http://localhost:8081/api/products`)
-                const productsAll = await response.json();
-                if(!response.ok) {
-                    toast('No se pudieron obtener los productos, contacte al administrador', {
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "dark",
-                        className: "custom-toast",
-                    });
-                } else { 
-                    setProducts(productsAll.data.docs)
-                }
-            } catch (error) {
-                console.error('Error al obtener datos:', error);
-            } finally {
-                setIsLoadingProducts(false);
-            }
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/products`)
+            const productsAll = await response.json();
+            setProducts(productsAll.data)
+            /* setPageInfo({
+                page: productsAll.data.page,
+                totalPages: productsAll.data.totalPages,
+                hasNextPage: productsAll.data.hasNextPage,
+                hasPrevPage: productsAll.data.hasPrevPage,
+                nextPage: productsAll.data.nextPage,
+                prevPage: productsAll.data.prevPage
+            }); */
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        } finally {
+            setIsLoadingProducts(false);  
         }
-        fetchProductsData();
+    };
+
+    const fetchPaginatedProducts = async (page = 1, search = "") => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&limit=9`)
+            const productsAll = await response.json();
+            console.log(productsAll.data)
+            setPaginatedProducts(productsAll.data.docs)
+            setPageInfo({
+                page: productsAll.data.page,
+                totalPages: productsAll.data.totalPages,
+                hasNextPage: productsAll.data.hasNextPage,
+                hasPrevPage: productsAll.data.hasPrevPage,
+                nextPage: productsAll.data.nextPage,
+                prevPage: productsAll.data.prevPage
+            });
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        } finally {
+            setIsLoadingProducts(false)
+        }
+    };
+
+    useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
             const decodedCookie = decodeURIComponent(document.cookie);
@@ -160,6 +180,8 @@ const Home = () => {
           };
         fetchUser();
         fetchCategories();
+        fetchProducts();
+        fetchPaginatedProducts();
         if(cookieValue) {
             login()
           } else {
@@ -253,11 +275,57 @@ const Home = () => {
                     </div>
                 </div>
 
+                <div className='catalogContainer__inputSearchProduct'>
+                    <div className="catalogContainer__inputSearchProduct__searchProductsLabel">Buscar productos</div>
+                    <input type="text" onChange={handleInputFilteredProducts} value={inputFilteredProducts} placeholder='Ingrese un titulo' className='catalogContainer__inputSearchProduct__input' name="" id="" />
+                </div>
+
                 <div className="catalogContainer__grid">
                     
                     <div className="catalogContainer__grid__catalog">
 
                         {
+                            isLoadingProducts ? 
+                                <>
+                                    <div className="catalogContainer__grid__catalog__isLoadingLabel">
+                                        Cargando productos&nbsp;&nbsp;<Spinner/>
+                                    </div>
+                                </>
+                            :
+
+                            inputFilteredProducts != '' ?
+
+                            <div className="catalogContainer__grid__catalog__filteredProductsList">
+                                {objetosFiltrados.map((product) => (
+                                    <ItemProduct
+                                    id={product.id}
+                                    images={product.images}
+                                    title={product.title}
+                                    description={product.description}
+                                    price={product.price}
+                                    />
+                                ))}
+                                <div className='cPanelProductsContainer__btnsPagesContainer'>
+                                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                        disabled={!pageInfo.hasPrevPage}
+                                        onClick={() => fetchPaginatedProducts(pageInfo.prevPage)}
+                                        >
+                                        Anterior
+                                    </button>
+                                    
+                                    <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+
+                                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                        disabled={!pageInfo.hasNextPage}
+                                        onClick={() => fetchPaginatedProducts(pageInfo.nextPage)}
+                                        >
+                                        Siguiente
+                                    </button>
+                                </div>
+                            </div>
+
+                            :
+
                             products.length ?
                         
                             Object.entries(groupedProducts).map(([category, items]) => (

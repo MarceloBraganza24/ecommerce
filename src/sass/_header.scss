@@ -212,6 +212,13 @@
         text-decoration: none;
         color: white;
     }
+    &__addCategoryLink {
+        text-decoration: none;
+        color: white;
+        &:hover {
+            color: #124285;
+        }
+    }
 }
 
 .selectOptionsContainer {

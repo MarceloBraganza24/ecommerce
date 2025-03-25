@@ -134,21 +134,6 @@ const NavBar = ({isLoggedIn,categories,isLoading,role}) => {
                 </div>
             }
 
-            {/* {
-                showCategories &&
-                <div className='categoriesContainer'>
-                    <div className='categoriesContainer__btnCloseMenu'>
-                        <div onClick={()=>setShowCategories(false)} className='categoriesContainer__btnCloseMenu__btn'>X</div>
-                    </div>
-                    <Link to={`/category/${'bodies'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- BODIES</Link>
-                    <Link to={`/category/${'shorts'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- SHORTS</Link>
-                    <Link to={`/category/${'tops'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- TOPS</Link>
-                    <Link to={`/category/${'vestidos'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- VESTIDOS</Link>
-                    <Link to={`/category/${'polleras'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- POLLERAS</Link>
-                    <Link to={`/category/${'cintos'}`} onClick={()=>setShowCategories(false)} className='categoriesContainer__category'>- CINTOS</Link>
-                </div>
-            } */}
-
             {
                 showCategories && (
                     <div className='categoriesContainer'>
@@ -173,7 +158,17 @@ const NavBar = ({isLoggedIn,categories,isLoading,role}) => {
                             </Link>
                             ))
                         ) : (
-                            <p>No hay categorías disponibles</p>
+                            <>
+                                <p className="categoriesContainer__category">Aún no hay categorías</p>
+                                <Link
+                                    to={`/cpanel`}
+                                    className="categoriesContainer__addCategoryLink"
+                                    >
+                                    {/* - {category.name.toUpperCase()} */}
+                                    Agregar categoría
+                                </Link>
+                            </>
+                        
                         )}
 
                     </div>

@@ -1,6 +1,7 @@
 import React, {useState,useRef,useEffect} from 'react'
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
+import { Link } from 'react-router-dom';
 
 const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}) => {
     const [loading, setLoading] = useState(false);
@@ -12,22 +13,11 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
         stock: '',
         state: '',
         category: '',
-        camposDinamicos: [] // Acá van los campos extra
+        camposDinamicos: []
     });
     const [nuevoCampo, setNuevoCampo] = useState({ key: '', value: '' });
-    //console.log(categories)
 
     const fileInputRef = useRef(null);
-
-    /* useEffect(() => {
-        // Verifica que haya categorías y asigna la primera categoría al estado
-        if (categories.length > 0) {
-          setProduct((prevState) => ({
-            ...prevState,
-            category: categories[0]._id, // Se selecciona la primera categoría por defecto
-          }));
-        }
-    }, [categories]); */
 
     useEffect(() => {
         return () => {
@@ -94,8 +84,6 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
             ...prev,
             images: [...prev.images, ...processedImages]
         }));
-    
-        // Limpia el input file para permitir seleccionar la misma imagen otra vez si se elimina antes
         e.target.value = '';
     };
 
@@ -227,7 +215,19 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
             });
     
             const data = await res.json();
-            if (res.ok) {
+            if(data.error === 'There is already a product with that title') {
+                toast('Ya existe un producto con ese título!', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } else if (res.ok) {
                 toast('Has ingresado el producto con éxito', {
                     position: "top-right",
                     autoClose: 2000,
@@ -245,14 +245,14 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
                 });
                 fetchProducts();
                 setShowCreateProductModal(false);
-            } else {
+            } /* else {
                 toast('No se ha podido ingresar el producto, intente nuevamente', {
                     position: "top-right",
                     autoClose: 2000,
                     theme: "dark",
                     className: "custom-toast",
                 });
-            }
+            } */
         } catch (error) {
             console.error('Error:', error);
         } finally {
@@ -485,12 +485,12 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
                         <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
 
                             <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Categoría</div>
-                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__input'>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__select'>
                                 <select
                                     name='category'
                                     value={product.category}
                                     onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__input__prop"
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__select__prop"
                                     required
                                 >
                                     <option value="">Selecciona una categoría</option>
@@ -500,6 +500,12 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
                                         </option>
                                     ))}
                                 </select>
+                                <Link
+                                    to={`/cpanel`}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__select__addCategoryLink"
+                                    >
+                                    Agregar categoría
+                                </Link>
                             </div>
 
                         </div>

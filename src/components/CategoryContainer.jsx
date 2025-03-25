@@ -1,23 +1,40 @@
 import {useEffect,useState,useContext} from 'react'
 import ItemProduct from './ItemProduct'
-import { useParams,useNavigate } from 'react-router-dom'
+import { useParams,useNavigate, Link } from 'react-router-dom'
 import NavBar from './NavBar';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
 import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
 const CategoryContainer = () => {
+    const [currentPage, setCurrentPage] = useState(1);  // 👈 Estado para manejar la página actual
+    const [totalPages, setTotalPages] = useState(1);  // 👈 Estado para almacenar el total de páginas
+
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
+    //console.log(products)
+    const [pageInfo, setPageInfo] = useState({
+        page: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        nextPage: null,
+        prevPage: null
+    });  
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
     const {category} = useParams()
     const productsByCategory = products.filter((product) => product.category == category)
+
+    useEffect(() => {
+        fetchProducts();
+    }, [currentPage, category]);
 
     const fetchCategories = async () => {
         try {
@@ -56,32 +73,43 @@ const CategoryContainer = () => {
     };
 
     useEffect(() => {
-        async function fetchProductsData() {
-            try {
-                const response = await fetch(`http://localhost:8081/api/products`)
-                const productsAll = await response.json();
-                if(!response.ok) {
-                    toast('No se pudieron obtener los productos, contacte al administrador', {
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "dark",
-                        className: "custom-toast",
-                    });
-                } else { 
-                    setProducts(productsAll.data.docs)
-                }
-            } catch (error) {
-                console.error('Error al obtener datos:', error);
-            } finally {
-                setIsLoadingProducts(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [pageInfo.page]);
+
+    const fetchProducts = async (page = 1) => {
+        try {
+            const url = new URL(`http://localhost:8081/api/products/by`, window.location.origin);
+            const params = new URLSearchParams();
+    
+            if (category) params.append("category", category);
+            params.append("page", page);  // 👈 Envía el número de página
+            params.append("limit", 9); // 👈 Define el límite de productos por página
+    
+            url.search = params.toString();  // Genera la URL con los parámetros
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            if (response.ok) {
+                setProducts(data.data);  // 👈 Guarda los productos correctamente
+                setPageInfo({
+                    page,
+                    totalPages: data.totalPages,
+                    hasNextPage: data.hasNextPage,
+                    hasPrevPage: data.hasPrevPage,
+                    nextPage: data.nextPage,
+                    prevPage: data.prevPage
+                });
+            } else {
+                console.error("Error al obtener productos:", data.message);
             }
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        } finally {
+            setIsLoadingProducts(false);  
         }
-        fetchProductsData();
+    };
+
+    useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
             const decodedCookie = decodeURIComponent(document.cookie);
@@ -118,9 +146,10 @@ const CategoryContainer = () => {
             };
         fetchUser();
         fetchCategories();
+        fetchProducts();
         if(cookieValue) {
             login()
-            } else {
+        } else {
             logout()
         }
         window.scrollTo(0, 0);
@@ -149,15 +178,76 @@ const CategoryContainer = () => {
 
                     <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer'>
 
-                        {productsByCategory.map((product) => (
-                            <ItemProduct
-                            id={product.id}
-                            images={product.images}
-                            title={product.title}
-                            description={product.description}
-                            price={product.price}
-                            />
-                        ))}
+                        {
+                            isLoadingProducts ? 
+                                <>
+                                    <div className="catalogContainer__grid__catalog__isLoadingLabel">
+                                        Cargando productos&nbsp;&nbsp;<Spinner/>
+                                    </div>
+                                </>
+                            :
+                            !productsByCategory.length ? 
+                            <>
+                            <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet'>
+                                <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__label'>Aún no existen productos con esta categoría</div>
+                                <Link
+                                    to={`/cpanel/products`}
+                                    className="categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__link"
+                                    >
+                                    Agregar productos
+                                </Link>
+                            </div>
+                            </>
+                            :
+                            <>
+                                {
+
+                                    productsByCategory.map((product) => (
+                                        <ItemProduct
+                                        id={product.id}
+                                        images={product.images}
+                                        title={product.title}
+                                        description={product.description}
+                                        price={product.price}
+                                        />
+                                    ))
+                                }      
+                                {/* <div className='cPanelProductsContainer__btnsPagesContainer'>
+                                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                        disabled={!pageInfo.hasPrevPage}
+                                        onClick={() => fetchProducts(pageInfo.prevPage)}
+                                        >
+                                        Anterior
+                                    </button>
+                                    
+                                    <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+
+                                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                        disabled={!pageInfo.hasNextPage}
+                                        onClick={() => fetchProducts(pageInfo.nextPage)}
+                                        >
+                                        Siguiente
+                                    </button>
+                                </div> */}
+                            </>
+                        }
+                            <div className='cPanelProductsContainer__btnsPagesContainer'>
+                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                    disabled={!pageInfo.hasPrevPage}
+                                    onClick={() => fetchProducts(pageInfo.prevPage)}
+                                    >
+                                    Anterior
+                                </button>
+                                
+                                <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+
+                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                    disabled={!pageInfo.hasNextPage}
+                                    onClick={() => fetchProducts(pageInfo.nextPage)}
+                                    >
+                                    Siguiente
+                                </button>
+                            </div>
 
                     </div>
                     
