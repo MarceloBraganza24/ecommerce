@@ -19,6 +19,7 @@ const Cart = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
     const {cart, deleteAllItemCart} = useContext(CartContext);
+    //console.log(cart)
 
     const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
     const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);

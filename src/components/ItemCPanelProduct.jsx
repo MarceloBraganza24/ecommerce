@@ -3,7 +3,7 @@ import UpdateProductModal from './UpdateProductModal'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const ItemCPanelProduct = ({product,fetchProducts}) => {
+const ItemCPanelProduct = ({product,fetchProducts,categories}) => {
     const [loading, setLoading] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     //console.log(product)
@@ -102,6 +102,7 @@ const ItemCPanelProduct = ({product,fetchProducts}) => {
                 product={product}
                 fetchProducts={fetchProducts}
                 setShowUpdateModal={setShowUpdateModal}
+                categories={categories}
                 />
             }
         </>

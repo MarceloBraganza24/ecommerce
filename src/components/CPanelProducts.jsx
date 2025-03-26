@@ -226,6 +226,7 @@ const CPanelProducts = () => {
                                 <ItemCPanelProduct
                                 product={product}
                                 fetchProducts={fetchProducts}
+                                categories={categories}
                                 />
                             </>
                         ))}
@@ -248,24 +249,6 @@ const CPanelProducts = () => {
                         </div>
 
                 </div>
-
-                {/* <div className='cPanelProductsContainer__btnsPagesContainer'>
-                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                        disabled={!pageInfo.hasPrevPage}
-                        onClick={() => fetchProducts(pageInfo.prevPage)}
-                        >
-                        Anterior
-                    </button>
-                    
-                    <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
-
-                    <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                        disabled={!pageInfo.hasNextPage}
-                        onClick={() => fetchProducts(pageInfo.nextPage)}
-                        >
-                        Siguiente
-                    </button>
-                </div> */}
 
             </div>  
             

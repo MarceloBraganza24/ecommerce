@@ -204,7 +204,7 @@ const CategoryContainer = () => {
 
                                     productsByCategory.map((product) => (
                                         <ItemProduct
-                                        id={product.id}
+                                        id={product._id}
                                         images={product.images}
                                         title={product.title}
                                         description={product.description}

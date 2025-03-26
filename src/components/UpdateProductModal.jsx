@@ -1,8 +1,9 @@
 import React, {useState,useRef,useEffect} from 'react'
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
+import { Link } from 'react-router-dom';
 
-const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
+const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts,categories}) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
@@ -472,7 +473,7 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
 
                         </div>
 
-                        <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct'>
+                        {/* <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct'>
 
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Categoría</div>
                             <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
@@ -485,6 +486,34 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts}) => {
                                     className="updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop"
                                     required
                                 />
+                            </div>
+
+                        </div> */}
+
+                        <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
+
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__label'>Categoría</div>
+                            <div className='createProductModalContainer__createProductModal__propsContainer__propProduct__select'>
+                                <select
+                                    name='category'
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__select__prop"
+                                    required
+                                >
+                                    <option value="">Selecciona una categoría</option>
+                                    {categories.map((category) => (
+                                        <option key={category._id} value={category.name}>
+                                            {capitalizeFirstLetter(category.name)}
+                                        </option>
+                                    ))}
+                                </select>
+                                <Link
+                                    to={`/cpanel`}
+                                    className="createProductModalContainer__createProductModal__propsContainer__propProduct__select__addCategoryLink"
+                                    >
+                                    Agregar categoría
+                                </Link>
                             </div>
 
                         </div>

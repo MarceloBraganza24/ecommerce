@@ -7,6 +7,7 @@ import DeliveryAddress from './DeliveryAddress';
 import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
+import Spinner from './Spinner';
 
 const ItemDetailContainer = () => {
     const navigate = useNavigate();
@@ -16,8 +17,8 @@ const ItemDetailContainer = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
-    const productById = products.find((product) => product.id == id)
-    console.log(products)
+    const productById = products.find((product) => product._id == id)
+    console.log(productById)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
@@ -48,6 +49,18 @@ const ItemDetailContainer = () => {
           setSelectedImage(`http://localhost:8081/${productById.images[0]}`);
         }
     }, [productById]);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/products`)
+            const productsAll = await response.json();
+            setProducts(productsAll.data)
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        } finally {
+            setIsLoadingProducts(false);  
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -86,32 +99,6 @@ const ItemDetailContainer = () => {
     };
 
     useEffect(() => {
-        async function fetchProductsData() {
-            try {
-                const response = await fetch(`http://localhost:8081/api/products`)
-                const productsAll = await response.json();
-                if(!response.ok) {
-                    toast('No se pudieron obtener los productos, contacte al administrador', {
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "dark",
-                        className: "custom-toast",
-                    });
-                } else { 
-                    setProducts(productsAll.data)
-                }
-            } catch (error) {
-                console.error('Error al obtener datos:', error);
-            } finally {
-                setIsLoadingProducts(false);
-            }
-        }
-        fetchProductsData();
         const getCookie = (name) => {
             const cookieName = name + "=";
             const decodedCookie = decodeURIComponent(document.cookie);
@@ -148,6 +135,7 @@ const ItemDetailContainer = () => {
             };
         fetchUser();
         fetchCategories();
+        fetchProducts();
         if(cookieValue) {
             login()
             } else {
@@ -170,111 +158,126 @@ const ItemDetailContainer = () => {
             <DeliveryAddress/>
             <div className='itemDetailContainer'>
 
-                <div className='itemDetailContainer__itemDetail'>
+                
+                
+                    <div className='itemDetailContainer__itemDetail'>
 
-                    <div className='itemDetailContainer__itemDetail__imgContainer'>
-                       
-                        <div onMouseEnter={() => setZoomActive(true)} onMouseMove={handleMouseMove} onMouseLeave={() => setZoomActive(false)} className="itemDetailContainer__itemDetail__imgContainer__img">
-                            <img style={{transform: zoomActive ? "scale(1.5)" : "scale(1)", transformOrigin: `${zoomPosition.x} ${zoomPosition.y}`}} className='itemDetailContainer__itemDetail__imgContainer__img__prop' src={selectedImage} alt="img_product" />
-                        </div>
+                        {
+                        
+                            isLoadingProducts ? 
+                            <>
+                                <div className="itemDetailContainer__itemDetail__loadingProducts">
+                                    Cargando producto&nbsp;&nbsp;<Spinner/>
+                                </div>
+                            </>
+                            :
+                            <>
 
-                        <div className='itemDetailContainer__itemDetail__imgContainer__galery'>
+                                <div className='itemDetailContainer__itemDetail__imgContainer'>
+                                
+                                    <div onMouseEnter={() => setZoomActive(true)} onMouseMove={handleMouseMove} onMouseLeave={() => setZoomActive(false)} className="itemDetailContainer__itemDetail__imgContainer__img">
+                                        <img style={{transform: zoomActive ? "scale(1.5)" : "scale(1)", transformOrigin: `${zoomPosition.x} ${zoomPosition.y}`}} className='itemDetailContainer__itemDetail__imgContainer__img__prop' src={selectedImage} alt="img_product" />
+                                    </div>
 
-                            {productById?.images.slice(0, 6).map((img, index) => (
+                                    <div className='itemDetailContainer__itemDetail__imgContainer__galery'>
 
-                                <div className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer'>
-                                    <img
-                                    key={index}
-                                    src={`http://localhost:8081/${img}`}
-                                    alt={`Miniatura ${index + 1}`}
-                                    className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer__prop'
-                                    onClick={() => setSelectedImage(`http://localhost:8081/${img}`)}
-                                    />
+                                        {productById?.images.slice(0, 6).map((img, index) => (
+                                            
+                                            <div className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer'>
+                                                <img
+                                                key={index}
+                                                src={`http://localhost:8081/${img}`}
+                                                alt={`Miniatura ${index + 1}`}
+                                                className='itemDetailContainer__itemDetail__imgContainer__galery__imgContainer__prop'
+                                                onClick={() => setSelectedImage(`http://localhost:8081/${img}`)}
+                                                />
+                                            </div>
+
+                                        ))}
+
+                                    </div>
+
                                 </div>
 
-                            ))}
-
-                        </div>
-
-                    </div>
-
-                    <div className='itemDetailContainer__itemDetail__infoContainer'>
+                                <div className='itemDetailContainer__itemDetail__infoContainer'>
 
 
-                        <div className='itemDetailContainer__itemDetail__infoContainer__info'>
+                                    <div className='itemDetailContainer__itemDetail__infoContainer__info'>
 
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+250 ventas</div>
-                            </div>
+                                        <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+250 ventas</div>
+                                        </div>
 
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__title__prop'>{capitalizeFirstLetter(`${productById?.title}`)}</div>
-                            </div>
+                                        <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__title__prop'>{capitalizeFirstLetter(`${productById?.title}`)}</div>
+                                        </div>
 
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__description'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__description__prop'>{capitalizeFirstLetter(`${productById?.description}`)}</div>
-                            </div>
+                                        <div className='itemDetailContainer__itemDetail__infoContainer__info__description'>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__description__prop'>{capitalizeFirstLetter(`${productById?.description}`)}</div>
+                                        </div>
 
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
-                                {
-                                    productById?.stock >= 1 ?
-                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Stock disponible</div>
-                                    :
-                                    <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Sin stock</div>
-                                }
-                            </div>
+                                        <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
+                                            {
+                                                productById?.stock >= 1 ?
+                                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Stock disponible</div>
+                                                :
+                                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stock__label'>Sin stock</div>
+                                            }
+                                        </div>
 
-                            <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
-                                <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>$ {productById?.price}</div>
-                            </div>
+                                        <div className='itemDetailContainer__itemDetail__infoContainer__info__price'>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__price__prop'>$ {productById?.price}</div>
+                                        </div>
 
-                            {
-                                productById?.camposExtras &&
-                                Object.entries(productById.camposExtras).map(([key, value], index) => {
-                                    const opciones = value.split(',').map(op => op.trim()); // Generamos el array de opciones
+                                        {
+                                            productById?.camposExtras &&
+                                            Object.entries(productById.camposExtras).map(([key, value], index) => {
+                                                const opciones = value.split(',').map(op => op.trim()); // Generamos el array de opciones
+                                                
+                                                return (
+                                                    <div key={index} className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra'>
+                                                    <label 
+                                                    className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__label'
+                                                    htmlFor={`campoExtra-${index}`}
+                                                    >
+                                                    {capitalizeFirstLetter(key)}:
+                                                    </label>
 
-                                    return (
-                                    <div key={index} className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra'>
-                                        <label 
-                                        className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__label'
-                                        htmlFor={`campoExtra-${index}`}
-                                        >
-                                        {capitalizeFirstLetter(key)}:
-                                        </label>
+                                                    <select
+                                                    id={`campoExtra-${index}`}
+                                                    className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__select'
+                                                    value={selectedOptions[key] || ''} // valor seleccionado o vacío
+                                                    onChange={(e) => handleSelectChange(key, e.target.value)}
+                                                    >
+                                                    {/* <option value="" disabled>Seleccione una opción</option> */}
+                                                    {opciones.map((opcion, i) => (
+                                                        <option key={i} value={opcion}>
+                                                        {capitalizeFirstLetter(opcion)}
+                                                        </option>
+                                                    ))}
+                                                    </select>
+                                                </div>
+                                                );
+                                            })
+                                        }
 
-                                        <select
-                                        id={`campoExtra-${index}`}
-                                        className='itemDetailContainer__itemDetail__infoContainer__info__campoExtra__select'
-                                        value={selectedOptions[key] || ''} // valor seleccionado o vacío
-                                        onChange={(e) => handleSelectChange(key, e.target.value)}
-                                        >
-                                        {/* <option value="" disabled>Seleccione una opción</option> */}
-                                        {opciones.map((opcion, i) => (
-                                            <option key={i} value={opcion}>
-                                            {capitalizeFirstLetter(opcion)}
-                                            </option>
-                                        ))}
-                                        </select>
+                                        <ItemCount 
+                                        id={productById?._id}
+                                        images={productById?.images}
+                                        title={productById?.title}
+                                        description={productById?.description}
+                                        price={productById?.price}
+                                        stock={productById?.stock}
+                                        />
+
                                     </div>
-                                    );
-                                })
-                            }
+                                    
+                                </div>
+                            </>
 
-                            <ItemCount 
-                            id={productById?.id}
-                            images={productById?.images}
-                            title={productById?.title}
-                            description={productById?.description}
-                            price={productById?.price}
-                            stock={productById?.stock}
-                            />
-
-                        </div>
-                        
+                        }
                     </div>
-
-                </div>
 
             </div>
 

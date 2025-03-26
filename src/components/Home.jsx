@@ -45,9 +45,9 @@ const Home = () => {
     const location = useLocation();
 
     const handleInputFilteredProducts = (e) => {
-        const value = e.target.value;
-        setInputFilteredProducts(value)
-    }
+        setInputFilteredProducts(e.target.value);
+        setPageInfo((prev) => ({ ...prev, page: 1 })); // Reiniciar a la primera página
+    };
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
@@ -58,13 +58,14 @@ const Home = () => {
         return objetosFiltrados;
     }
     const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
-    //console.log(objetosFiltrados)
+    //console.log(paginatedProducts)
     
     const groupedProducts = products.reduce((acc, product) => {
         acc[product.category] = acc[product.category] || [];
         acc[product.category].push(product);
         return acc;
     }, {});
+    //console.log(groupedProducts)
 
     const fetchCategories = async () => {
         try {
@@ -104,17 +105,10 @@ const Home = () => {
 
     const fetchProducts = async () => {
         try {
+            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/products`)
             const productsAll = await response.json();
             setProducts(productsAll.data)
-            /* setPageInfo({
-                page: productsAll.data.page,
-                totalPages: productsAll.data.totalPages,
-                hasNextPage: productsAll.data.hasNextPage,
-                hasPrevPage: productsAll.data.hasPrevPage,
-                nextPage: productsAll.data.nextPage,
-                prevPage: productsAll.data.prevPage
-            }); */
         } catch (error) {
             console.error('Error al obtener datos:', error);
         } finally {
@@ -122,11 +116,12 @@ const Home = () => {
         }
     };
 
-    const fetchPaginatedProducts = async (page = 1, search = "") => {
+    const fetchPaginatedProducts = async (page = 1, search = '') => {
         try {
+            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&limit=9`)
             const productsAll = await response.json();
-            console.log(productsAll.data)
+            //console.log(productsAll.data)
             setPaginatedProducts(productsAll.data.docs)
             setPageInfo({
                 page: productsAll.data.page,
@@ -142,6 +137,10 @@ const Home = () => {
             setIsLoadingProducts(false)
         }
     };
+
+    useEffect(() => {
+        fetchPaginatedProducts(pageInfo.page, inputFilteredProducts);
+    }, [pageInfo.page, inputFilteredProducts]);
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -298,7 +297,7 @@ const Home = () => {
                             <div className="catalogContainer__grid__catalog__filteredProductsList">
                                 {objetosFiltrados.map((product) => (
                                     <ItemProduct
-                                    id={product.id}
+                                    id={product._id}
                                     images={product.images}
                                     title={product.title}
                                     description={product.description}
@@ -353,9 +352,9 @@ const Home = () => {
                                             }}
                                         >
                                             {items.slice(0, 10).map((product) => (
-                                            <SwiperSlide key={product.id}>
+                                            <SwiperSlide key={product._id}>
                                                 <ItemProduct
-                                                id={product.id}
+                                                id={product._id}
                                                 images={product.images}
                                                 title={product.title}
                                                 description={product.description}
@@ -378,7 +377,8 @@ const Home = () => {
                             ))
                             :
                             <>
-                                <div className="catalogContainer__grid__catalog__nonProductsLabel">Aún no existen productos</div>
+                                <div className="catalogContainer__grid__catalog__nonProductsLabel"><Spinner/></div>
+                                {/* <div className="catalogContainer__grid__catalog__nonProductsLabel">Aún no existen productos</div> */}
                                 {
                                     user.role == 'admin' &&
                                     <Link className='catalogContainer__grid__catalog__goCpanelLink' to={`/cpanel/products`}>

@@ -966,8 +966,9 @@ h2 {
                         }
                     }
                     &__addCategoryLink {
+                        width: 40%;
                         color: black;
-                        //padding-top: 0.5vh;
+                        padding-top: 0.5vh;
                         &:hover {
                             color: #0e3061;
                         }
@@ -1140,7 +1141,8 @@ h2 {
             &__nonProductsLabel {
                 font-size: 25px;
                 text-align: center;
-                padding-top: 2vh;
+                padding: 2vh 0vh;
+                @include disFC();
             }
             &__goCpanelLink {
                 display: flex;
@@ -1239,6 +1241,12 @@ h2 {
         grid-template-columns: 1fr 1fr;
         padding: 5vh;
         border-radius: 1vh;
+        &__loadingProducts {
+            width: 100%;
+            height: 50vh;
+            grid-column: 1/3;
+            @include disFC();
+        }
         &__imgContainer {
             width: 100%;
             @include disFC();

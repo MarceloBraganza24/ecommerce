@@ -14,6 +14,18 @@ const DeliveryForm = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+        province: "",
+        country: "",
+        postal_code: "",
+        dpto: "",
+        indications: "",
+        name: "",
+        phone: "",
+    });
 
     const inputRef = useRef(null)
     const { isLoaded } = useJsApiLoader({
@@ -21,18 +33,7 @@ const DeliveryForm = () => {
         googleMapsApiKey: 'AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8',
         libraries:["places"]
     })
-    const [street, setStreet] = useState('')
-    const [streetNumber, setStreetNumber] = useState('')
-    const [locality, setLocality] = useState('')
-    const [province, setProvince] = useState('')
-    const [country, setCountry] = useState('')
-    const [dpto, setDpto] = useState('')
-    const [postalCode, setPostalCode] = useState('')
-    const [indications, setIndications] = useState('')
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
 
-    //console.log(isLoaded)
     const fetchCategories = async () => {
         try {
             const response = await fetch('http://localhost:8081/api/categories');
@@ -69,6 +70,53 @@ const DeliveryForm = () => {
         }
     };
 
+    const fetchDeliveryForm = async () => {
+        /* try {
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setFormData({
+                    street: deliveryForm.data[0].street || "",
+                    street_number: deliveryForm.data[0].street_number || "",
+                    locality: deliveryForm.data[0].locality || "",
+                    province: deliveryForm.data[0].province || "",
+                    country: deliveryForm.data[0].country || "",
+                    postalCode: deliveryForm.data[0].postalCode || "",
+                    dpto: deliveryForm.data[0].dpto || "", // Si no existe, se asigna ""
+                    indications: deliveryForm.data[0].indications || "", // Si no existe, se asigna ""
+                    name: deliveryForm.data[0].name || "",
+                    phone: deliveryForm.data[0].phone || "",
+                });
+            } else {
+                toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        } */
+    };
+
     const handleOnPlacesChanged = () => {
         let address = inputRef.current.getPlaces()
         const desglocedAddress = address.map(dm => dm.address_components)
@@ -85,51 +133,55 @@ const DeliveryForm = () => {
         setProvince(province.long_name)
         setCountry(country.long_name)
         setPostalCode(postal_code.long_name)
-        // console.log('Calle: ',street.long_name,street_number.long_name)
-        // console.log('Ciudad: ',locality.long_name)
-        // console.log('Provincia: ',province.long_name)
-        // console.log('Pais: ',country.long_name)
-        // console.log('Código postal: ',postal_code.long_name)
     }
 
-    const hanldeInputStreet = (e) => {
-        setStreet(e.target.value)
-    }
-
-    const hanldeInputStreetNumber = (e) => {
-        setStreetNumber(e.target.value)
-    }
+    const handleBtnSaveDeliveryForm = async() => {
+        try {
+            // Enviar los datos al backend
+            const formattedData = {
+                ...formData,
+                phone: Number(formData.phone) || 0, // Convierte a número
+            };
+            const response = await fetch('http://localhost:8081/api/deliveryForm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
+                },
+                body: JSON.stringify(formattedData), // Convertimos formData a JSON
+            });
+            //console.log(formData)
+            if (response.ok) {
+                toast('Formulario cargado con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } else {
+                toast('Error al cargar formulario', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                
+            }
     
-    const hanldeInputLocality = (e) => {
-        setLocality(e.target.value)
-    }
-    
-    const hanldeInputProvince = (e) => {
-        setProvince(e.target.value)
-    }
-    
-    const hanldeInputCountry = (e) => {
-        setCountry(e.target.value)
-    }
-    
-    const hanldeInputPostalCode = (e) => {
-        setPostalCode(e.target.value)
-    }
-
-    const hanldeInputDpto = (e) => {
-        setDpto(e.target.value)
-    }
-    
-    const hanldeInputIndications = (e) => {
-        setIndications(e.target.value)
-    }
-
-    const hanldeInputName = (e) => {
-        setName(e.target.value)
-    }
-
-    const hanldeInputPhone = (e) => {
-        setPhone(e.target.value)
+            // Aquí puedes agregar un manejo de éxito, por ejemplo, resetear el formulario o mostrar un mensaje
+        } catch (error) {
+            console.error('Error al enviar el formulario:', error);
+            // Aquí puedes agregar un manejo de error
+        }
     }
 
     useEffect(() => {
@@ -169,6 +221,7 @@ const DeliveryForm = () => {
             };
         fetchUser();
         fetchCategories();
+        fetchDeliveryForm();
         if(cookieValue) {
             login()
             } else {
@@ -176,6 +229,22 @@ const DeliveryForm = () => {
         }
         window.scrollTo(0, 0);
     }, []);
+
+    /* const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    }; */
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+    
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: name === "phone" ? value.replace(/\D/g, '') : value, // Elimina caracteres no numéricos
+        }));
+    };
     
     return (
         
@@ -216,49 +285,49 @@ const DeliveryForm = () => {
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Calle:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={street} onChange={hanldeInputStreet} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Calle' />
+                                <input value={formData.street} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='street' type="text" placeholder='Calle' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Número:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={streetNumber} onChange={hanldeInputStreetNumber} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Número' />
+                                <input value={formData.street_number} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='street_number' type="text" placeholder='Número' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Localidad:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={locality} onChange={hanldeInputLocality} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Localidad' />
+                                <input value={formData.locality} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='locality' type="text" placeholder='Localidad' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Provincia:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={province} onChange={hanldeInputProvince} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Provincia' />
+                                <input value={formData.province} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='province' type="text" placeholder='Provincia' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>País:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={country} onChange={hanldeInputCountry} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='País' />
+                                <input value={formData.country} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='country' type="text" placeholder='País' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Código postal:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={postalCode} onChange={hanldeInputPostalCode} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Código postal' />
+                                <input value={formData.postal_code} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='postal_code' type="text" placeholder='Código postal' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Departamento (opcional):</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={dpto} onChange={hanldeInputDpto} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Departamento' />
+                                <input value={formData.dpto} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='dpto' type="text" placeholder='Departamento' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Indicaciones (opcional):</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <textarea className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__textArea' placeholder='Mensaje' name="" id=""></textarea>
+                                <textarea className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__textArea' value={formData.indications} onChange={handleInputChange} placeholder='Mensaje' name="indications" id=""></textarea>
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
@@ -270,20 +339,20 @@ const DeliveryForm = () => {
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Nombre:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={name} onChange={hanldeInputName} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Nombre' />
+                                <input value={formData.name} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='name' type="text" placeholder='Nombre' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Teléfono:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={phone} onChange={hanldeInputPhone} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' type="text" placeholder='Teléfono' />
+                                <input value={formData.phone} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='phone' type="number" placeholder='Teléfono' />
                             </div>
                         </div>
                         
                     </div>
 
                     <div className='deliveryFormContainer__deliveryForm__btnContainer'>
-                        <button className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
+                        <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
                     </div>
 
                 </div>

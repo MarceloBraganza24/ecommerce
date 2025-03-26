@@ -23,7 +23,7 @@ const ItemCart = ({id,title,description,stock,quantity,img,price}) => {
         <div className='itemCart'>
 
             <div className='itemCart__imgContainer'>
-                <img className='itemCart__imgContainer__img' src={img} alt="img" />
+                <img className='itemCart__imgContainer__img' src={`http://localhost:8081/${img}`} alt="img" />
             </div>
 
             <div className='itemCart__title'>

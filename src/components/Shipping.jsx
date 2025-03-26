@@ -48,7 +48,6 @@ const Shipping = () => {
                         </div>
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer">
-                            {/* <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn">Editar o elegir otro domicilio</div> */}
                             <Link to={"/deliveryForm"} className='shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn'>
                                 Editar o elegir otro domicilio
                             </Link>
