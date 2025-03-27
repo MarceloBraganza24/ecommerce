@@ -11,6 +11,7 @@ const DeliveryForm = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
+    const [idDeliveryForm, setIdDeliveryForm] = useState('');
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
@@ -71,7 +72,7 @@ const DeliveryForm = () => {
     };
 
     const fetchDeliveryForm = async () => {
-        /* try {
+        try {
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -81,14 +82,15 @@ const DeliveryForm = () => {
                     locality: deliveryForm.data[0].locality || "",
                     province: deliveryForm.data[0].province || "",
                     country: deliveryForm.data[0].country || "",
-                    postalCode: deliveryForm.data[0].postalCode || "",
+                    postal_code: deliveryForm.data[0].postal_code || "",
                     dpto: deliveryForm.data[0].dpto || "", // Si no existe, se asigna ""
                     indications: deliveryForm.data[0].indications || "", // Si no existe, se asigna ""
                     name: deliveryForm.data[0].name || "",
                     phone: deliveryForm.data[0].phone || "",
                 });
+                setIdDeliveryForm(deliveryForm.data[0]._id)
             } else {
-                toast('Error al cargar categorías', {
+                toast('Error al cargar el formulario de entrega', {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -100,21 +102,9 @@ const DeliveryForm = () => {
                     className: "custom-toast",
                 });
             }
-
         } catch (error) {
             console.error(error);
-            toast('Error en la conexión', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        } */
+        }
     };
 
     const handleOnPlacesChanged = () => {
@@ -127,17 +117,20 @@ const DeliveryForm = () => {
         const province = prop.find(dm => dm.types[0] == "administrative_area_level_1")
         const postal_code = prop.find(dm => dm.types[0] == "postal_code")
         const country = prop.find(dm => dm.types[0] == "country")
-        setStreet(street.long_name)
-        setStreetNumber(street_number.long_name)
-        setLocality(locality.long_name)
-        setProvince(province.long_name)
-        setCountry(country.long_name)
-        setPostalCode(postal_code.long_name)
+        setFormData({
+            street: street.long_name || "",
+            street_number: street_number.long_name || "",
+            locality: locality.long_name || "",
+            province: province.long_name || "",
+            country: country.long_name || "",
+            postal_code: postal_code.long_name || "",
+            dpto: "",
+            indications: "",
+        });
     }
 
     const handleBtnSaveDeliveryForm = async() => {
         try {
-            // Enviar los datos al backend
             const formattedData = {
                 ...formData,
                 phone: Number(formData.phone) || 0, // Convierte a número
@@ -149,7 +142,6 @@ const DeliveryForm = () => {
                 },
                 body: JSON.stringify(formattedData), // Convertimos formData a JSON
             });
-            //console.log(formData)
             if (response.ok) {
                 toast('Formulario cargado con éxito', {
                     position: "top-right",
@@ -162,6 +154,7 @@ const DeliveryForm = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                fetchDeliveryForm();
             } else {
                 toast('Error al cargar formulario', {
                     position: "top-right",
@@ -176,11 +169,53 @@ const DeliveryForm = () => {
                 });
                 
             }
-    
-            // Aquí puedes agregar un manejo de éxito, por ejemplo, resetear el formulario o mostrar un mensaje
         } catch (error) {
             console.error('Error al enviar el formulario:', error);
-            // Aquí puedes agregar un manejo de error
+        }
+    }
+
+    const handleBtnUpdateDeliveryForm = async() => {
+        try {
+            const formattedData = {
+                ...formData,
+                phone: Number(formData.phone) || 0, // Convierte a número
+            };
+            const response = await fetch(`http://localhost:8081/api/deliveryForm/${idDeliveryForm}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
+                },
+                body: JSON.stringify(formattedData), // Convertimos formData a JSON
+            });
+            if (response.ok) {
+                toast('Formulario modificado con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchDeliveryForm()
+            } else {
+                toast('Error al modificar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                
+            }
+        } catch (error) {
+            console.error('Error al enviar el formulario:', error);
         }
     }
 
@@ -230,13 +265,6 @@ const DeliveryForm = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    /* const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }; */
     const handleInputChange = (e) => {
         const { name, value } = e.target;
     
@@ -258,7 +286,9 @@ const DeliveryForm = () => {
                 role={user.role}
                 />
             </div>
-            <DeliveryAddress/>
+            <DeliveryAddress
+            formData={formData}
+            />
 
             <div className='deliveryFormContainer'>
 
@@ -274,10 +304,7 @@ const DeliveryForm = () => {
                     {
                         isLoaded && 
                         <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
-                            
-
                             <input className='deliveryFormContainer__deliveryForm__inputStreet' type="text" placeholder='Dirección' />
-            
                         </StandaloneSearchBox>
                     }
 
@@ -352,7 +379,12 @@ const DeliveryForm = () => {
                     </div>
 
                     <div className='deliveryFormContainer__deliveryForm__btnContainer'>
-                        <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
+                        {
+                            idDeliveryForm ?
+                            <button onClick={handleBtnUpdateDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar cambios</button>
+                            :
+                            <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
+                        }
                     </div>
 
                 </div>

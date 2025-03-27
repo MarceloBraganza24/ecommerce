@@ -1792,10 +1792,17 @@ h2 {
     display: flex;
     gap: 1vh;
     &__label {
+        @include disFC();
         padding-left: 2vh;
+    }
+    &__spinner {
+        width: 5%;
+        @include disFC();
     }
     &__address {
         font-weight: bold;
+        color: black;
+        @include disFC();
         &:hover {
             color: #124285;
             cursor: pointer;
@@ -1810,6 +1817,7 @@ h2 {
         cursor: pointer;
         text-decoration: none;
         text-align: center;
+        @include disFC();
         &:hover {
             background-color: #124285;
         }
@@ -1907,9 +1915,11 @@ h2 {
             display: flex;
             justify-self: center;
             border-radius: 0.5vh;
+            text-align: center;
             &::placeholder {
                 font-size: 20px;
                 padding-left: 1vh;
+                text-align: center;
             }
         }
         &__btnContainer {

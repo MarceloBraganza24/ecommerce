@@ -16,7 +16,12 @@ const CategoryContainer = () => {
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
-    //console.log(products)
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: ""
+    });
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -76,8 +81,41 @@ const CategoryContainer = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [pageInfo.page]);
 
+    const fetchDeliveryForm = async () => {
+        try {
+            setIsLoadingDeliveryForm(true)
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setFormData({
+                    street: deliveryForm.data[0].street || "",
+                    street_number: deliveryForm.data[0].street_number || "",
+                    locality: deliveryForm.data[0].locality || ""
+                });
+            } else {
+                toast('Error al cargar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingDeliveryForm(false)
+        }
+    };
+
     const fetchProducts = async (page = 1) => {
         try {
+            setIsLoadingProducts(true);  
             const url = new URL(`http://localhost:8081/api/products/by`, window.location.origin);
             const params = new URLSearchParams();
     
@@ -147,6 +185,7 @@ const CategoryContainer = () => {
         fetchUser();
         fetchCategories();
         fetchProducts();
+        fetchDeliveryForm();
         if(cookieValue) {
             login()
         } else {
@@ -167,7 +206,10 @@ const CategoryContainer = () => {
                 categories={categories}
                 />
             </div>
-            <DeliveryAddress/>
+            <DeliveryAddress
+            formData={formData}
+            isLoadingDeliveryForm={isLoadingDeliveryForm}
+            />
             <div className="categoryContainer__grid">
                                 
                 <div className="categoryContainer__grid__catalog">
@@ -186,19 +228,8 @@ const CategoryContainer = () => {
                                     </div>
                                 </>
                             :
-                            !productsByCategory.length ? 
-                            <>
-                            <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet'>
-                                <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__label'>Aún no existen productos con esta categoría</div>
-                                <Link
-                                    to={`/cpanel/products`}
-                                    className="categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__link"
-                                    >
-                                    Agregar productos
-                                </Link>
-                            </div>
-                            </>
-                            :
+                            productsByCategory.length != 0 ?
+                            
                             <>
                                 {
 
@@ -212,7 +243,7 @@ const CategoryContainer = () => {
                                         />
                                     ))
                                 }      
-                                {/* <div className='cPanelProductsContainer__btnsPagesContainer'>
+                                <div className='cPanelProductsContainer__btnsPagesContainer'>
                                     <button className='cPanelProductsContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasPrevPage}
                                         onClick={() => fetchProducts(pageInfo.prevPage)}
@@ -228,26 +259,22 @@ const CategoryContainer = () => {
                                         >
                                         Siguiente
                                     </button>
-                                </div> */}
+                                </div>
                             </>
-                        }
-                            <div className='cPanelProductsContainer__btnsPagesContainer'>
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasPrevPage}
-                                    onClick={() => fetchProducts(pageInfo.prevPage)}
+                            : 
+                            <>
+                            <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet'>
+                                <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__label'>Aún no existen productos con esta categoría</div>
+                                <Link
+                                    to={`/cpanel/products`}
+                                    className="categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__link"
                                     >
-                                    Anterior
-                                </button>
-                                
-                                <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
-
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasNextPage}
-                                    onClick={() => fetchProducts(pageInfo.nextPage)}
-                                    >
-                                    Siguiente
-                                </button>
+                                    Agregar productos
+                                </Link>
                             </div>
+                            </>
+                            
+                        }
 
                     </div>
                     

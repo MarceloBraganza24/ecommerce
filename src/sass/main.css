@@ -1934,10 +1934,23 @@ h2 {
   gap: 1vh;
 }
 .deliveryAddressContainer__label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding-left: 2vh;
+}
+.deliveryAddressContainer__spinner {
+  width: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .deliveryAddressContainer__address {
   font-weight: bold;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .deliveryAddressContainer__address:hover {
   color: #124285;
@@ -1952,6 +1965,9 @@ h2 {
   cursor: pointer;
   text-decoration: none;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .deliveryAddressContainer__btnEdit:hover {
   background-color: #124285;
@@ -2055,14 +2071,17 @@ h2 {
   display: flex;
   justify-self: center;
   border-radius: 0.5vh;
+  text-align: center;
 }
 .deliveryFormContainer__deliveryForm__inputStreet::-moz-placeholder {
   font-size: 20px;
   padding-left: 1vh;
+  text-align: center;
 }
 .deliveryFormContainer__deliveryForm__inputStreet::placeholder {
   font-size: 20px;
   padding-left: 1vh;
+  text-align: center;
 }
 .deliveryFormContainer__deliveryForm__btnContainer {
   width: 90%;

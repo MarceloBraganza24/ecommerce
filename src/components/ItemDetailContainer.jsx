@@ -18,10 +18,16 @@ const ItemDetailContainer = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const productById = products.find((product) => product._id == id)
-    console.log(productById)
+    //console.log(productById)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: ""
+    });
 
     const [zoomActive, setZoomActive] = useState(false);
     const [zoomPosition, setZoomPosition] = useState({ x: "50%", y: "50%" });
@@ -98,6 +104,38 @@ const ItemDetailContainer = () => {
         }
     };
 
+    const fetchDeliveryForm = async () => {
+        try {
+            setIsLoadingDeliveryForm(true)
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setFormData({
+                    street: deliveryForm.data[0].street || "",
+                    street_number: deliveryForm.data[0].street_number || "",
+                    locality: deliveryForm.data[0].locality || ""
+                });
+            } else {
+                toast('Error al cargar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingDeliveryForm(false)
+        }
+    };
+
     useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
@@ -136,6 +174,7 @@ const ItemDetailContainer = () => {
         fetchUser();
         fetchCategories();
         fetchProducts();
+        fetchDeliveryForm();
         if(cookieValue) {
             login()
             } else {
@@ -155,7 +194,10 @@ const ItemDetailContainer = () => {
                 role={user.role}
                 />
             </div>
-            <DeliveryAddress/>
+            <DeliveryAddress
+            formData={formData}
+            isLoadingDeliveryForm={isLoadingDeliveryForm}
+            />
             <div className='itemDetailContainer'>
 
                 

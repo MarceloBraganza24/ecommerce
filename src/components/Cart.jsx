@@ -17,12 +17,46 @@ const Cart = () => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: ""
+    });
 
     const {cart, deleteAllItemCart} = useContext(CartContext);
-    //console.log(cart)
+    
+    const [codigoPostal, setCodigoPostal] = useState("");
+    const [costoEnvio, setCostoEnvio] = useState(null);
+    const [error, setError] = useState(null);
+    console.log(costoEnvio)
+    console.log(error)
 
     const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
     const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
+
+    const cotizarEnvio = async () => {
+        setError(null);
+        setCostoEnvio(null);
+    
+        try {
+          const response = await fetch("http://localhost:8081/api/shipping/cotizar-envio", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ destino: codigoPostal, peso: 1 }), // Peso en kg
+          });
+    
+          const data = await response.json();
+    
+          if (response.ok) {
+            setCostoEnvio(`Costo: $${data.precio} - Entrega en ${data.tiempo_estimado} días`);
+          } else {
+            setError(data.error || "No se pudo calcular el costo.");
+          }
+        } catch (err) {
+          setError("Error en la conexión con el servidor.");
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -59,6 +93,40 @@ const Cart = () => {
             });
         }
     };
+
+    const fetchDeliveryForm = async () => {
+        try {
+            setIsLoadingDeliveryForm(true)
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setFormData({
+                    street: deliveryForm.data[0].street || "",
+                    street_number: deliveryForm.data[0].street_number || "",
+                    locality: deliveryForm.data[0].locality || ""
+                });
+                setCodigoPostal(deliveryForm.data[0].postal_code)
+            } else {
+                toast('Error al cargar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingDeliveryForm(false)
+        }
+    };
+
+    
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -97,6 +165,8 @@ const Cart = () => {
             };
         fetchUser();
         fetchCategories();
+        fetchDeliveryForm();
+        cotizarEnvio()
         if(cookieValue) {
             login()
             } else {
@@ -116,7 +186,10 @@ const Cart = () => {
                 role={user.role}
                 />
             </div>
-            <DeliveryAddress/>
+            <DeliveryAddress
+            formData={formData}
+            isLoadingDeliveryForm={isLoadingDeliveryForm}
+            />
             {
                 cart.length > 0 ? 
 

@@ -1,13 +1,104 @@
-import {useState,useContext} from 'react'
+import {useState,useContext,useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import { CartContext } from '../context/ShoppingCartContext';
+import Spinner from './Spinner';
 
 const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
     const {cart} = useContext(CartContext);
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: ""
+    });
 
     const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
     const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
+
+    const capitalizeWords = (str) => {
+        return str.replace(/\b\w/g, (char) => char.toUpperCase());
+    };
+
+    const fetchDeliveryForm = async () => {
+        try {
+            setIsLoadingDeliveryForm(true)
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setFormData({
+                    street: deliveryForm.data[0].street || "",
+                    street_number: deliveryForm.data[0].street_number || "",
+                    locality: deliveryForm.data[0].locality || ""
+                });
+            } else {
+                toast('Error al cargar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingDeliveryForm(false)
+        }
+    };
+
+    useEffect(() => {
+        /* const getCookie = (name) => {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+            }
+            return "";
+        };
+        const cookieValue = getCookie('TokenJWT');
+        const fetchUser = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+                const data = await response.json();
+                if(data.error === 'jwt expired') {
+                logout();
+                navigate("/login");
+                } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                }
+                setIsLoading(false)
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        fetchUser();
+        fetchCategories();
+        fetchProducts();
+        fetchDeliveryForm();
+        if(cookieValue) {
+            login()
+            } else {
+                logout()
+        }
+        window.scrollTo(0, 0); */
+        fetchDeliveryForm();
+    }, []);
 
     return (
 
@@ -44,7 +135,18 @@ const Shipping = () => {
                         </div>
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer">
-                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">Las Heras 1692, Coronel Suárez</div>
+                            {
+                                isLoadingDeliveryForm ? 
+                                    <>
+                                        <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">
+                                            <Spinner/>
+                                        </div>
+                                    </>
+                                :
+                                formData.street &&
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div>
+                            }
+                            {/* <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div> */}
                         </div>
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer">
