@@ -1,4 +1,5 @@
-import React, {useState,useEffect,useContext} from 'react'
+import React, {useState,useEffect,useContext,useRef} from 'react'
+import {GoogleMap, useJsApiLoader, StandaloneSearchBox} from '@react-google-maps/api'
 import NavBar from './NavBar'
 import { useNavigate } from 'react-router-dom'
 import {IsLoggedContext} from '../context/IsLoggedContext';
@@ -12,9 +13,51 @@ const CPanel = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
     const [categories, setCategories] = useState([]);
+    const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [addressData, setAddressData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+    });
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
+    const fetchSellerAddresses = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/sellerAddresses');
+            const data = await response.json();
+            if (response.ok) {
+                setSellerAddresses(data.data); 
+            } else {
+                toast('Error al cargar domicilios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
     };
 
     const fetchCategories = async () => {
@@ -52,9 +95,8 @@ const CPanel = () => {
             });
         }
     };
-    const handleDeleteCategory = async (categoryId) => {
-        //if (!window.confirm('¿Estás seguro de que querés eliminar esta categoría?')) return;
 
+    const handleDeleteCategory = async (categoryId) => {
         try {
             const response = await fetch(`http://localhost:8081/api/categories/${categoryId}`, {
                 method: 'DELETE',
@@ -72,7 +114,6 @@ const CPanel = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                // Actualizás la lista después de borrar
                 fetchCategories();
             } else {
                 toast('Error al eliminar la categoría', {
@@ -104,7 +145,56 @@ const CPanel = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleDeleteSellerAddress = async (sellerAddressId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sellerAddresses/${sellerAddressId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                toast('Domicilio eliminado', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchSellerAddresses();
+            } else {
+                toast('Error al eliminar la domicilio', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleSubmitCategory = async (e) => {
         e.preventDefault();
         const date = new Date();
         const year = date.getFullYear();
@@ -129,7 +219,6 @@ const CPanel = () => {
             return;
         }
 
-        // Enviar la nueva categoría al backend (puedes usar fetch o axios)
         try {
             const response = await fetch('http://localhost:8081/api/categories', {
                 method: 'POST',
@@ -162,19 +251,7 @@ const CPanel = () => {
                 });
                 setCategoryName('');
                 fetchCategories()
-            } /* else {
-                toast('Error al crear la categoría', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            } */
+            } 
         } catch (error) {
             toast('Error en la conexión', {
                 position: "top-right",
@@ -189,6 +266,114 @@ const CPanel = () => {
             });
         }
     };
+
+    const handleSubmitAddress = async (e) => {
+        e.preventDefault();
+        if(!addressData.street || !addressData.street_number || !addressData.locality) {
+            toast('Debes ingresar un domicilio', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const sellerAddress_datetime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+
+        try {
+            const sellerAddress = {
+                street: addressData.street,
+                street_number: addressData.street_number,
+                locality: addressData.locality,
+                sellerAddress_datetime 
+            }
+            const response = await fetch('http://localhost:8081/api/sellerAddresses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sellerAddress),
+            });
+            const data = await response.json();
+            if(data.error === 'There is already an address with that street') {
+                toast('Ya existe una domicilio con esa calle!', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } else if (response.ok) {
+                toast('Domicilio creado con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setAddressData({
+                    street: '',
+                    street_number: '',
+                    locality: '',
+                });
+                document.getElementById('inputCreateAddress').value = ''
+                fetchSellerAddresses()
+            } 
+        } catch (error) {
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleOnPlacesChanged = () => {
+        let address = inputRef.current.getPlaces()
+        const desglocedAddress = address.map(dm => dm.address_components)
+        const prop = desglocedAddress[0]
+        const street = prop.find(dm => dm.types[0] == "route")
+        const street_number = prop.find(dm => dm.types[0] == "street_number")
+        const locality = prop.find(dm => dm.types[0] == "locality")
+        setAddressData({
+            street: street.long_name || "",
+            street_number: street_number.long_name || "",
+            locality: locality.long_name || "",
+        });
+    }
+
+    const inputRef = useRef(null)
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: 'AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8',
+        libraries:["places"]
+    })
+
+    
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -227,6 +412,7 @@ const CPanel = () => {
         };
         fetchUser();
         fetchCategories();
+        fetchSellerAddresses();
         if(cookieValue) {
             login()
         } else {
@@ -277,7 +463,7 @@ const CPanel = () => {
 
                 <div className="cPanelContainer__newCategoryForm">
                     <h2 className='cPanelContainer__newCategoryForm__title'>Crear nueva categoría</h2>
-                    <form onSubmit={handleSubmit} className='cPanelContainer__newCategoryForm__form'>
+                    <form onSubmit={handleSubmitCategory} className='cPanelContainer__newCategoryForm__form'>
                         <input
                         className='cPanelContainer__newCategoryForm__form__input'
                         type="text"
@@ -289,6 +475,46 @@ const CPanel = () => {
                         />
                         <button className='cPanelContainer__newCategoryForm__form__btn' type="submit">Crear categoría</button>
                     </form>
+                </div>
+
+                <div className='cPanelContainer__sellerAddressesContainer'>
+
+                    <div className="cPanelContainer__sellerAddressesContainer__existingSellerAddresses">
+                        <h2 className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__title'>Domicilios del vendedor</h2>
+                        {sellerAddresses.length === 0 ? (
+                            <p className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__withOutSellerAddressesLabel'>No hay domicilios aún</p>
+                            ) 
+                            :
+                            (
+                            <ul className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress'>
+                                {sellerAddresses.map((item) => (
+                                    <li className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress' key={item._id}>
+                                        <span className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}</span>
+                                        <button className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn' onClick={() => handleDeleteSellerAddress(item._id)}>
+                                            Eliminar
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    <div className="cPanelContainer__sellerAddressesContainer__createNewSellerAddress">
+
+                        <h2 className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__title'>Crear nuevo domicilio</h2>
+                        {
+                            isLoaded && 
+                            <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
+                                <input id='inputCreateAddress' className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__input' type="text" placeholder='Buscar dirección' />
+                            </StandaloneSearchBox>
+                        }
+                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
+                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
+                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
+                        <button className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__btn' onClick={handleSubmitAddress}>Guardar</button>
+                        
+                    </div>
+
                 </div>
 
             </div>

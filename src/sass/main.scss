@@ -159,6 +159,7 @@ h2 {
         display: flex;
         flex-direction: column;
         gap: 1vh;
+        //border-bottom: 0.3vh solid grey;
         &__title {
             font-size: 20px;
             padding-left: 2vh;
@@ -189,6 +190,98 @@ h2 {
                 border-radius: 0.5vh;
                 color: white;
                 font-size: 16px;
+                cursor: pointer;
+                &:hover {
+                    background-color: #124285;
+                }
+            }
+        }
+    }
+    &__sellerAddressesContainer {
+        //background-color: salmon;
+        width: 100%;
+        padding: 4vh 0vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1vh;
+        &__existingSellerAddresses {
+            background-color: white;
+            width: 100%;
+            padding: 4vh 0vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            border-bottom: 0.3vh solid grey;
+            &__title {
+                font-size: 20px;
+                padding-left: 2vh;
+            }
+            &__withOutSellerAddressesLabel {
+                padding-left: 2vh;
+                font-size: 18px;
+            }
+            &__itemSellerAddress {
+                width: 50%;
+                display: flex;
+                gap: 1vh;
+                flex-direction: column;
+                &__sellerAddress {
+                    background-color: #9fbbe2;
+                    display: grid;
+                    grid-template-columns: 3fr 1fr;
+                    padding: 1vh;
+                    border-radius: 1vh;
+                    &__address {
+                        font-size: 18px;
+                        text-align: center;
+                        align-self: center;
+                    }
+                    &__btn {
+                        background-color: #1b509c;
+                        padding: 1vh;
+                        border-radius: 0.5vh;
+                        color: white;
+                        font-size: 14px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
+                }
+            }
+        }
+        &__createNewSellerAddress {
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            padding: 2vh;
+            &__title {
+                font-size: 20px;
+            }
+            &__input {
+                width: 60%;
+                height: 20px;
+                border-radius: 1vh;
+                font-size: 20px;
+                padding: 1vh;
+                color: black;
+                border: 0.3vh solid black;
+                text-align: center;
+                &::placeholder {
+                    font-size: 18px;
+                    text-align: center;
+                }
+            }
+            &__label {
+                font-size: 18px;
+            }
+            &__btn {
+                width: 10%;
+                background-color: #1b509c;
+                padding: 1vh;
+                border-radius: 0.5vh;
+                color: white;
+                font-size: 14px;
                 cursor: pointer;
                 &:hover {
                     background-color: #124285;
@@ -1540,6 +1633,29 @@ h2 {
                     cursor: pointer;
                 }
             }
+            &__inputCouponContainer {
+                width: 100%;
+                display: flex;
+                gap: 2vh;
+                padding: 1vh;
+                &__input {
+                    width: 70%;
+                    height: 30px;
+                    align-self: center;
+                }
+                &__btn {
+                    width: 30%;
+                    background-color: #1b509c;
+                    padding: 1vh;
+                    border-radius: 0.5vh;
+                    color: white;
+                    font-size: 14px;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #124285;
+                    }
+                }
+            }
             &__btn {
                 width: 100%;
                 @include disFC();
@@ -1705,6 +1821,10 @@ h2 {
                 padding: 1vh 0vh;
                 &__address {
                     grid-column: 2/3;
+                }
+                &__select {
+                    grid-column: 2/3;
+                    height: 30px;
                 }
             }
             &__editAddressContainer {

@@ -13,11 +13,13 @@ const Cart = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
+    const [inputCoupon, setInputCoupon] = useState('');
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [showInputCouponContainer, setShowInputCouponContainer] = useState(true);
     const [formData, setFormData] = useState({
         street: "",
         street_number: "",
@@ -26,16 +28,22 @@ const Cart = () => {
 
     const {cart, deleteAllItemCart} = useContext(CartContext);
     
-    const [codigoPostal, setCodigoPostal] = useState("");
-    const [costoEnvio, setCostoEnvio] = useState(null);
-    const [error, setError] = useState(null);
-    console.log(costoEnvio)
-    console.log(error)
+    //const [codigoPostal, setCodigoPostal] = useState("");
+    // const [costoEnvio, setCostoEnvio] = useState(null);
+    // const [error, setError] = useState(null);
 
     const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
     const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
 
-    const cotizarEnvio = async () => {
+    const handleInputCoupon = (e) => {
+        setInputCoupon(e.target.value)
+    }
+
+    const handleBtnValidateCoupon = () => {
+        console.log('validar cupon')
+    }
+
+    /* const cotizarEnvio = async () => {
         setError(null);
         setCostoEnvio(null);
     
@@ -56,7 +64,7 @@ const Cart = () => {
         } catch (err) {
           setError("Error en la conexión con el servidor.");
         }
-    };
+    }; */
 
     const fetchCategories = async () => {
         try {
@@ -105,7 +113,7 @@ const Cart = () => {
                     street_number: deliveryForm.data[0].street_number || "",
                     locality: deliveryForm.data[0].locality || ""
                 });
-                setCodigoPostal(deliveryForm.data[0].postal_code)
+                //setCodigoPostal(deliveryForm.data[0].postal_code)
             } else {
                 toast('Error al cargar el formulario de entrega', {
                     position: "top-right",
@@ -166,7 +174,7 @@ const Cart = () => {
         fetchUser();
         fetchCategories();
         fetchDeliveryForm();
-        cotizarEnvio()
+        //cotizarEnvio()
         if(cookieValue) {
             login()
             } else {
@@ -295,6 +303,13 @@ const Cart = () => {
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop'>Ingresar código de cupón</div>
                             </div>
 
+                            {
+                                showInputCouponContainer &&
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer'>
+                                    <input value={inputCoupon} onChange={handleInputCoupon} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input' type="text" />
+                                    <button onClick={handleBtnValidateCoupon} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn'>Validar</button>
+                                </div>
+                            }
 
                             <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
 

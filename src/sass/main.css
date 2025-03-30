@@ -204,6 +204,101 @@ h2 {
 .cPanelContainer__newCategoryForm__form__btn:hover {
   background-color: #124285;
 }
+.cPanelContainer__sellerAddressesContainer {
+  width: 100%;
+  padding: 4vh 0vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses {
+  background-color: white;
+  width: 100%;
+  padding: 4vh 0vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  border-bottom: 0.3vh solid grey;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__title {
+  font-size: 20px;
+  padding-left: 2vh;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__withOutSellerAddressesLabel {
+  padding-left: 2vh;
+  font-size: 18px;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress {
+  width: 50%;
+  display: flex;
+  gap: 1vh;
+  flex-direction: column;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress {
+  background-color: #9fbbe2;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  padding: 1vh;
+  border-radius: 1vh;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address {
+  font-size: 18px;
+  text-align: center;
+  align-self: center;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn {
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn:hover {
+  background-color: #124285;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding: 2vh;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__title {
+  font-size: 20px;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__input {
+  width: 60%;
+  height: 20px;
+  border-radius: 1vh;
+  font-size: 20px;
+  padding: 1vh;
+  color: black;
+  border: 0.3vh solid black;
+  text-align: center;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__input::-moz-placeholder {
+  font-size: 18px;
+  text-align: center;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__input::placeholder {
+  font-size: 18px;
+  text-align: center;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label {
+  font-size: 18px;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__btn {
+  width: 10%;
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cPanelContainer__sellerAddressesContainer__createNewSellerAddress__btn:hover {
+  background-color: #124285;
+}
 
 .homeContainer {
   background-image: url("../assets/fondo_home_3.jpg");
@@ -1654,6 +1749,29 @@ h2 {
   text-decoration: underline;
   cursor: pointer;
 }
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer {
+  width: 100%;
+  display: flex;
+  gap: 2vh;
+  padding: 1vh;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input {
+  width: 70%;
+  height: 30px;
+  align-self: center;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn {
+  width: 30%;
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn:hover {
+  background-color: #124285;
+}
 .cartContainer__accountSummaryContainer__accountSummary__btn {
   width: 100%;
   display: flex;
@@ -1847,6 +1965,10 @@ h2 {
 }
 .shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address {
   grid-column: 2/3;
+}
+.shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__select {
+  grid-column: 2/3;
+  height: 30px;
 }
 .shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer {
   width: 100%;

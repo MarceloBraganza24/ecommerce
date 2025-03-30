@@ -7,7 +7,16 @@ const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
     const {cart} = useContext(CartContext);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
+    console.log(sellerAddresses)
     const [formData, setFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: ""
+    });
+    const [sellerAddressData, setSellerAddressData] = useState({
         street: "",
         street_number: "",
         locality: ""
@@ -49,6 +58,50 @@ const Shipping = () => {
             console.error(error);
         } finally {
             setIsLoadingDeliveryForm(false)
+        }
+    };
+
+    const fetchSellerAddresses = async () => {
+        try {
+            setIsLoadingSellerAddresses(true)
+            const response = await fetch('http://localhost:8081/api/sellerAddresses');
+            const data = await response.json();
+            if (response.ok) {
+                setSellerAddresses(data.data); 
+                setSellerAddressData({
+                    street: data.data[0].street || "",
+                    street_number: data.data[0].street_number || "",
+                    locality: data.data[0].locality || ""
+                });
+            } else {
+                toast('Error al cargar domicilios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        } finally {
+            setIsLoadingSellerAddresses(false)
         }
     };
 
@@ -98,7 +151,14 @@ const Shipping = () => {
         }
         window.scrollTo(0, 0); */
         fetchDeliveryForm();
+        fetchSellerAddresses();
     }, []);
+
+    const handleSelectSellerAddressChange = (event) => {
+        setSelectedSellerAddress(event.target.value);
+        console.log("Dirección seleccionada:", event.target.value);
+    };
+
 
     return (
 
@@ -161,14 +221,35 @@ const Shipping = () => {
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid">
 
-                                <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__radio">
-                                    <input type="radio" name="metodoEntrega" value='vendedor' checked={metodoEntrega === "vendedor"} onChange={(e) => setMetodoEntrega(e.target.value)} />
-                                </div>
+                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__radio">
+                                <input type="radio" name="metodoEntrega" value='vendedor' checked={metodoEntrega === "vendedor"} onChange={(e) => setMetodoEntrega(e.target.value)} />
+                            </div>
 
-                                <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__option">Retirar en el domicilio del vendedor</div>
+                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__option">Retirar en el domicilio del vendedor</div>
 
-                                <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__state">Gratis</div>
+                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__state">Gratis</div>
 
+                        </div>
+
+                        <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer">
+                            {
+                                isLoadingSellerAddresses ? 
+                                    <>
+                                        <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">
+                                            <Spinner/>
+                                        </div>
+                                    </>
+                                :
+                                sellerAddressData &&
+                                <select className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__select' id="addressSelect" value={selectedSellerAddress} onChange={handleSelectSellerAddressChange}>
+                                    <option value="">Selecciona una opción</option>
+                                    {sellerAddresses.map((address, index) => (
+                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
+                                        {address.street} {address.street_number}, {address.locality}
+                                    </option>
+                                    ))}
+                                </select>
+                            }
                         </div>
 
                     </div>
