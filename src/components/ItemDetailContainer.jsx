@@ -304,7 +304,8 @@ const ItemDetailContainer = () => {
                                             })
                                         }
 
-                                        <ItemCount 
+                                        <ItemCount
+                                        user_id={user._id} 
                                         id={productById?._id}
                                         images={productById?.images}
                                         title={productById?.title}

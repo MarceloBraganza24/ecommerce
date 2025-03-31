@@ -9,11 +9,16 @@ const CPanel = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
-    //const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
+    const [codeCoupon, setCodeCoupon] = useState('');
+    const [discount, setDiscount] = useState('');
+    const [expirationDate, setExpirationDate] = useState('');
     const [categories, setCategories] = useState([]);
     const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [coupons, setCoupons] = useState([]);
+    const couponsByExpirationDate = coupons.sort((a, b) => new Date(a.expiration_date) - new Date(b.expiration_date));
+
     const [addressData, setAddressData] = useState({
         street: "",
         street_number: "",
@@ -68,6 +73,42 @@ const CPanel = () => {
                 setCategories(data.data); 
             } else {
                 toast('Error al cargar categorías', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const fetchCoupons = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/coupons');
+            const data = await response.json();
+            if (response.ok) {
+                setCoupons(data.data); 
+            } else {
+                toast('Error al cargar los cupones', {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -166,6 +207,55 @@ const CPanel = () => {
                 fetchSellerAddresses();
             } else {
                 toast('Error al eliminar la domicilio', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleDeleteCoupons = async (couponId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/coupons/${couponId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                toast('Cupón eliminado', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchCoupons();
+            } else {
+                toast('Error al eliminar el cupón', {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -352,6 +442,96 @@ const CPanel = () => {
         }
     };
 
+    const handleSubmitCoupon = async () => {
+        if (!codeCoupon.trim() || !discount || !expirationDate) {
+            toast('Todos los campos son obligatorios', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        if (isNaN(discount) || discount <= 0) {
+            toast('El descuento debe ser un número válido', {
+                position: "top-right",
+                autoClose: 1500,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const coupon_datetime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+        try {
+            const coupon = {
+                code: codeCoupon,
+                discount: Number(discount),
+                expiration_date: new Date(expirationDate).toISOString(),
+                coupon_datetime 
+            }
+            const response = await fetch('http://localhost:8081/api/coupons', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(coupon),
+            });
+            const data = await response.json();
+            if(data.error === 'There is already a coupon with that code') {
+                toast('Ya existe un cupón con ese código!', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } else if (response.ok) {
+                toast('Cupón creado con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setCodeCoupon('')
+                setDiscount('')
+                setExpirationDate('');
+                fetchCoupons()
+            } 
+        } catch (error) {
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
     const handleOnPlacesChanged = () => {
         let address = inputRef.current.getPlaces()
         const desglocedAddress = address.map(dm => dm.address_components)
@@ -372,8 +552,6 @@ const CPanel = () => {
         googleMapsApiKey: 'AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8',
         libraries:["places"]
     })
-
-    
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -413,6 +591,7 @@ const CPanel = () => {
         fetchUser();
         fetchCategories();
         fetchSellerAddresses();
+        fetchCoupons();
         if(cookieValue) {
             login()
         } else {
@@ -477,44 +656,113 @@ const CPanel = () => {
                     </form>
                 </div>
 
-                <div className='cPanelContainer__sellerAddressesContainer'>
+                <div className="cPanelContainer__existingSellerAddresses">
+                    <h2 className='cPanelContainer__existingSellerAddresses__title'>Domicilios del vendedor</h2>
+                    {sellerAddresses.length === 0 ? (
+                        <p className='cPanelContainer__existingSellerAddresses__withOutSellerAddressesLabel'>No hay domicilios aún</p>
+                        ) 
+                        :
+                        (
+                        <ul className='cPanelContainer__existingSellerAddresses__itemSellerAddress'>
+                            {sellerAddresses.map((item) => (
+                                <li className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress' key={item._id}>
+                                    <span className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}</span>
+                                    <button className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn' onClick={() => handleDeleteSellerAddress(item._id)}>
+                                        Eliminar
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
 
-                    <div className="cPanelContainer__sellerAddressesContainer__existingSellerAddresses">
-                        <h2 className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__title'>Domicilios del vendedor</h2>
-                        {sellerAddresses.length === 0 ? (
-                            <p className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__withOutSellerAddressesLabel'>No hay domicilios aún</p>
-                            ) 
-                            :
-                            (
-                            <ul className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress'>
-                                {sellerAddresses.map((item) => (
-                                    <li className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress' key={item._id}>
-                                        <span className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}</span>
-                                        <button className='cPanelContainer__sellerAddressesContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn' onClick={() => handleDeleteSellerAddress(item._id)}>
+                <div className="cPanelContainer__createNewSellerAddress">
+
+                    <h2 className='cPanelContainer__createNewSellerAddress__title'>Crear nuevo domicilio</h2>
+                    {
+                        isLoaded && 
+                        <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
+                            <input id='inputCreateAddress' className='cPanelContainer__createNewSellerAddress__input' type="text" placeholder='Buscar dirección' />
+                        </StandaloneSearchBox>
+                    }
+                    <div className='cPanelContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
+                    <div className='cPanelContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
+                    <div className='cPanelContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
+                    <button className='cPanelContainer__createNewSellerAddress__btn' onClick={handleSubmitAddress}>Guardar</button>
+                    
+                </div>
+
+                <div className="cPanelContainer__existingCoupons">
+                    <h2 className='cPanelContainer__existingCoupons__title'>Cupones</h2>
+                    {couponsByExpirationDate.length === 0 ? (
+                        <p className='cPanelContainer__existingCoupons__withOutCouponsLabel'>No hay cupones aún</p>
+                        ) 
+                        :
+                        (
+                            <ul className='cPanelContainer__existingCoupons__itemCoupons'>
+                                <li className='cPanelContainer__existingCoupons__itemCoupons__couponsHeader'>
+                                    <span className='cPanelContainer__existingCoupons__itemCoupons__couponsHeader__coupon'>Código</span>
+                                    <span className='cPanelContainer__existingCoupons__itemCoupons__couponsHeader__coupon'>Descuento (%)</span>
+                                    <span className='cPanelContainer__existingCoupons__itemCoupons__couponsHeader__coupon'>Fecha de expiración</span>
+                                </li>
+                            {couponsByExpirationDate.map((item) => {
+                                const fechaUTC = new Date(item.expiration_date);
+                                const fechaLocal = new Date(fechaUTC.getTime() + fechaUTC.getTimezoneOffset() * 60000);
+                        
+                                return (
+                                    <li className='cPanelContainer__existingCoupons__itemCoupons__coupons' key={item._id}>
+                                        <span className='cPanelContainer__existingCoupons__itemCoupons__coupons__coupon'>{item.code}</span>
+                                        <span className='cPanelContainer__existingCoupons__itemCoupons__coupons__coupon'>{item.discount}%</span>
+                                        <span className='cPanelContainer__existingCoupons__itemCoupons__coupons__coupon'>
+                                            {fechaLocal.toLocaleDateString("es-AR", {
+                                                year: "numeric",
+                                                month: "2-digit",
+                                                day: "2-digit"
+                                            })}
+                                        </span>
+                                        <button className='cPanelContainer__existingCoupons__itemCoupons__coupons__btn' onClick={() => handleDeleteCoupons(item._id)}>
                                             Eliminar
                                         </button>
                                     </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-
-                    <div className="cPanelContainer__sellerAddressesContainer__createNewSellerAddress">
-
-                        <h2 className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__title'>Crear nuevo domicilio</h2>
-                        {
-                            isLoaded && 
-                            <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
-                                <input id='inputCreateAddress' className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__input' type="text" placeholder='Buscar dirección' />
-                            </StandaloneSearchBox>
-                        }
-                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
-                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
-                        <div className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
-                        <button className='cPanelContainer__sellerAddressesContainer__createNewSellerAddress__btn' onClick={handleSubmitAddress}>Guardar</button>
+                                );
+                            })}
+                        </ul>
                         
-                    </div>
+                    )}
+                </div>
 
+                <div className="cPanelContainer__createNewCoupons">
+
+                    <h2 className='cPanelContainer__createNewCoupons__title'>Crear nuevo cupón</h2>
+                    <div>Código</div>
+                    <input
+                    className='cPanelContainer__createNewCoupons__input'
+                    type="text"
+                    placeholder='Código cupón'
+                    value={codeCoupon}
+                    onChange={(e) => setCodeCoupon(e.target.value)}
+                    required
+                    />
+                    <div>Descuento</div>
+                    <input
+                        className='cPanelContainer__createNewCoupons__input'
+                        type="number"
+                        placeholder='Descuento (%)'
+                        value={discount}
+                        onChange={(e) => setDiscount(e.target.value)}
+                        required
+                    />
+                    <div>Fecha de expiración</div>
+                    <input
+                        className='cPanelContainer__createNewCoupons__input'
+                        type="date"
+                        placeholder='Fecha de expiración'
+                        value={expirationDate}
+                        onChange={(e) => setExpirationDate(e.target.value)}
+                        required
+                    />
+                    <button className='cPanelContainer__createNewCoupons__btn' onClick={handleSubmitCoupon}>Guardar</button>
+                    
                 </div>
 
             </div>

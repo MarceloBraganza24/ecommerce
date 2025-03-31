@@ -2,17 +2,17 @@ import {useContext,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom';
 
-const ItemCart = ({id,title,description,stock,quantity,img,price}) => {
+const ItemCart = ({user_id,id,title,description,stock,quantity,img,price}) => {
 
     const {deleteItemCart,updateQuantity} = useContext(CartContext);
 
     const increment = () => {
-        updateQuantity(id, quantity + 1);
+        updateQuantity(user_id,id, quantity + 1);
     }
 
     const decrement = () => {
         if (quantity > 1) {
-          updateQuantity(id, quantity - 1);
+          updateQuantity(user_id,id, quantity - 1);
         }
     }
 

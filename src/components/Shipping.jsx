@@ -10,7 +10,6 @@ const Shipping = () => {
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
-    console.log(sellerAddresses)
     const [formData, setFormData] = useState({
         street: "",
         street_number: "",
