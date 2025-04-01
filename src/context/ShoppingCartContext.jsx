@@ -7,46 +7,54 @@ export const ShoppingCartContext = ({children}) => {
 
     const [cart, setCart] = useState([])
 
-    const updateQuantity = async (user_id,id, newQuantity) => {
-        // Actualizar el carrito en el estado local de React
+    const updateQuantity = async (user_id,id, newQuantity,fetchCartByUserId) => {
         setCart((prevCart) =>
             prevCart.map((item) =>
                 item.id === id ? { ...item, quantity: newQuantity } : item
             )
         );
-
-        // Ahora actualizar la base de datos
         try {
-            await fetch(`http://localhost:8081/api/carts/update-quantity/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_id,quantity: newQuantity }),
+            const response = await fetch(`http://localhost:8081/api/carts/update-quantity/${user_id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ product: id, quantity: newQuantity }),
             });
-            console.log('Cantidad actualizada en la base de datos');
+    
+            const data = await response.json();
+            console.log(data)
+            if (!response.ok) {
+                console.error("Error al actualizar la cantidad en MongoDB");
+            } else {
+                fetchCartByUserId(user_id)
+            }
         } catch (error) {
-            console.error('Error al actualizar la cantidad en la base de datos:', error);
+            console.error("Error en la actualización del carrito:", error);
         }
     };
 
-    const deleteItemCart = async (id) => {
+    const deleteItemCart = async (user_id,id,fetchCartByUserId) => {
         // Eliminar del estado local
-        setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+        //setCart((prevCart) => prevCart?.filter((item) => item.id !== id));
+        setCart((prevCart) => Array.isArray(prevCart) ? prevCart.filter((item) => item.id !== id) : []);
 
-        // Eliminar del backend
         try {
-            await fetch(`http://localhost:8081/api/carts/delete-item/${id}`, {
-                method: 'DELETE',
+            const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
+                method: "DELETE",
             });
-            console.log('Producto eliminado de la base de datos');
+    
+            const data = await response.json();
+            console.log(data)
+            if(response.ok) {
+                setCart(data.cart); // Actualiza el estado con el carrito actualizado
+            }
+            fetchCartByUserId(user_id)
         } catch (error) {
-            console.error('Error al eliminar el producto del carrito:', error);
+            console.error(error);
         }
     };
 
     const deleteAllItemCart = async(id) => {
-        try {
+        /* try {
             await fetch(`http://localhost:8081/api/carts/${id}`, {
                 method: 'DELETE',
             });
@@ -65,7 +73,20 @@ export const ShoppingCartContext = ({children}) => {
             setCart([])
         } catch (error) {
             console.error('Error al eliminar el producto del carrito:', error);
-        }
+        } */
+        console.log('Carrito eliminado de la base de datos');
+        toast('El carrito está vacío!', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            className: "custom-toast",
+        });
+        setCart([])
     }
 
     return (

@@ -15,6 +15,7 @@ const DeliveryForm = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [userCart, setUserCart] = useState({});
     const [formData, setFormData] = useState({
         street: "",
         street_number: "",
@@ -219,6 +220,43 @@ const DeliveryForm = () => {
         }
     }
 
+    const fetchCartByUserId = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const data = await response.json();
+            //console.log(data.data); 
+            if (response.ok) {
+                setUserCart(data.data); 
+            } else {
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
     useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
@@ -247,6 +285,7 @@ const DeliveryForm = () => {
                 const user = data.data
                 if(user) {
                     setUser(user)
+                    fetchCartByUserId(user._id);
                 }
                 setIsLoading(false)
                 }
@@ -283,6 +322,7 @@ const DeliveryForm = () => {
                 isLoading={isLoading}
                 categories={categories}
                 isLoggedIn={user.isLoggedIn}
+                userCart={userCart}
                 role={user.role}
                 />
             </div>

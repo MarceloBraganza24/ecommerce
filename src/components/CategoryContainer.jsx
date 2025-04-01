@@ -15,6 +15,7 @@ const CategoryContainer = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
+    const [userCart, setUserCart] = useState({});
     const [products, setProducts] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [formData, setFormData] = useState({
@@ -40,6 +41,43 @@ const CategoryContainer = () => {
     useEffect(() => {
         fetchProducts();
     }, [currentPage, category]);
+
+    const fetchCartByUserId = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const data = await response.json();
+            //console.log(data.data); 
+            if (response.ok) {
+                setUserCart(data.data); 
+            } else {
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -175,6 +213,7 @@ const CategoryContainer = () => {
                 const user = data.data
                 if(user) {
                     setUser(user)
+                    fetchCartByUserId(user._id);
                 }
                 setIsLoading(false)
                 }
@@ -204,6 +243,7 @@ const CategoryContainer = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 categories={categories}
+                userCart={userCart}
                 />
             </div>
             <DeliveryAddress

@@ -40,8 +40,10 @@ const Cart = () => {
     // const [error, setError] = useState(null);
 
 
-    const total = userCart.products?.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0);
-    const totalQuantity = userCart.products?.reduce((sum, producto) => sum + producto.quantity, 0);
+    const total = userCart?.products?.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0);
+    const totalQuantity = userCart?.products?.reduce((sum, producto) => sum + producto.quantity, 0);
+    /* const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
+    const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0); */
     const discountPercentage = validatedCoupon.discount;
     const totalWithDiscount = total - (total * (discountPercentage / 100));
 
@@ -157,11 +159,13 @@ const Cart = () => {
 
     const fetchCartByUserId = async (id) => {
         try {
+            //setIsLoadingProducts(true)
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
             const data = await response.json();
-            console.log(data.data); 
+            //console.log(data.data); 
             if (response.ok) {
                 setUserCart(data.data); 
+
             } else {
                 toast('Error al cargar el carrito del usuario actual', {
                     position: "top-right",
@@ -189,6 +193,8 @@ const Cart = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setIsLoadingProducts(false)
         }
     };
 
@@ -319,6 +325,7 @@ const Cart = () => {
                 categories={categories}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
+                userCart={userCart}
                 />
             </div>
             <DeliveryAddress
@@ -326,7 +333,15 @@ const Cart = () => {
             isLoadingDeliveryForm={isLoadingDeliveryForm}
             />
             {
-                userCart.products?.length > 0 ? 
+                
+                isLoadingProducts ? 
+                <>
+                    <div className="itemDetailContainer__itemDetail__loadingProducts">
+                        Cargando productos&nbsp;&nbsp;<Spinner/>
+                    </div>
+                </>
+                :
+                userCart?.products?.length > 0 ? 
 
                 <>
                 
@@ -370,19 +385,20 @@ const Cart = () => {
 
 
                             {
-                                userCart.products?.map((itemCart) =>{
+                                userCart.products.map((itemCart) =>{
                                     
                                     return(
                                         
                                         <ItemCart
                                         user_id={user._id}
-                                        id={itemCart.product.id}
-                                        img={itemCart.product.images}
+                                        id={itemCart.product._id}
+                                        img={itemCart.product.images[0]}
                                         title={itemCart.product.title}
                                         description={itemCart.product.description}
                                         price={itemCart.product.price}
                                         quantity={itemCart.quantity}
                                         stock={itemCart.product.stock}
+                                        fetchCartByUserId={fetchCartByUserId}
                                         />
                                         
                                     )

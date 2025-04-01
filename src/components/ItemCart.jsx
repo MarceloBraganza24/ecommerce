@@ -1,20 +1,18 @@
 import {useContext,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom';
+import Spinner from './Spinner';
 
-const ItemCart = ({user_id,id,title,description,stock,quantity,img,price}) => {
+const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCartByUserId}) => {
 
     const {deleteItemCart,updateQuantity} = useContext(CartContext);
+    const [loadingQuantity, setLoadingQuantity] = useState(false);
 
-    const increment = () => {
-        updateQuantity(user_id,id, quantity + 1);
-    }
-
-    const decrement = () => {
-        if (quantity > 1) {
-          updateQuantity(user_id,id, quantity - 1);
-        }
-    }
+    const handleUpdateQuantity = async (newQuantity) => {
+        setLoadingQuantity(true);
+        await updateQuantity(user_id, id, newQuantity, fetchCartByUserId);
+        setLoadingQuantity(false);
+    };
 
   return (
 
@@ -37,12 +35,26 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price}) => {
             </div>
 
             <div className='itemCart__quantity'>
-                
-                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
 
-                <div className='itemCart__quantity'>{quantity}</div>
+                <button
+                    className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
+                    onClick={() => handleUpdateQuantity(quantity + 1)}
+                    disabled={loadingQuantity}
+                >
+                    +
+                </button>
 
-                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button>
+                <div className="itemCart__quantity">
+                    {loadingQuantity ? <Spinner/> : quantity} 
+                </div>
+
+                <button
+                    className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
+                    onClick={() => quantity > 1 && handleUpdateQuantity(quantity - 1)}
+                    disabled={loadingQuantity} 
+                >
+                    -
+                </button>
 
             </div>
 
@@ -55,7 +67,7 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price}) => {
             </div>
 
             <div className='itemCart__btn'>
-                <button onClick={()=>deleteItemCart(id)} className='itemCart__btn__prop'>X</button>
+                <button onClick={()=>deleteItemCart(user_id,id,fetchCartByUserId)} className='itemCart__btn__prop'>X</button>
             </div>
 
         </div>

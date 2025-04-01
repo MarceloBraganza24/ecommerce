@@ -13,6 +13,44 @@ const About = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [userCart, setUserCart] = useState({});
+
+    const fetchCartByUserId = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const data = await response.json();
+            //console.log(data.data); 
+            if (response.ok) {
+                setUserCart(data.data); 
+            } else {
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -78,6 +116,7 @@ const About = () => {
                     const user = data.data
                     if(user) {
                         setUser(user)
+                        fetchCartByUserId(user._id);
                     }
                     setIsLoading(false)
                 }
@@ -105,6 +144,7 @@ const About = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 categories={categories}
+                userCart={userCart}
                 />
             </div>
             <div className="aboutContainer">

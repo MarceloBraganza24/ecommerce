@@ -39,6 +39,7 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [userCart, setUserCart] = useState({});
     
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const navigate = useNavigate();
@@ -66,6 +67,43 @@ const Home = () => {
         return acc;
     }, {});
     //console.log(groupedProducts)
+
+    const fetchCartByUserId = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const data = await response.json();
+            //console.log(data.data); 
+            if (response.ok) {
+                setUserCart(data.data); 
+            } else {
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -170,6 +208,7 @@ const Home = () => {
                 const user = data.data
                 if(user) {
                     setUser(user)
+                    fetchCartByUserId(user._id);
                 }
                 setIsLoading(false)
               }
@@ -230,6 +269,7 @@ const Home = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 categories={categories}
+                userCart={userCart}
                 />
 
                 <div className="homeContainer__gridOffer">
