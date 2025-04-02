@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId}) => {
 
-    const { setCart, addToCart } = useContext(CartContext); 
+    const { setCart } = useContext(CartContext); 
     
     const navigate = useNavigate();
     const [count, setCount] = useState(1);
@@ -40,7 +40,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
 
     const addToCartAndSave = async () => {
         const newItem = {
-            product: id, // Solo enviamos el ID del producto
+            product: id, 
             quantity: count,
         };
     
@@ -53,7 +53,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
                 updatedCart.push({ id, img: images[0], title, description, price, quantity: count });
             }
         
-            return [...updatedCart]; // ✅ Creamos una nueva referencia del array
+            return [...updatedCart]; 
         });
         
     

@@ -19,7 +19,14 @@ const ItemDetailContainer = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const productById = products.find((product) => product._id == id)
-    //console.log(productById)
+    const [deliveryForms, setDeliveryForms] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+    });
+    //console.log(userCart)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
@@ -40,6 +47,28 @@ const ItemDetailContainer = () => {
         }));
     };
 
+    useEffect(() => {
+        if (user?.selected_addresses) {
+            // Buscar la dirección en deliveryForms para asegurarnos de que tenga un _id
+            const matchedAddress = deliveryForms.find(item => 
+                item.street === user.selected_addresses.street &&
+                item.street_number === user.selected_addresses.street_number &&
+                item.locality === user.selected_addresses.locality
+            );
+    
+            if (matchedAddress) {
+                setSelectedAddress(matchedAddress);
+                setDeliveryAddressFormData({
+                    street: user.selected_addresses.street,
+                    street_number: user.selected_addresses.street_number,
+                    locality: user.selected_addresses.locality
+                })
+            } else {
+                setSelectedAddress(user.selected_addresses); // Usa la dirección guardada
+            }
+        }
+    }, [user, deliveryForms]);
+
     const handleMouseMove = (e) => {
         const { left, top, width, height } = e.target.getBoundingClientRect();
         let x = ((e.clientX - left) / width) * 100;
@@ -57,14 +86,13 @@ const ItemDetailContainer = () => {
         }
     }, [productById]);
 
-    const fetchCartByUserId = async (id) => {
+    const fetchCartByUserId = async (user_id) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-            //console.log(data.data); 
-            if (response.ok) {
-                setUserCart(data.data); 
-            } else {
+            //console.log(data)
+            if (!response.ok) {
+                console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
                     position: "top-right",
                     autoClose: 2000,
@@ -76,10 +104,19 @@ const ItemDetailContainer = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                return [];
             }
-
+    
+            if (!data.data || !Array.isArray(data.data.products)) {
+                console.warn("Carrito vacío o no válido, asignando array vacío.");
+                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                return [];
+            }
+            setUserCart(data.data);
+            return data.data;
         } catch (error) {
-            console.error(error);
+            console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
                 position: "top-right",
                 autoClose: 2000,
@@ -91,9 +128,11 @@ const ItemDetailContainer = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            return [];
         }
     };
-
+    
     const fetchProducts = async () => {
         try {
             const response = await fetch(`http://localhost:8081/api/products`)
@@ -148,11 +187,7 @@ const ItemDetailContainer = () => {
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
-                setFormData({
-                    street: deliveryForm.data[0].street || "",
-                    street_number: deliveryForm.data[0].street_number || "",
-                    locality: deliveryForm.data[0].locality || ""
-                });
+                setDeliveryForms(deliveryForm.data)
             } else {
                 toast('Error al cargar el formulario de entrega', {
                     position: "top-right",
@@ -166,7 +201,6 @@ const ItemDetailContainer = () => {
                     className: "custom-toast",
                 });
             }
-
         } catch (error) {
             console.error(error);
         } finally {
@@ -235,7 +269,7 @@ const ItemDetailContainer = () => {
                 />
             </div>
             <DeliveryAddress
-            formData={formData}
+            deliveryAddressFormData={deliveryAddressFormData}
             isLoadingDeliveryForm={isLoadingDeliveryForm}
             />
             <div className='itemDetailContainer'>

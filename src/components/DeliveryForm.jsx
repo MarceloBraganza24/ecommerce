@@ -11,11 +11,19 @@ const DeliveryForm = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
-    const [idDeliveryForm, setIdDeliveryForm] = useState('');
+    const [cookieValue, setCookieValue] = useState('');
+    //console.log(user)
     const [products, setProducts] = useState([]);
+    const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+    });
     const [formData, setFormData] = useState({
         street: "",
         street_number: "",
@@ -35,6 +43,78 @@ const DeliveryForm = () => {
         googleMapsApiKey: 'AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8',
         libraries:["places"]
     })
+
+    useEffect(() => {
+        if (user?.selected_addresses) {
+            setSelectedAddress(user.selected_addresses);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user?.selected_addresses) {
+            // Buscar la dirección en deliveryForms para asegurarnos de que tenga un _id
+            const matchedAddress = deliveryForms.find(item => 
+                item.street === user.selected_addresses.street &&
+                item.street_number === user.selected_addresses.street_number &&
+                item.locality === user.selected_addresses.locality
+            );
+    
+            if (matchedAddress) {
+                setSelectedAddress(matchedAddress);
+                setDeliveryAddressFormData({
+                    street: user.selected_addresses.street,
+                    street_number: user.selected_addresses.street_number,
+                    locality: user.selected_addresses.locality
+                })
+            } else {
+                setSelectedAddress(user.selected_addresses); // Usa la dirección guardada
+            }
+        }
+    }, [user, deliveryForms]);
+    
+
+    const handleSelectAddress = async (address) => {
+        setSelectedAddress(address);
+        const { _id, __v, ...cleanAddress } = address;
+        try {
+            const response = await fetch(`http://localhost:8081/api/users/address-selected/${user._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ selected_addresses: cleanAddress }),
+            });
+    
+            if (response.ok) {
+                toast('Domicilio actualizado con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchUser(cookieValue)
+            } else {
+                toast('Error al actualizar el domicilio', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error("Error al actualizar la dirección:", error);
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -77,19 +157,7 @@ const DeliveryForm = () => {
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
-                setFormData({
-                    street: deliveryForm.data[0].street || "",
-                    street_number: deliveryForm.data[0].street_number || "",
-                    locality: deliveryForm.data[0].locality || "",
-                    province: deliveryForm.data[0].province || "",
-                    country: deliveryForm.data[0].country || "",
-                    postal_code: deliveryForm.data[0].postal_code || "",
-                    dpto: deliveryForm.data[0].dpto || "", // Si no existe, se asigna ""
-                    indications: deliveryForm.data[0].indications || "", // Si no existe, se asigna ""
-                    name: deliveryForm.data[0].name || "",
-                    phone: deliveryForm.data[0].phone || "",
-                });
-                setIdDeliveryForm(deliveryForm.data[0]._id)
+                setDeliveryForms(deliveryForm.data)
             } else {
                 toast('Error al cargar el formulario de entrega', {
                     position: "top-right",
@@ -136,12 +204,12 @@ const DeliveryForm = () => {
                 ...formData,
                 phone: Number(formData.phone) || 0, // Convierte a número
             };
-            const response = await fetch('http://localhost:8081/api/deliveryForm', {
-                method: 'POST',
+            const response = await fetch(`http://localhost:8081/api/address-selected/${user_id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
                 },
-                body: JSON.stringify(formattedData), // Convertimos formData a JSON
+                body: JSON.stringify({ user_id, selectedAddress }),
             });
             if (response.ok) {
                 toast('Formulario cargado con éxito', {
@@ -155,6 +223,19 @@ const DeliveryForm = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setFormData({
+                    street: "",
+                    street_number: "",
+                    locality: "",
+                    province: "",
+                    country: "",
+                    postal_code: "",
+                    dpto: "",
+                    indications: "",
+                    name: "",
+                    phone: "",
+                });
+                document.getElementById('inputSearchAddress').value = '';
                 fetchDeliveryForm();
             } else {
                 toast('Error al cargar formulario', {
@@ -175,60 +256,136 @@ const DeliveryForm = () => {
         }
     }
 
-    const handleBtnUpdateDeliveryForm = async() => {
+    const fetchCartByUserId = async (user_id) => {
         try {
-            const formattedData = {
-                ...formData,
-                phone: Number(formData.phone) || 0, // Convierte a número
-            };
-            const response = await fetch(`http://localhost:8081/api/deliveryForm/${idDeliveryForm}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
-                },
-                body: JSON.stringify(formattedData), // Convertimos formData a JSON
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Error al obtener el carrito:", data);
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                return [];
+            }
+    
+            if (!data.data || !Array.isArray(data.data.products)) {
+                console.warn("Carrito vacío o no válido, asignando array vacío.");
+                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                return [];
+            }
+    
+            setUserCart(data.data);
+            return data.data;
+        } catch (error) {
+            console.error("Error al obtener el carrito:", error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
             });
-            if (response.ok) {
-                toast('Formulario modificado con éxito', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                fetchDeliveryForm()
+            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            return [];
+        }
+    };
+
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt expired') {
+                logout();
+                navigate("/login");
             } else {
-                toast('Error al modificar el formulario de entrega', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                
+                const user = data.data
+            if(user) {
+                setUser(user)
+                fetchCartByUserId(user._id);
+            }
+            setIsLoading(false)
             }
         } catch (error) {
-            console.error('Error al enviar el formulario:', error);
+            console.error('Error:', error);
         }
-    }
+    };
 
-    const fetchCartByUserId = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
-            const data = await response.json();
-            //console.log(data.data); 
-            if (response.ok) {
-                setUserCart(data.data); 
+    useEffect(() => {
+        const getCookie = (name) => {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+            }
+            return "";
+        };
+        const cookieValue = getCookie('TokenJWT');
+        setCookieValue(cookieValue)
+        fetchUser(cookieValue);
+        fetchCategories();
+        fetchDeliveryForm();
+        if(cookieValue) {
+            login()
             } else {
-                toast('Error al cargar el carrito del usuario actual', {
+            logout()
+        }
+        window.scrollTo(0, 0);
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+    
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value, // Elimina caracteres no numéricos
+        }));
+    };
+
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+    
+    const handleDeleteAddress = async (addressId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/deliveryForm/${addressId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                toast('Domicilio eliminado', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchDeliveryForm();
+            } else {
+                toast('Error al eliminar el domicilio', {
                     position: "top-right",
                     autoClose: 2000,
                     hideProgressBar: false,
@@ -257,62 +414,6 @@ const DeliveryForm = () => {
         }
     };
 
-    useEffect(() => {
-        const getCookie = (name) => {
-            const cookieName = name + "=";
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-            let cookie = cookieArray[i];
-            while (cookie.charAt(0) === ' ') {
-                cookie = cookie.substring(1);
-            }
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-            }
-            return "";
-        };
-        const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
-                } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-            };
-        fetchUser();
-        fetchCategories();
-        fetchDeliveryForm();
-        if(cookieValue) {
-            login()
-            } else {
-            logout()
-        }
-        window.scrollTo(0, 0);
-    }, []);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-    
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: name === "phone" ? value.replace(/\D/g, '') : value, // Elimina caracteres no numéricos
-        }));
-    };
-    
     return (
         
         <>
@@ -327,7 +428,7 @@ const DeliveryForm = () => {
                 />
             </div>
             <DeliveryAddress
-            formData={formData}
+            deliveryAddressFormData={deliveryAddressFormData}
             />
 
             <div className='deliveryFormContainer'>
@@ -337,6 +438,51 @@ const DeliveryForm = () => {
                     <div className='deliveryFormContainer__deliveryForm__title'>
                         <div className='deliveryFormContainer__deliveryForm__title__prop'>Formulario de entrega</div>
                     </div>
+
+                    <div className="deliveryFormContainer__deliveryForm__existingAddresses">
+                        <h2 className='deliveryFormContainer__deliveryForm__existingAddresses__title'>Domicilios</h2>
+                        {deliveryForms.length === 0 ? (
+                            <p className='deliveryFormContainer__deliveryForm__existingAddresses__withOutAddressesLabel'>
+                                No hay domicilios aún
+                            </p>
+                        ) : (
+                            <ul className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress">
+                                {deliveryForms.map((item) => (
+                                    <li 
+                                        key={item._id} 
+                                        className={`deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer 
+                                            ${selectedAddress && selectedAddress._id === item._id ? "selected" : ""}`}
+                                    >
+                                        <label className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__label">
+                                            <input
+                                                type="radio"
+                                                name="selectedAddress"
+                                                value={item._id}
+                                                checked={selectedAddress && selectedAddress._id === item._id} // Comparación correcta
+                                                onChange={() => handleSelectAddress(item)} // Ejecuta petición en cada selección
+                                                className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__radio"
+                                            />
+                                            <span className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__address">
+                                                {capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}
+                                            </span>
+                                        </label>
+                                        <button
+                                            className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Evita que el click en eliminar seleccione la dirección
+                                                handleDeleteAddress(item._id);
+                                            }}
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+
+
+                        )}
+                    </div>
+
                     <div className='deliveryFormContainer__deliveryForm__labelInputLoadStreet'>
                         <div className='deliveryFormContainer__deliveryForm__labelInputLoadStreet__prop'>Busca tu dirección aquí!</div>
                     </div>
@@ -344,7 +490,7 @@ const DeliveryForm = () => {
                     {
                         isLoaded && 
                         <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
-                            <input className='deliveryFormContainer__deliveryForm__inputStreet' type="text" placeholder='Dirección' />
+                            <input id='inputSearchAddress' className='deliveryFormContainer__deliveryForm__inputStreet' type="text" placeholder='Dirección' />
                         </StandaloneSearchBox>
                     }
 
@@ -412,19 +558,14 @@ const DeliveryForm = () => {
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Teléfono:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.phone} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='phone' type="number" placeholder='Teléfono' />
+                                <input value={formData.phone} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='phone' type="number" placeholder='Teléfono'/>
                             </div>
                         </div>
                         
                     </div>
 
                     <div className='deliveryFormContainer__deliveryForm__btnContainer'>
-                        {
-                            idDeliveryForm ?
-                            <button onClick={handleBtnUpdateDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar cambios</button>
-                            :
-                            <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
-                        }
+                        <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
                     </div>
 
                 </div>

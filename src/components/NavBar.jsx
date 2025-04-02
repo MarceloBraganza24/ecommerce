@@ -1,13 +1,11 @@
 import {useContext,useState,useEffect} from 'react'
-//import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 
 const NavBar = ({userCart,isLoggedIn,categories,isLoading,role}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
-    //const {cart} = useContext(CartContext)
-    const totalQuantity = userCart?.products?.reduce((sum, producto) => sum + producto.quantity, 0);
+    const totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
 
     const handleBtnShowHMenuOptions = () => {
 
@@ -98,12 +96,14 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role}) => {
                                 <img className='header__rightMenu__menu__cart__logo__prop' src="/src/assets/cart.png" alt="" />
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
-                                    {
-                                        isLoading ?
-                                        <Spinner/>
-                                        :
-                                        <div className='header__rightMenu__menu__cart__number__prop'>{totalQuantity?totalQuantity:'-'}</div>
-                                    }
+                                    
+                                    {isLoading? (
+                                        <Spinner />
+                                    ) : (
+                                        <div className='header__rightMenu__menu__cart__number__prop'>
+                                            {totalQuantity || 0}
+                                        </div>
+                                    )}
                             </div>
 
                         </div>

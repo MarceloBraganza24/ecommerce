@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Spinner from './Spinner';
 
-const DeliveryAddress = ({formData,isLoadingDeliveryForm}) => {
+const DeliveryAddress = ({deliveryAddressFormData,isLoadingDeliveryForm}) => {
     const capitalizeWords = (str) => {
         return str.replace(/\b\w/g, (char) => char.toUpperCase());
     };
@@ -21,8 +21,8 @@ const DeliveryAddress = ({formData,isLoadingDeliveryForm}) => {
                             </div>
                         </>
                     :
-                    formData.street ?
-                    <div className='deliveryAddressContainer__address'>{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div>
+                    deliveryAddressFormData.street ?
+                    <div className='deliveryAddressContainer__address'>{capitalizeWords(deliveryAddressFormData.street)} {capitalizeWords(deliveryAddressFormData.street_number)}, {capitalizeWords(deliveryAddressFormData.locality)}</div>
                     :
                     <Link to={"/deliveryForm"} className='deliveryAddressContainer__address'>
                         agregar dirección

@@ -7,59 +7,75 @@ export const ShoppingCartContext = ({children}) => {
 
     const [cart, setCart] = useState([])
 
-    const updateQuantity = async (user_id,id, newQuantity,fetchCartByUserId) => {
-        setCart((prevCart) =>
-            prevCart.map((item) =>
-                item.id === id ? { ...item, quantity: newQuantity } : item
-            )
-        );
+    const updateQuantity = async (user_id, id, newQuantity, fetchCartByUserId) => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/update-quantity/${user_id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ product: id, quantity: newQuantity }),
             });
-    
-            const data = await response.json();
-            console.log(data)
             if (!response.ok) {
                 console.error("Error al actualizar la cantidad en MongoDB");
-            } else {
-                fetchCartByUserId(user_id)
+                return;
             }
+            const updatedCart = await fetchCartByUserId(user_id);
         } catch (error) {
             console.error("Error en la actualización del carrito:", error);
         }
     };
+    
+    
+    
 
     const deleteItemCart = async (user_id,id,fetchCartByUserId) => {
-        // Eliminar del estado local
-        //setCart((prevCart) => prevCart?.filter((item) => item.id !== id));
-        setCart((prevCart) => Array.isArray(prevCart) ? prevCart.filter((item) => item.id !== id) : []);
-
         try {
             const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
                 method: "DELETE",
             });
-    
-            const data = await response.json();
-            console.log(data)
-            if(response.ok) {
-                setCart(data.cart); // Actualiza el estado con el carrito actualizado
+            if (response.ok) {
+                fetchCartByUserId(user_id)
             }
-            fetchCartByUserId(user_id)
         } catch (error) {
             console.error(error);
         }
     };
 
-    const deleteAllItemCart = async(id) => {
-        /* try {
-            await fetch(`http://localhost:8081/api/carts/${id}`, {
-                method: 'DELETE',
+    const deleteAllItemCart = async (user_id, fetchCartByUserId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/${user_id}`, {
+                method: "DELETE",
             });
-            console.log('Carrito eliminado de la base de datos');
-            toast('El carrito está vacío!', {
+    
+            // console.log("Response status:", response.status); // 🛠 Verificar status
+            // console.log("Response headers:", response.headers.get("content-type")); // 🛠 Verificar si devuelve JSON
+    
+            let data = null;
+            if (response.headers.get("content-type")?.includes("application/json")) {
+                data = await response.json();
+            } else {
+                console.warn("La respuesta no es JSON");
+            }
+    
+            if (response.ok) {
+                toast('El carrito está vacío!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchCartByUserId(user_id);
+            } else {
+                throw new Error("Error al eliminar el carrito");
+            }
+    
+        } catch (error) {
+            console.error("Error en deleteAllItemCart:", error); // 🛠 Verifica el error exacto
+            toast('Error al eliminar el producto del carrito!', {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -70,24 +86,47 @@ export const ShoppingCartContext = ({children}) => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setCart([])
+            fetchCartByUserId(user_id);
+        }
+    };
+    
+
+    /* const deleteAllItemCart = async(user_id,fetchCartByUserId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/${user_id}`, {
+                method: "DELETE",
+            });
+            const data = await response.json();
+            console.log(response)
+            if (response.ok) {
+                toast('El carrito está vacío!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchCartByUserId(user_id)
+            }
         } catch (error) {
-            console.error('Error al eliminar el producto del carrito:', error);
-        } */
-        console.log('Carrito eliminado de la base de datos');
-        toast('El carrito está vacío!', {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            className: "custom-toast",
-        });
-        setCart([])
-    }
+            toast('Error al eliminar el producto del carrito!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            fetchCartByUserId(user_id)
+        }
+    } */
 
     return (
 

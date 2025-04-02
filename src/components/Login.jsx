@@ -115,9 +115,9 @@ const Login = () => {
     return (
 
         <>
-            <div className='navbarContainer'>
+            {/* <div className='navbarContainer'>
                 <NavBar/>
-            </div>
+            </div> */}
 
             <div className='loginContainer'>
 

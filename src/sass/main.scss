@@ -293,7 +293,7 @@ h2 {
             font-size: 18px;
         }
         &__itemCoupons {
-            width: 75%;
+            width: 80%;
             display: flex;
             flex-direction: column;
             &__couponsHeader {
@@ -334,6 +334,7 @@ h2 {
                 grid-template-columns: 1fr 1fr 1fr 1fr;
                 padding: 1vh;
                 gap: 1vh;
+                border-bottom: 0.3vh solid #0e3061;
                 &__coupon {
                     font-size: 18px;
                     text-align: center;
@@ -2086,6 +2087,57 @@ h2 {
             padding: 2vh 0vh;
             &__prop {
                 font-size: 30px;
+            }
+        }
+        &__existingAddresses {
+            background-color: white;
+            width: 100%;
+            padding: 4vh 0vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            &__title {
+                font-size: 20px;
+                padding-left: 2vh;
+            }
+            &__withOutAddressesLabel {
+                padding-left: 2vh;
+                font-size: 18px;
+            }
+            &__itemAddress {
+                width: 80%;
+                display: flex;
+                gap: 1vh;
+                flex-direction: column;
+                &__addressContainer {
+                    background-color: #9fbbe2;
+                    display: grid;
+                    grid-template-columns: 3fr 1fr;
+                    padding: 1vh 4vh;
+                    border-radius: 1vh;
+                    cursor: pointer;
+                    &__label {
+                        display: flex;
+                        cursor: pointer;
+                    }
+                    &__address {
+                        font-size: 18px;
+                        //text-align: center;
+                        align-self: center;
+                        padding-left: 2vh;
+                    }
+                    &__btn {
+                        background-color: #1b509c;
+                        padding: 1vh;
+                        border-radius: 0.5vh;
+                        color: white;
+                        font-size: 14px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
+                }
             }
         }
         &__labelInputLoadStreet {

@@ -15,14 +15,13 @@ const About = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
 
-    const fetchCartByUserId = async (id) => {
+    const fetchCartByUserId = async (user_id) => {
         try {
-            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${id}`);
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-            //console.log(data.data); 
-            if (response.ok) {
-                setUserCart(data.data); 
-            } else {
+            //console.log(data)
+            if (!response.ok) {
+                console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
                     position: "top-right",
                     autoClose: 2000,
@@ -34,10 +33,20 @@ const About = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                return [];
             }
-
+    
+            if (!data.data || !Array.isArray(data.data.products)) {
+                console.warn("Carrito vacío o no válido, asignando array vacío.");
+                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                return [];
+            }
+    
+            setUserCart(data.data); // ✅ Asignamos los productos al estado del carrito
+            return data.data;
         } catch (error) {
-            console.error(error);
+            console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
                 position: "top-right",
                 autoClose: 2000,
@@ -49,6 +58,8 @@ const About = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            return [];
         }
     };
 
