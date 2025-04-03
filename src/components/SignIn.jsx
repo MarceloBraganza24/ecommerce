@@ -1,9 +1,111 @@
-import {useEffect} from 'react'
+import {useEffect,useState} from 'react'
 import NavBar from './NavBar'
 import Footer from './Footer'
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
+    const navigate = useNavigate();
+    const [credentials, setCredentials] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+    });
+
+    /* const handleChange = (e) => {
+        const { name, value } = e.target;
+        setCredentials({ ...credentials, [name]: value });
+    }; */
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        
+        if ((name === "first_name" || name === "last_name") && !/^[a-zA-Z\s]*$/.test(value)) {
+          return; // No actualiza el estado si el valor tiene caracteres no permitidos
+        }
+        setCredentials({ ...credentials, [name]: value });
+      
+        // Aquí puedes actualizar el estado si la validación pasa
+    };
+
+    const validateForm = () => {
+        const { first_name,last_name,email,password } = credentials;
+    
+        if (!first_name.trim() || !last_name.trim() || !email.trim() || !password.trim()) {
+            toast('Debes completar todos los campos!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });          
+            return false;
+        }
+    
+        return true;
+    };
+
+    const handleSubmit = async (e) => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+        const user_datetime = currentDate;
+        e.preventDefault();
+        if (!validateForm()) return;
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/singIn`, {
+                method: 'POST',         
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    first_name: credentials.first_name,
+                    last_name: credentials.last_name,
+                    email: credentials.email,
+                    password: credentials.password,
+                    user_datetime
+                })
+            })
+            const data = await response.json();
+            if (response.ok) {
+                navigate("/login");
+                toast('Te has registrado exitosamente!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+            if(data.error === 'There is already a user with that email') {
+                toast('Ya existe un usuario con ese email!', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -12,9 +114,9 @@ const SignIn = () => {
     return (
 
         <>
-            <div className='navbarContainer'>
+            {/* <div className='navbarContainer'>
                 <NavBar/>
-            </div>
+            </div> */}
 
             <div className='loginContainer'>
 
@@ -27,23 +129,23 @@ const SignIn = () => {
                         </div>
 
                         <div className='loginContainer__formContainer__form__input'>
-                            <input className='loginContainer__formContainer__form__input__prop' type="text" placeholder='Nombre' name="" id="" />
+                            <input className='loginContainer__formContainer__form__input__prop' type="text" value={credentials.first_name} onChange={handleChange} placeholder='Nombre' name="first_name" id="" />
                         </div>
 
                         <div className='loginContainer__formContainer__form__input'>
-                            <input className='loginContainer__formContainer__form__input__prop' type="text" placeholder='Apellido' name="" id="" />
+                            <input className='loginContainer__formContainer__form__input__prop' type="text" value={credentials.last_name} onChange={handleChange} placeholder='Apellido' name="last_name" id="" />
                         </div>
 
                         <div className='loginContainer__formContainer__form__input'>
-                            <input className='loginContainer__formContainer__form__input__prop' type="text" placeholder='Email' name="" id="" />
+                            <input className='loginContainer__formContainer__form__input__prop' type="email" value={credentials.email} onChange={handleChange} placeholder='Email' name="email" id="" />
                         </div>
 
                         <div className='loginContainer__formContainer__form__input'>
-                            <input className='loginContainer__formContainer__form__input__prop' type="password" placeholder='Contraseña' name="" id="" />
+                            <input className='loginContainer__formContainer__form__input__prop' type="password" value={credentials.password} onChange={handleChange} placeholder='Contraseña' name="password" id="" />
                         </div>
 
                         <div className='loginContainer__formContainer__form__btn'>
-                            <button className='loginContainer__formContainer__form__btn__prop'>Registrarse</button>
+                            <button onClick={handleSubmit} className='loginContainer__formContainer__form__btn__prop'>Registrarse</button>
                             <Link to={"/logIn"} className='loginContainer__formContainer__form__btn__prop'>
                                 Iniciar sesión
                             </Link>
@@ -71,7 +173,7 @@ const SignIn = () => {
 
             </div>  
 
-            <Footer/>
+            {/* <Footer/> */}
 
         </>
 

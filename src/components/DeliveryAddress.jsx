@@ -22,7 +22,7 @@ const DeliveryAddress = ({deliveryAddressFormData,isLoadingDeliveryForm}) => {
                         </>
                     :
                     deliveryAddressFormData.street ?
-                    <div className='deliveryAddressContainer__address'>{capitalizeWords(deliveryAddressFormData.street)} {capitalizeWords(deliveryAddressFormData.street_number)}, {capitalizeWords(deliveryAddressFormData.locality)}</div>
+                    <div className='deliveryAddressContainer__address'>{capitalizeWords(deliveryAddressFormData.street)} {capitalizeWords(deliveryAddressFormData.street_number)}, {deliveryAddressFormData.locality}</div>
                     :
                     <Link to={"/deliveryForm"} className='deliveryAddressContainer__address'>
                         agregar dirección

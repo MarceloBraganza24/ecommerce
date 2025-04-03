@@ -35,6 +35,7 @@ const DeliveryForm = () => {
         indications: "",
         name: "",
         phone: "",
+        owner: user?user.email : ""
     });
 
     const inputRef = useRef(null)
@@ -204,12 +205,12 @@ const DeliveryForm = () => {
                 ...formData,
                 phone: Number(formData.phone) || 0, // Convierte a número
             };
-            const response = await fetch(`http://localhost:8081/api/address-selected/${user_id}`, {
-                method: 'PUT',
+            const response = await fetch(`http://localhost:8081/api/deliveryForm`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Indicamos que estamos enviando datos JSON
                 },
-                body: JSON.stringify({ user_id, selectedAddress }),
+                body: JSON.stringify(formattedData),
             });
             if (response.ok) {
                 toast('Formulario cargado con éxito', {
@@ -550,7 +551,7 @@ const DeliveryForm = () => {
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'></div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
-                            <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Nombre:</div>
+                            <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Nombre completo:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
                                 <input value={formData.name} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='name' type="text" placeholder='Nombre' />
                             </div>
