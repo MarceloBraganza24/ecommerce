@@ -39,12 +39,26 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
     };
 
     const addToCartAndSave = async () => {
+        if(!user_id) {
+            toast("Debes iniciar sesión para realizar una compra", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
         const newItem = {
             product: id, 
             quantity: count,
         };
     
-        setCart((currItems = []) => {
+        /* setCart((currItems = []) => {
             const updatedCart = currItems.map((item) =>
                 item.id === id ? { ...item, quantity: item.quantity + count } : item
             );
@@ -54,7 +68,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
             }
         
             return [...updatedCart]; 
-        });
+        }); */
         
     
         try {
@@ -96,6 +110,20 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
     
 
     const addToCartAndContinue = async () => {
+        if(!user_id) {
+            toast("Debes iniciar sesión para realizar una compra", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
         await addToCartAndSave();
         setTimeout(() => {
             navigate("/shipping");

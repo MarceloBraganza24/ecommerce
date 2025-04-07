@@ -301,6 +301,27 @@ const Cart = () => {
     };
 
     
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingProducts(false)
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -319,26 +340,7 @@ const Cart = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                    logout();
-                    navigate("/login");
-                } else {
-                    const user = data.data
-                    if(user) {
-                        setUser(user)
-                        fetchCartByUserId(user._id);
-                    }
-                    setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        fetchUser();
+        fetchUser(cookieValue);
         fetchCategories();
         fetchDeliveryForm();
         //cotizarEnvio()

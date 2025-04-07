@@ -1,8 +1,9 @@
 import {useContext,useState,useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
+import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,isLoggedIn,categories,isLoading,role}) => {
+const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
     const totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
@@ -28,6 +29,43 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role}) => {
                 setShowHMenuOptions(false)
             }
             setShowCategories(true)
+        }
+    }
+
+    const handleBtnLogOut = async () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+        const last_connection = currentDate;
+        const response = await fetch(`http://localhost:8081/api/sessions/logout?cookie=${cookieValue}`, {
+            method: 'POST',         
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ last_connection })
+        })
+        const data = await response.json();
+        if(response.ok) {
+            const expirationDate = new Date(0);
+            const cookieJWT = `TokenJWT=${cookieValue}; expires=${expirationDate.toUTCString()}`;
+            document.cookie = cookieJWT;
+            toast('Gracias por visitar nuestra página', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            setTimeout(()=> {
+                window.location.reload()
+            },2500)
         }
     }
 
@@ -113,9 +151,12 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role}) => {
                                 <Spinner/>
                             </div>
                             : isLoggedIn ?
-                            <Link to={"/logIn"} className='header__rightMenu__menu__item'>
-                                LOG OUT
-                            </Link>
+                            <>
+                                {/* <Link to={"/logIn"} className='header__rightMenu__menu__item'>
+                                    LOG OUT
+                                    </Link> */}
+                                <div onClick={handleBtnLogOut} className='header__rightMenu__menu__item'>LOG OUT</div>
+                            </>
                             :
                             <Link to={"/logIn"} className='header__rightMenu__menu__item'>
                                 LOG IN
