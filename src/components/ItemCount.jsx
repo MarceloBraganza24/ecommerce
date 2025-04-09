@@ -1,12 +1,9 @@
-import {useContext,useState} from 'react'
-import {CartContext} from '../context/ShoppingCartContext'
+import {useState} from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
 const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId}) => {
 
-    const { setCart } = useContext(CartContext); 
-    
     const navigate = useNavigate();
     const [count, setCount] = useState(1);
     const [ultimoToast, setUltimoToast] = useState(0);
@@ -57,19 +54,6 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
             product: id, 
             quantity: count,
         };
-    
-        /* setCart((currItems = []) => {
-            const updatedCart = currItems.map((item) =>
-                item.id === id ? { ...item, quantity: item.quantity + count } : item
-            );
-        
-            if (!currItems.find((item) => item.id === id)) {
-                updatedCart.push({ id, img: images[0], title, description, price, quantity: count });
-            }
-        
-            return [...updatedCart]; 
-        }); */
-        
     
         try {
             const response = await fetch("http://localhost:8081/api/carts", {

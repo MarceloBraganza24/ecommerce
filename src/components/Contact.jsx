@@ -13,6 +13,7 @@ const Contact = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
+    const [cookieValue, setCookieValue] = useState('');
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -96,6 +97,25 @@ const Contact = () => {
             });
         }
     };
+    
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+            } else {
+            const user = data.data
+            if(user) {
+                setUser(user)
+                fetchCartByUserId(user._id);
+            }
+            setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -114,32 +134,11 @@ const Contact = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
-                } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-            };
-        fetchUser();
-        fetchCategories();
         if(cookieValue) {
-            login()
-            } else {
-            logout()
-        }
+            setCookieValue(cookieValue)
+        } 
+        fetchUser(cookieValue);
+        fetchCategories();
         window.scrollTo(0, 0);
     }, []);
 
@@ -154,6 +153,8 @@ const Contact = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 userCart={userCart}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
             <div className="contactContainer">

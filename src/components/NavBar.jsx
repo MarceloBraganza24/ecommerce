@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue}) => {
+const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetchUser}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
-    const totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
-
+    let totalQuantity;
+    if(isLoggedIn) {
+        totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
+    } else {
+        totalQuantity = 0
+    }
+        
     const handleBtnShowHMenuOptions = () => {
 
         if(showHMenuOptions) {
@@ -62,10 +67,9 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue}) => 
                 draggable: true,
                 progress: undefined,
                 theme: "dark",
+                className: "custom-toast",
             });
-            setTimeout(()=> {
-                window.location.reload()
-            },2500)
+            fetchUser(cookieValue)
         }
     }
 

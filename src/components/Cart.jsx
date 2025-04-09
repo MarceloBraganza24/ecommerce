@@ -17,6 +17,7 @@ const Cart = () => {
     const [inputCoupon, setInputCoupon] = useState('');
     const [validatedCoupon, setValidatedCoupon] = useState({});
     const [userCart, setUserCart] = useState({});
+    const [cookieValue, setCookieValue] = useState('');
     //console.log(userCart.user_id)
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -340,6 +341,9 @@ const Cart = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
+        if(cookieValue) {
+            setCookieValue(cookieValue)
+        } 
         fetchUser(cookieValue);
         fetchCategories();
         fetchDeliveryForm();
@@ -362,6 +366,8 @@ const Cart = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 userCart={userCart}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
             <DeliveryAddress

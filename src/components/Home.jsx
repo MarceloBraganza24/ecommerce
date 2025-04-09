@@ -282,6 +282,7 @@ const Home = () => {
                 categories={categories}
                 userCart={userCart}
                 cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
 
                 <div className="homeContainer__gridOffer">

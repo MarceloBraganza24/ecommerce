@@ -13,7 +13,9 @@ const ItemDetailContainer = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
+    console.log("Usuario: ",user)
     const [products, setProducts] = useState([]);
+    const [cookieValue, setCookieValue] = useState('');
     const [userCart, setUserCart] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -208,6 +210,26 @@ const ItemDetailContainer = () => {
         }
     };
 
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingProducts(false)
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
@@ -225,26 +247,10 @@ const ItemDetailContainer = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
-                } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-            };
-        fetchUser();
+        if(cookieValue) {
+            setCookieValue(cookieValue)
+        } 
+        fetchUser(cookieValue);
         fetchCategories();
         fetchProducts();
         fetchDeliveryForm();
@@ -266,6 +272,8 @@ const ItemDetailContainer = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 userCart={userCart}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
             <DeliveryAddress
