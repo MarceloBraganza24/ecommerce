@@ -29,6 +29,7 @@ const Home = () => {
     const [cookieValue, setCookieValue] = useState('');
     const [products, setProducts] = useState([]);
     const [paginatedProducts, setPaginatedProducts] = useState([]);
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -42,7 +43,7 @@ const Home = () => {
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
     
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
+    //const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -249,6 +250,12 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
+
+    useEffect(() => {
         if (location.hash) {
         const id = location.hash.replace("#", "");
         const elemento = document.getElementById(id);
@@ -264,7 +271,58 @@ const Home = () => {
           behavior: 'smooth'
         });
     };
+    
+    const LogOut = () => {
 
+        const handleBtnLogOut = async () => {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+            const last_connection = currentDate;
+            const response = await fetch(`http://localhost:8081/api/sessions/logout?cookie=${cookieValue}`, {
+                method: 'POST',         
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ last_connection })
+            })
+            const data = await response.json();
+            if(response.ok) {
+                const expirationDate = new Date(0);
+                const cookieJWT = `TokenJWT=${cookieValue}; expires=${expirationDate.toUTCString()}`;
+                document.cookie = cookieJWT;
+                toast('Gracias por visitar nuestra página', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchUser(cookieValue)
+                setShowLogOutContainer(false)
+                fetchCartByUserId(user._id)
+            }
+        }
+    
+
+        return (
+            
+            <div className='logOutContainer'>
+                <div onClick={handleBtnLogOut} className='logOutContainer__label'>LOG OUT</div>
+            </div>
+
+        )
+
+    }
+    
     return (
 
         <>
@@ -279,11 +337,18 @@ const Home = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
+                first_name={user.first_name}
                 categories={categories}
                 userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />
+
+                {
+                    showLogOutContainer&&
+                    <LogOut/>
+                }
 
                 <div className="homeContainer__gridOffer">
 

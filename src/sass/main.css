@@ -2267,6 +2267,11 @@ h2 {
   font-size: 20px;
   padding-left: 2vh;
 }
+.deliveryFormContainer__deliveryForm__existingAddresses__loadingAddresses {
+  display: flex;
+  font-size: 16px;
+  padding-left: 2vh;
+}
 .deliveryFormContainer__deliveryForm__existingAddresses__withOutAddressesLabel {
   padding-left: 2vh;
   font-size: 18px;
@@ -2968,7 +2973,7 @@ h2 {
   width: 100%;
   height: auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
 }
 .header__rightMenu__menu {
   width: 100%;
@@ -3029,11 +3034,33 @@ h2 {
   background-color: black;
   color: white;
 }
+.header__rightMenu__menu__name {
+  width: 100%;
+  height: auto;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  align-self: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
 .header__rightMenu__menu__spinner {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.logOutContainer {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  padding: 0.5vh 0vh;
+}
+.logOutContainer__label {
+  padding-right: 2vh;
+  color: white;
+  cursor: pointer;
 }
 
 .headerPurchase {
@@ -3112,13 +3139,12 @@ h2 {
   color: #124285;
 }
 
-.selectOptionsContainer {
-  background-color: rgba(0, 0, 0, 0.9);
-  width: 20%;
-  height: auto;
-  padding: 5vh 2vh;
-}
-
+/* .selectOptionsContainer {
+    background-color: rgb(0, 0, 0, 0.9);
+    width: 20%;
+    height: auto;
+    padding: 5vh 2vh;
+} */
 @media (max-width: 480px) {
   .mainContainer {
     width: 100%;

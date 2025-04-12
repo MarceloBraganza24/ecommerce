@@ -6,15 +6,16 @@ import Footer from './Footer'
 import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
+import Spinner from './Spinner';
 
 const DeliveryForm = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [cookieValue, setCookieValue] = useState('');
-    //console.log(user)
     const [products, setProducts] = useState([]);
     const [deliveryForms, setDeliveryForms] = useState([]);
+    const deliveryFormsById = deliveryForms?.filter(deliveryForm => deliveryForm.owner == user.email)
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
@@ -35,7 +36,7 @@ const DeliveryForm = () => {
         indications: "",
         name: "",
         phone: "",
-        owner: user?user.email : ""
+        owner: ""
     });
 
     const inputRef = useRef(null)
@@ -196,6 +197,8 @@ const DeliveryForm = () => {
             postal_code: postal_code.long_name || "",
             dpto: "",
             indications: "",
+            name: "",
+            phone: "",
         });
     }
 
@@ -204,6 +207,7 @@ const DeliveryForm = () => {
             const formattedData = {
                 ...formData,
                 phone: Number(formData.phone) || 0, // Convierte a número
+                owner: user.email
             };
             const response = await fetch(`http://localhost:8081/api/deliveryForm`, {
                 method: 'POST',
@@ -308,16 +312,15 @@ const DeliveryForm = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
             const data = await response.json();
-            if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
             } else {
                 const user = data.data
-            if(user) {
-                setUser(user)
-                fetchCartByUserId(user._id);
-            }
-            setIsLoading(false)
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
             }
         } catch (error) {
             console.error('Error:', error);
@@ -425,6 +428,7 @@ const DeliveryForm = () => {
                 categories={categories}
                 isLoggedIn={user.isLoggedIn}
                 userCart={userCart}
+                first_name={user.first_name}
                 role={user.role}
                 />
             </div>
@@ -442,13 +446,24 @@ const DeliveryForm = () => {
 
                     <div className="deliveryFormContainer__deliveryForm__existingAddresses">
                         <h2 className='deliveryFormContainer__deliveryForm__existingAddresses__title'>Domicilios</h2>
-                        {deliveryForms.length === 0 ? (
-                            <p className='deliveryFormContainer__deliveryForm__existingAddresses__withOutAddressesLabel'>
-                                No hay domicilios aún
-                            </p>
-                        ) : (
+                        {
+                            isLoading ? 
+                            <>
+                                <div className="deliveryFormContainer__deliveryForm__existingAddresses__loadingAddresses">
+                                    Cargando domicilios&nbsp;&nbsp;<Spinner/>
+                                </div>
+                            </>
+                        :
+                            deliveryFormsById.length === 0 ?
+                            (
+                                <p className='deliveryFormContainer__deliveryForm__existingAddresses__withOutAddressesLabel'>
+                                    No hay domicilios aún
+                                </p>
+                            ) 
+                        :
+                            (
                             <ul className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress">
-                                {deliveryForms.map((item) => (
+                                {deliveryFormsById.map((item) => (
                                     <li 
                                         key={item._id} 
                                         className={`deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer 

@@ -153,6 +153,7 @@ const Contact = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 userCart={userCart}
+                first_name={user.first_name}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />

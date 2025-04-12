@@ -77,7 +77,7 @@
         width: 100%;
         height: auto;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1.5fr;
         &__menu {
             width: 100%;
             display: flex;
@@ -137,11 +137,35 @@
                     }
                 }
             }
+            &__name {
+                width: 100%;
+                height: auto;
+                color: white;
+                font-size: 12px;
+                text-align: center;
+                align-self: center;
+                text-decoration: none;
+                text-transform: uppercase;
+            }
             &__spinner {
                 width: 100%;
                 @include disFC;
             }
         }
+    }
+}
+
+.logOutContainer {
+    //background-color: rgb(0, 0, 0, 0.3);
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    padding: 0.5vh 0vh;
+    //border-top: 0.1vh solid white;
+    &__label {
+        padding-right: 2vh;
+        color: white;
+        cursor: pointer;
     }
 }
 
@@ -221,9 +245,9 @@
     }
 }
 
-.selectOptionsContainer {
+/* .selectOptionsContainer {
     background-color: rgb(0, 0, 0, 0.9);
     width: 20%;
     height: auto;
     padding: 5vh 2vh;
-}
+} */

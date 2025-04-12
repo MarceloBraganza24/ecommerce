@@ -6,9 +6,12 @@ import Spinner from './Spinner';
 const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
     const {cart} = useContext(CartContext);
+    const [user, setUser] = useState('');
+    const selectedUserAddress = user.selected_addresses
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [cookieValue, setCookieValue] = useState('');
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
     const [formData, setFormData] = useState({
         street: "",
@@ -105,7 +108,34 @@ const Shipping = () => {
     };
 
     useEffect(() => {
-        /* const getCookie = (name) => {
+        setFormData({
+            street: selectedUserAddress?.street || "",
+            street_number: selectedUserAddress?.street_number || "",
+            locality: selectedUserAddress?.locality || ""
+        });
+    }, [user]);
+
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingProducts(false)
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                }
+                //setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    useEffect(() => {
+        const getCookie = (name) => {
             const cookieName = name + "=";
             const decodedCookie = decodeURIComponent(document.cookie);
             const cookieArray = decodedCookie.split(';');
@@ -121,34 +151,10 @@ const Shipping = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                logout();
-                navigate("/login");
-                } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                }
-                setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        fetchUser();
-        fetchCategories();
-        fetchProducts();
-        fetchDeliveryForm();
         if(cookieValue) {
-            login()
-            } else {
-                logout()
-        }
-        window.scrollTo(0, 0); */
+            setCookieValue(cookieValue)
+        } 
+        fetchUser(cookieValue);
         fetchDeliveryForm();
         fetchSellerAddresses();
     }, []);
@@ -203,7 +209,7 @@ const Shipping = () => {
                                     </>
                                 :
                                 formData.street &&
-                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div>
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(selectedUserAddress.street)} {capitalizeWords(selectedUserAddress.street_number)}, {capitalizeWords(selectedUserAddress.locality)}</div>
                             }
                             {/* <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div> */}
                         </div>

@@ -222,6 +222,7 @@ const CPanelProducts = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 categories={categories}
+                first_name={user.first_name}
                 userCart={userCart}
                 />
             </div>

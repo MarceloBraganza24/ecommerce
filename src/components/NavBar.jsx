@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetchUser}) => {
+const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,showLogOutContainer}) => {
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
     let totalQuantity;
@@ -11,6 +11,15 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetch
         totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
     } else {
         totalQuantity = 0
+    }
+
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
+    const getTotalQuantity = () => {
+        if (!userCart.products || !Array.isArray(userCart.products)) return null;
+        return userCart.products.reduce((sum, producto) => sum + producto.quantity, 0);
     }
         
     const handleBtnShowHMenuOptions = () => {
@@ -37,52 +46,20 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetch
         }
     }
 
-    const handleBtnLogOut = async () => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
-        const last_connection = currentDate;
-        const response = await fetch(`http://localhost:8081/api/sessions/logout?cookie=${cookieValue}`, {
-            method: 'POST',         
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ last_connection })
-        })
-        const data = await response.json();
-        if(response.ok) {
-            const expirationDate = new Date(0);
-            const cookieJWT = `TokenJWT=${cookieValue}; expires=${expirationDate.toUTCString()}`;
-            document.cookie = cookieJWT;
-            toast('Gracias por visitar nuestra página', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            fetchUser(cookieValue)
-        }
-    }
-
     useEffect(() => {
         const handleScrollShowHMenuOptions = () => setShowHMenuOptions(false);
         const handleScrollShowCategories = () => setShowCategories(false);
         window.addEventListener("scroll", handleScrollShowCategories);
         window.addEventListener("scroll", handleScrollShowHMenuOptions);
+        if(isLoggedIn) {
+            setShowLogOutContainer(true)
+        } 
         return () => {
             window.removeEventListener("scroll", handleScrollShowCategories);
             window.removeEventListener("scroll", handleScrollShowHMenuOptions);
         } 
     }, []);
+
 
     return (
 
@@ -96,7 +73,7 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetch
                             isLoading ?
                             <Spinner/>
                             :
-                            role == 'admin' &&
+                            role == 'admin' && showLogOutContainer &&
                             <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
@@ -139,13 +116,39 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetch
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
                                     
-                                    {isLoading? (
+                                    {/* {
+                                        isLoading ? 
+                                            (
+                                            <Spinner />
+                                            ) 
+                                        :
+                                            (
+                                                <div className='header__rightMenu__menu__cart__number__prop'>
+                                                    {totalQuantity || 0}
+                                                </div>
+                                            )
+                                    } */}
+                                    {/* {
+                                        isLoading || getTotalQuantity() === null ?
+                                            <Spinner />
+                                        :
+                                            <div className='header__rightMenu__menu__cart__number__prop'>
+                                                {getTotalQuantity()}
+                                            </div>
+                                    } */}
+                                    {
+                                    isLoading ? (
+                                        <Spinner />
+                                    ) : !isLoggedIn ? (
+                                        <div className='header__rightMenu__menu__cart__number__prop'>0</div>
+                                    ) : !userCart.products ? (
                                         <Spinner />
                                     ) : (
                                         <div className='header__rightMenu__menu__cart__number__prop'>
-                                            {totalQuantity || 0}
+                                            {getTotalQuantity()}
                                         </div>
-                                    )}
+                                    )
+                                }
                             </div>
 
                         </div>
@@ -156,10 +159,7 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,cookieValue,fetch
                             </div>
                             : isLoggedIn ?
                             <>
-                                {/* <Link to={"/logIn"} className='header__rightMenu__menu__item'>
-                                    LOG OUT
-                                    </Link> */}
-                                <div onClick={handleBtnLogOut} className='header__rightMenu__menu__item'>LOG OUT</div>
+                                <div className='header__rightMenu__menu__name'>BIENVENIDO/A<br />{first_name?capitalizeFirstLetter(first_name):''}</div>
                             </>
                             :
                             <Link to={"/logIn"} className='header__rightMenu__menu__item'>

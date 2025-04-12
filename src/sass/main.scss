@@ -2100,6 +2100,12 @@ h2 {
                 font-size: 20px;
                 padding-left: 2vh;
             }
+            &__loadingAddresses {
+                display: flex;
+                font-size: 16px;
+                padding-left: 2vh;
+
+            }
             &__withOutAddressesLabel {
                 padding-left: 2vh;
                 font-size: 18px;

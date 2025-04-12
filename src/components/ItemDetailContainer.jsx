@@ -137,6 +137,7 @@ const ItemDetailContainer = () => {
     
     const fetchProducts = async () => {
         try {
+            setIsLoadingProducts(true); 
             const response = await fetch(`http://localhost:8081/api/products`)
             const productsAll = await response.json();
             setProducts(productsAll.data)
@@ -254,11 +255,6 @@ const ItemDetailContainer = () => {
         fetchCategories();
         fetchProducts();
         fetchDeliveryForm();
-        if(cookieValue) {
-            login()
-            } else {
-            logout()
-        }
         window.scrollTo(0, 0);
     }, []);
 
@@ -272,6 +268,7 @@ const ItemDetailContainer = () => {
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 userCart={userCart}
+                first_name={user.first_name}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />
@@ -294,7 +291,7 @@ const ItemDetailContainer = () => {
                                     Cargando producto&nbsp;&nbsp;<Spinner/>
                                 </div>
                             </>
-                            :
+                            : productById ?
                             <>
 
                                 <div className='itemDetailContainer__itemDetail__imgContainer'>
@@ -401,7 +398,12 @@ const ItemDetailContainer = () => {
                                     
                                 </div>
                             </>
-
+                            :
+                            <>
+                                <div className="itemDetailContainer__itemDetail__loadingProducts">
+                                    Cargando producto&nbsp;&nbsp;<Spinner/>
+                                </div>
+                            </>
                         }
                     </div>
 
