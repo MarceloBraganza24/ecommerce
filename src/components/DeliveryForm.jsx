@@ -19,6 +19,7 @@ const DeliveryForm = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
         street: "",
@@ -51,6 +52,12 @@ const DeliveryForm = () => {
             setSelectedAddress(user.selected_addresses);
         }
     }, [user]);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     useEffect(() => {
         if (user?.selected_addresses) {
@@ -425,11 +432,14 @@ const DeliveryForm = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
-                categories={categories}
                 isLoggedIn={user.isLoggedIn}
-                userCart={userCart}
-                first_name={user.first_name}
                 role={user.role}
+                first_name={user.first_name}
+                categories={categories}
+                userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
             <DeliveryAddress

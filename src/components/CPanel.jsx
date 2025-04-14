@@ -16,14 +16,24 @@ const CPanel = () => {
     const [expirationDate, setExpirationDate] = useState('');
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
+    const [cookieValue, setCookieValue] = useState('');
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [coupons, setCoupons] = useState([]);
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
+
     const couponsByExpirationDate = coupons.sort((a, b) => new Date(a.expiration_date) - new Date(b.expiration_date));
 
     const [addressData, setAddressData] = useState({
         street: "",
         street_number: "",
         locality: "",
+        province: "",
     });
 
     const capitalizeFirstLetter = (text) => {
@@ -408,7 +418,7 @@ const CPanel = () => {
 
     const handleSubmitAddress = async (e) => {
         e.preventDefault();
-        if(!addressData.street || !addressData.street_number || !addressData.locality) {
+        if(!addressData.street || !addressData.street_number || !addressData.locality || !addressData.province) {
             toast('Debes ingresar un domicilio', {
                 position: "top-right",
                 autoClose: 1500,
@@ -436,6 +446,7 @@ const CPanel = () => {
                 street: addressData.street,
                 street_number: addressData.street_number,
                 locality: addressData.locality,
+                province: addressData.province,
                 sellerAddress_datetime 
             }
             const response = await fetch('http://localhost:8081/api/sellerAddresses', {
@@ -472,6 +483,7 @@ const CPanel = () => {
                     street: '',
                     street_number: '',
                     locality: '',
+                    province: '',
                 });
                 document.getElementById('inputCreateAddress').value = ''
                 fetchSellerAddresses()
@@ -588,10 +600,12 @@ const CPanel = () => {
         const street = prop.find(dm => dm.types[0] == "route")
         const street_number = prop.find(dm => dm.types[0] == "street_number")
         const locality = prop.find(dm => dm.types[0] == "locality")
+        const province = prop.find(dm => dm.types[0] == "administrative_area_level_1")
         setAddressData({
             street: street.long_name || "",
             street_number: street_number.long_name || "",
             locality: locality.long_name || "",
+            province: province.long_name || "",
         });
     }
 
@@ -601,6 +615,26 @@ const CPanel = () => {
         googleMapsApiKey: 'AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8',
         libraries:["places"]
     })
+
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingProducts(false)
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -619,26 +653,10 @@ const CPanel = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                    logout();
-                    navigate("/login");
-                } else {
-                    const user = data.data
-                    if(user) {
-                        setUser(user)
-                        fetchCartByUserId(user._id);
-                    }
-                    setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        fetchUser();
+        if(cookieValue) {
+            setCookieValue(cookieValue)
+        } 
+        fetchUser(cookieValue);
         fetchCategories();
         fetchSellerAddresses();
         fetchCoupons();
@@ -658,9 +676,12 @@ const CPanel = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                categories={categories}
                 first_name={user.first_name}
+                categories={categories}
                 userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
 
@@ -718,7 +739,7 @@ const CPanel = () => {
                         <ul className='cPanelContainer__existingSellerAddresses__itemSellerAddress'>
                             {sellerAddresses.map((item) => (
                                 <li className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress' key={item._id}>
-                                    <span className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}</span>
+                                    <span className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}, {item.province}</span>
                                     <button className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn' onClick={() => handleDeleteSellerAddress(item._id)}>
                                         Eliminar
                                     </button>
@@ -740,6 +761,7 @@ const CPanel = () => {
                     <div className='cPanelContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
                     <div className='cPanelContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
                     <div className='cPanelContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
+                    <div className='cPanelContainer__createNewSellerAddress__label'>Provincia: {addressData.province}</div>
                     <button className='cPanelContainer__createNewSellerAddress__btn' onClick={handleSubmitAddress}>Guardar</button>
                     
                 </div>

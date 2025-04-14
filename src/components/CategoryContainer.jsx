@@ -16,6 +16,7 @@ const CategoryContainer = () => {
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
     const [products, setProducts] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
@@ -49,6 +50,12 @@ const CategoryContainer = () => {
     useEffect(() => {
         fetchProducts();
     }, [currentPage, category]);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     useEffect(() => {
         if (user?.selected_addresses) {
@@ -277,17 +284,21 @@ const CategoryContainer = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                categories={categories}
                 first_name={user.first_name}
+                categories={categories}
                 userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />
             </div>
-            <DeliveryAddress
-            deliveryAddressFormData={deliveryAddressFormData}
-            isLoadingDeliveryForm={isLoadingDeliveryForm}
-            />
+            {
+                user && 
+                <DeliveryAddress
+                deliveryAddressFormData={deliveryAddressFormData}
+                isLoadingDeliveryForm={isLoadingDeliveryForm}
+                />
+            }
             <div className="categoryContainer__grid">
                                 
                 <div className="categoryContainer__grid__catalog">

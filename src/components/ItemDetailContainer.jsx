@@ -4,18 +4,14 @@ import { useParams } from 'react-router-dom'
 import ItemCount from './ItemCount';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom'
 import Spinner from './Spinner';
 
 const ItemDetailContainer = () => {
-    const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
-    console.log("Usuario: ",user)
     const [products, setProducts] = useState([]);
     const [cookieValue, setCookieValue] = useState('');
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -48,6 +44,12 @@ const ItemDetailContainer = () => {
             [key]: value
         }));
     };
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     useEffect(() => {
         if (user?.selected_addresses) {
@@ -264,19 +266,23 @@ const ItemDetailContainer = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
-                categories={categories}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                userCart={userCart}
                 first_name={user.first_name}
+                categories={categories}
+                userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />
             </div>
-            <DeliveryAddress
-            deliveryAddressFormData={deliveryAddressFormData}
-            isLoadingDeliveryForm={isLoadingDeliveryForm}
-            />
+            {
+                user && 
+                <DeliveryAddress
+                deliveryAddressFormData={deliveryAddressFormData}
+                isLoadingDeliveryForm={isLoadingDeliveryForm}
+                />
+            }
             <div className='itemDetailContainer'>
 
                 

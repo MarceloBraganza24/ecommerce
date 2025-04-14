@@ -221,7 +221,7 @@ h2 {
   font-size: 18px;
 }
 .cPanelContainer__existingSellerAddresses__itemSellerAddress {
-  width: 50%;
+  width: 65%;
   display: flex;
   gap: 1vh;
   flex-direction: column;
@@ -250,6 +250,7 @@ h2 {
   background-color: #124285;
 }
 .cPanelContainer__createNewSellerAddress {
+  background-color: white;
   display: flex;
   flex-direction: column;
   gap: 1vh;
@@ -2046,6 +2047,14 @@ h2 {
   display: grid;
   grid-template-columns: 2fr 1fr;
 }
+.shippingContainer__spinner {
+  width: 100%;
+  height: 90vh;
+  grid-column: 1/3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .shippingContainer__deliveryMethodContainer {
   width: 100%;
   display: flex;
@@ -3058,9 +3067,15 @@ h2 {
   padding: 0.5vh 0vh;
 }
 .logOutContainer__label {
-  padding-right: 2vh;
-  color: white;
+  background-color: white;
+  margin-right: 1vh;
+  padding: 0.5vh 2vh;
+  border-radius: 2vh;
+  color: black;
   cursor: pointer;
+}
+.logOutContainer__label:hover {
+  background-color: rgb(233, 233, 233);
 }
 
 .headerPurchase {

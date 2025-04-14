@@ -14,6 +14,13 @@ const Contact = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
     const [cookieValue, setCookieValue] = useState('');
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -149,11 +156,12 @@ const Contact = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
-                categories={categories}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                userCart={userCart}
                 first_name={user.first_name}
+                categories={categories}
+                userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />

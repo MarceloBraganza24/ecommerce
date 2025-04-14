@@ -13,6 +13,7 @@ const CPanelProducts = () => {
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
     const [userCart, setUserCart] = useState({});
+    const [cookieValue, setCookieValue] = useState('');
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -27,6 +28,13 @@ const CPanelProducts = () => {
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
@@ -167,6 +175,26 @@ const CPanelProducts = () => {
         }
     };
 
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingProducts(false)
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     useEffect(() => {
         const getCookie = (name) => {
             const cookieName = name + "=";
@@ -184,26 +212,10 @@ const CPanelProducts = () => {
             return "";
         };
         const cookieValue = getCookie('TokenJWT');
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-                const data = await response.json();
-                if(data.error === 'jwt expired') {
-                    logout();
-                    navigate("/login");
-                } else {
-                    const user = data.data
-                    if(user) {
-                        setUser(user)
-                        fetchCartByUserId(user._id);
-                    }
-                    setIsLoading(false)
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        fetchUser();
+        if(cookieValue) {
+            setCookieValue(cookieValue)
+        } 
+        fetchUser(cookieValue);
         fetchProducts();
         fetchCategories();
         if(cookieValue) {
@@ -221,9 +233,12 @@ const CPanelProducts = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                categories={categories}
                 first_name={user.first_name}
+                categories={categories}
                 userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
+                cookieValue={cookieValue}
+                fetchUser={fetchUser}
                 />
             </div>
             <div className='cPanelProductsContainer'>

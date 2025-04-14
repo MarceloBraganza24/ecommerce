@@ -42,6 +42,13 @@ const Cart = () => {
     });
 
     const {cart, deleteAllItemCart} = useContext(CartContext);
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
     
     //const [codigoPostal, setCodigoPostal] = useState("");
     // const [costoEnvio, setCostoEnvio] = useState(null);
@@ -362,19 +369,23 @@ const Cart = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
-                categories={categories}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                userCart={userCart}
                 first_name={user.first_name}
+                categories={categories}
+                userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />
             </div>
-            <DeliveryAddress
-            deliveryAddressFormData={deliveryAddressFormData}
-            isLoadingDeliveryForm={isLoadingDeliveryForm}
-            />
+            {
+                user && 
+                <DeliveryAddress
+                deliveryAddressFormData={deliveryAddressFormData}
+                isLoadingDeliveryForm={isLoadingDeliveryForm}
+                />
+            }
             {
                 
                 isLoadingProducts ? 
@@ -575,7 +586,7 @@ const Cart = () => {
                         </div>
                         <div className='noProductsContainer__link'>
                             <Link to={"/#catalog"} className='noProductsContainer__link__prop'>
-                                ¡Volver al Catálogo!  
+                                ¡Ir al Catálogo!  
                             </Link>
                         </div>
 

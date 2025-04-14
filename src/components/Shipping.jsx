@@ -2,14 +2,16 @@ import {useState,useContext,useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import { CartContext } from '../context/ShoppingCartContext';
 import Spinner from './Spinner';
+import { toast } from 'react-toastify';
 
 const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
     const {cart} = useContext(CartContext);
+    const [userCart, setUserCart] = useState({});
     const [user, setUser] = useState('');
-    const selectedUserAddress = user.selected_addresses
-    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
+    //const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [isLoadingGeneralData, setIsLoadingGeneralData] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [cookieValue, setCookieValue] = useState('');
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
@@ -24,14 +26,68 @@ const Shipping = () => {
         locality: ""
     });
 
-    const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
-    const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
+    //const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
+    //const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
+
+    const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
+    : 0;
+    const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
 
     const capitalizeWords = (str) => {
         return str.replace(/\b\w/g, (char) => char.toUpperCase());
     };
 
-    const fetchDeliveryForm = async () => {
+    const fetchCartByUserId = async (user_id) => {
+        try {
+            //setIsLoadingProducts(true)
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Error al obtener el carrito:", data);
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                return [];
+            }
+    
+            if (!data.data || !Array.isArray(data.data.products)) {
+                console.warn("Carrito vacío o no válido, asignando array vacío.");
+                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                return [];
+            }
+    
+            setUserCart(data.data); // ✅ Asignamos los productos al estado del carrito
+            return data.data;
+        } catch (error) {
+            console.error("Error al obtener el carrito:", error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            return [];
+        } finally {
+            //setIsLoadingProducts(false)
+        }
+    };
+
+    /* const fetchDeliveryForm = async () => {
         try {
             setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
@@ -61,7 +117,7 @@ const Shipping = () => {
         } finally {
             setIsLoadingDeliveryForm(false)
         }
-    };
+    }; */
 
     const fetchSellerAddresses = async () => {
         try {
@@ -108,24 +164,28 @@ const Shipping = () => {
     };
 
     useEffect(() => {
-        setFormData({
-            street: selectedUserAddress?.street || "",
-            street_number: selectedUserAddress?.street_number || "",
-            locality: selectedUserAddress?.locality || ""
-        });
-    }, [user]);
+        if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
+            setIsLoadingGeneralData(false)
+            setFormData({
+                street: user.selected_addresses.street || "",
+                street_number: user.selected_addresses.street_number || "",
+                locality: user.selected_addresses.locality || ""
+            });
+        }
+    }, [user,userCart,sellerAddresses,total,totalQuantity]);
 
     const fetchUser = async (cookieValue) => {
         try {
             const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingProducts(false)
+                //setIsLoading(false)
+                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {
                     setUser(user)
+                    fetchCartByUserId(user._id);
                 }
                 //setIsLoading(false)
             }
@@ -155,13 +215,12 @@ const Shipping = () => {
             setCookieValue(cookieValue)
         } 
         fetchUser(cookieValue);
-        fetchDeliveryForm();
+        //fetchDeliveryForm();
         fetchSellerAddresses();
     }, []);
 
     const handleSelectSellerAddressChange = (event) => {
         setSelectedSellerAddress(event.target.value);
-        console.log("Dirección seleccionada:", event.target.value);
     };
 
 
@@ -178,6 +237,16 @@ const Shipping = () => {
             </div>
 
             <div className="shippingContainer">
+
+                {
+                    isLoadingGeneralData ?
+                        <div className="shippingContainer__spinner">
+                            <Spinner/>
+                        </div>
+                    :
+
+                    <>
+                
 
                 <div className="shippingContainer__deliveryMethodContainer">
 
@@ -201,17 +270,10 @@ const Shipping = () => {
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer">
                             {
-                                isLoadingDeliveryForm ? 
-                                    <>
-                                        <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">
-                                            <Spinner/>
-                                        </div>
-                                    </>
-                                :
-                                formData.street &&
-                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(selectedUserAddress.street)} {capitalizeWords(selectedUserAddress.street_number)}, {capitalizeWords(selectedUserAddress.locality)}</div>
+                                <>
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div>
+                                </>
                             }
-                            {/* <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div> */}
                         </div>
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer">
@@ -238,21 +300,26 @@ const Shipping = () => {
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer">
                             {
-                                isLoadingSellerAddresses ? 
-                                    <>
-                                        <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address">
-                                            <Spinner/>
-                                        </div>
-                                    </>
-                                :
-                                sellerAddressData &&
                                 <select className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__select' id="addressSelect" value={selectedSellerAddress} onChange={handleSelectSellerAddressChange}>
-                                    <option value="">Selecciona una opción</option>
-                                    {sellerAddresses.map((address, index) => (
-                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
-                                        {address.street} {address.street_number}, {address.locality}
-                                    </option>
-                                    ))}
+                                    {
+                                        sellerAddresses.length > 1 ?
+                                        <>
+                                        <option value="">Selecciona una opción</option>
+                                        {sellerAddresses.map((address, index) => (
+                                            <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
+                                            {address.street} {address.street_number}, {address.locality}
+                                        </option>
+                                        ))}
+                                        </>
+                                        :
+                                        <>
+                                        {sellerAddresses.map((address, index) => (
+                                            <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
+                                            {address.street} {address.street_number}, {address.locality}
+                                        </option>
+                                        ))}
+                                        </>
+                                    }
                                 </select>
                             }
                         </div>
@@ -310,6 +377,9 @@ const Shipping = () => {
                     </div>
 
                 </div>
+                </>
+
+                }
 
             </div>
 

@@ -37,7 +37,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
 
     const addToCartAndSave = async () => {
         if(!user_id) {
-            toast("Debes iniciar sesión para realizar una compra", {
+            toast("Debes iniciar sesión para agregar productos al carrito", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,

@@ -15,6 +15,13 @@ const About = () => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
+    const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+
+    useEffect(() => {
+        if(user.isLoggedIn) {
+            setShowLogOutContainer(true)
+        }
+    }, [user.isLoggedIn]);
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -154,9 +161,10 @@ const About = () => {
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
-                categories={categories}
                 first_name={user.first_name}
+                categories={categories}
                 userCart={userCart}
+                showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
                 fetchUser={fetchUser}
                 />

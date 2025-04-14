@@ -115,40 +115,19 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                                 <img className='header__rightMenu__menu__cart__logo__prop' src="/src/assets/cart.png" alt="" />
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
-                                    
-                                    {/* {
-                                        isLoading ? 
-                                            (
+                                    {
+                                        isLoading ? (
                                             <Spinner />
-                                            ) 
-                                        :
-                                            (
-                                                <div className='header__rightMenu__menu__cart__number__prop'>
-                                                    {totalQuantity || 0}
-                                                </div>
-                                            )
-                                    } */}
-                                    {/* {
-                                        isLoading || getTotalQuantity() === null ?
+                                        ) : !isLoggedIn ? (
+                                            <div className='header__rightMenu__menu__cart__number__prop'>0</div>
+                                        ) : !userCart.products ? (
                                             <Spinner />
-                                        :
+                                        ) : (
                                             <div className='header__rightMenu__menu__cart__number__prop'>
                                                 {getTotalQuantity()}
                                             </div>
-                                    } */}
-                                    {
-                                    isLoading ? (
-                                        <Spinner />
-                                    ) : !isLoggedIn ? (
-                                        <div className='header__rightMenu__menu__cart__number__prop'>0</div>
-                                    ) : !userCart.products ? (
-                                        <Spinner />
-                                    ) : (
-                                        <div className='header__rightMenu__menu__cart__number__prop'>
-                                            {getTotalQuantity()}
-                                        </div>
-                                    )
-                                }
+                                        )
+                                    }
                             </div>
 
                         </div>
@@ -214,7 +193,6 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                                     to={`/cpanel`}
                                     className="categoriesContainer__addCategoryLink"
                                     >
-                                    {/* - {category.name.toUpperCase()} */}
                                     Agregar categoría
                                 </Link>
                             </>
