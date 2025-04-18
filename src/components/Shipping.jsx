@@ -1,19 +1,18 @@
 import {useState,useContext,useEffect} from 'react'
 import { Link } from 'react-router-dom'
-import { CartContext } from '../context/ShoppingCartContext';
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
 const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
-    const {cart} = useContext(CartContext);
     const [userCart, setUserCart] = useState({});
     const [user, setUser] = useState('');
-    //const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [isLoadingGeneralData, setIsLoadingGeneralData] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [cookieValue, setCookieValue] = useState('');
+    const [deliveryForms, setDeliveryForms] = useState([]);
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
     const [formData, setFormData] = useState({
         street: "",
@@ -26,20 +25,29 @@ const Shipping = () => {
         locality: ""
     });
 
-    //const total = cart.reduce((acumulador, producto) => acumulador + (producto.price * producto.quantity), 0);
-    //const totalQuantity = cart.reduce((sum, producto) => sum + producto.quantity, 0);
-
     const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
     : 0;
     const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
 
-    const capitalizeWords = (str) => {
-        return str.replace(/\b\w/g, (char) => char.toUpperCase());
+    const corregirCapitalizacion = (texto) => {
+        if (!texto) return '';
+    
+        const excepciones = ['de', 'del', 'la', 'el', 'y', 'en', 'a', 'los', 'las', 'por', 'con', 'para', 'al', 'un', 'una'];
+    
+        return texto
+            .toLocaleLowerCase('es-AR')
+            .split(' ')
+            .map((palabra, index) => {
+                if (excepciones.includes(palabra) && index !== 0) {
+                    return palabra;
+                }
+                return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+            })
+            .join(' ');
     };
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            //setIsLoadingProducts(true)
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
             if (!response.ok) {
@@ -82,8 +90,33 @@ const Shipping = () => {
             });
             setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
             return [];
+        }
+    };
+
+    const fetchDeliveryForm = async () => {
+        try {
+            setIsLoadingDeliveryForm(true)
+            const response = await fetch('http://localhost:8081/api/deliveryForm');
+            const deliveryForm = await response.json();
+            if (response.ok) {
+                setDeliveryForms(deliveryForm.data)
+            } else {
+                toast('Error al cargar el formulario de entrega', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error(error);
         } finally {
-            //setIsLoadingProducts(false)
+            setIsLoadingDeliveryForm(false)
         }
     };
 
@@ -163,7 +196,60 @@ const Shipping = () => {
         }
     };
 
+    /* useEffect(() => {
+        if(user && deliveryForms) {
+            setIsLoadingGeneralData(false)
+        }
+        const matchedAddress = deliveryForms?.find(item => 
+            item.street === user.selected_addresses?.street &&
+            item.street_number === user.selected_addresses?.street_number &&
+            item.locality === user.selected_addresses?.locality
+        );
+
+        if (matchedAddress) {
+            setFormData({
+                street: user.selected_addresses.street || "",
+                street_number: user.selected_addresses.street_number || "",
+                locality: user.selected_addresses.locality || ""
+            });
+        } else {
+            setFormData({
+                street: "",
+                street_number: "",
+                locality: ""
+            });
+        }
+
+
+    }, [user, deliveryForms]); */
     useEffect(() => {
+        if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
+            setIsLoadingGeneralData(false)
+        }
+        const matchedAddress = deliveryForms?.find(item => 
+            item.street === user.selected_addresses?.street &&
+            item.street_number === user.selected_addresses?.street_number &&
+            item.locality === user.selected_addresses?.locality
+        );
+
+        if (matchedAddress) {
+            setFormData({
+                street: user.selected_addresses.street || "",
+                street_number: user.selected_addresses.street_number || "",
+                locality: user.selected_addresses.locality || ""
+            });
+        } else {
+            setFormData({
+                street: "",
+                street_number: "",
+                locality: ""
+            });
+        }
+
+
+    }, [user,userCart,sellerAddresses,total,totalQuantity]);
+
+    /* useEffect(() => {
         if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
             setIsLoadingGeneralData(false)
             setFormData({
@@ -172,7 +258,7 @@ const Shipping = () => {
                 locality: user.selected_addresses.locality || ""
             });
         }
-    }, [user,userCart,sellerAddresses,total,totalQuantity]);
+    }, [user,userCart,sellerAddresses,total,totalQuantity]); */
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -215,7 +301,7 @@ const Shipping = () => {
             setCookieValue(cookieValue)
         } 
         fetchUser(cookieValue);
-        //fetchDeliveryForm();
+        fetchDeliveryForm();
         fetchSellerAddresses();
     }, []);
 
@@ -270,8 +356,15 @@ const Shipping = () => {
 
                         <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer">
                             {
+                                isLoadingDeliveryForm ?
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>
+                                    <Spinner/>
+                                </div>
+                                : formData.street == '' ?
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>Aún no hay un domicilio seleccionado</div>
+                                :
                                 <>
-                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{capitalizeWords(formData.street)} {capitalizeWords(formData.street_number)}, {capitalizeWords(formData.locality)}</div>
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{corregirCapitalizacion(formData.street)} {corregirCapitalizacion(formData.street_number)}, {corregirCapitalizacion(formData.locality)}</div>
                                 </>
                             }
                         </div>
@@ -349,7 +442,6 @@ const Shipping = () => {
                             {
                                 totalQuantity == 1 ?
                                 <>
-                                    {/* <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Producto</div> */}
                                     <Link to={"/cart"} className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>
                                         Producto
                                     </Link>
@@ -357,7 +449,6 @@ const Shipping = () => {
                                 </>
                                 :
                                 <>
-                                    {/* <div className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>Productos ({totalQuantity})</div> */}
                                     <Link to={"/cart"} className='shippingContainer__accountSummaryContainer__accountSummary__item__label'>
                                         Productos ({totalQuantity})
                                     </Link>

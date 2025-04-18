@@ -131,7 +131,7 @@ const CPanelProducts = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-            //console.log(data)
+    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -145,18 +145,19 @@ const CPanelProducts = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             if (!data.data || !Array.isArray(data.data.products)) {
                 console.warn("Carrito vacío o no válido, asignando array vacío.");
-                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             setUserCart(data.data);
             return data.data;
+    
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
@@ -170,10 +171,11 @@ const CPanelProducts = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
         }
     };
+    
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -218,11 +220,6 @@ const CPanelProducts = () => {
         fetchUser(cookieValue);
         fetchProducts();
         fetchCategories();
-        if(cookieValue) {
-            login()
-        } else {
-            logout()
-        }
     }, []);
 
     return (

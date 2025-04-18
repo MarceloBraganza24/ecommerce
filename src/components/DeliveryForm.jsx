@@ -3,21 +3,17 @@ import {GoogleMap, useJsApiLoader, StandaloneSearchBox} from '@react-google-maps
 import NavBar from './NavBar'
 import DeliveryAddress from './DeliveryAddress'
 import Footer from './Footer'
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom'
 import Spinner from './Spinner';
 
 const DeliveryForm = () => {
-    const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [cookieValue, setCookieValue] = useState('');
-    const [products, setProducts] = useState([]);
     const [deliveryForms, setDeliveryForms] = useState([]);
-    const deliveryFormsById = deliveryForms?.filter(deliveryForm => deliveryForm.owner == user.email)
+    const [deliveryFormsById, setDeliveryFormsById] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [userCart, setUserCart] = useState({});
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(null);
@@ -48,39 +44,36 @@ const DeliveryForm = () => {
     })
 
     useEffect(() => {
-        if (user?.selected_addresses) {
-            setSelectedAddress(user.selected_addresses);
+        if(user && deliveryForms) {
+            const deliveryFormsById = deliveryForms.filter(deliveryForm => deliveryForm.owner == user.email)
+            setDeliveryFormsById(deliveryFormsById)
+            
         }
-    }, [user]);
+        const matchedAddress = deliveryForms?.find(item => 
+            item.street === user.selected_addresses?.street &&
+            item.street_number === user.selected_addresses?.street_number &&
+            item.locality === user.selected_addresses?.locality
+        );
+
+        if (matchedAddress) {
+            setSelectedAddress(matchedAddress);
+            setDeliveryAddressFormData({
+                street: user.selected_addresses.street,
+                street_number: user.selected_addresses.street_number,
+                locality: user.selected_addresses.locality
+            })
+        } else {
+            setSelectedAddress(user.selected_addresses); // Usa la dirección guardada
+        }
+
+
+    }, [user, deliveryForms]);
 
     useEffect(() => {
         if(user.isLoggedIn) {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
-
-    useEffect(() => {
-        if (user?.selected_addresses) {
-            // Buscar la dirección en deliveryForms para asegurarnos de que tenga un _id
-            const matchedAddress = deliveryForms.find(item => 
-                item.street === user.selected_addresses.street &&
-                item.street_number === user.selected_addresses.street_number &&
-                item.locality === user.selected_addresses.locality
-            );
-    
-            if (matchedAddress) {
-                setSelectedAddress(matchedAddress);
-                setDeliveryAddressFormData({
-                    street: user.selected_addresses.street,
-                    street_number: user.selected_addresses.street_number,
-                    locality: user.selected_addresses.locality
-                })
-            } else {
-                setSelectedAddress(user.selected_addresses); // Usa la dirección guardada
-            }
-        }
-    }, [user, deliveryForms]);
-    
 
     const handleSelectAddress = async (address) => {
         setSelectedAddress(address);
@@ -93,7 +86,6 @@ const DeliveryForm = () => {
                 },
                 body: JSON.stringify({ selected_addresses: cleanAddress }),
             });
-    
             if (response.ok) {
                 toast('Domicilio actualizado con éxito', {
                     position: "top-right",
@@ -163,6 +155,7 @@ const DeliveryForm = () => {
 
     const fetchDeliveryForm = async () => {
         try {
+            setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -182,6 +175,8 @@ const DeliveryForm = () => {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoadingDeliveryForm(false)
         }
     };
 
@@ -223,6 +218,8 @@ const DeliveryForm = () => {
                 },
                 body: JSON.stringify(formattedData),
             });
+            const data = await response.json();
+            console.log(data)
             if (response.ok) {
                 toast('Formulario cargado con éxito', {
                     position: "top-right",
@@ -249,6 +246,13 @@ const DeliveryForm = () => {
                 });
                 document.getElementById('inputSearchAddress').value = '';
                 fetchDeliveryForm();
+                handleSelectAddress(data.data);
+                setDeliveryAddressFormData({
+                    street: data.data.street,
+                    street_number: data.data.street_number,
+                    locality: data.data.locality
+                })
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 toast('Error al cargar formulario', {
                     position: "top-right",
@@ -261,7 +265,6 @@ const DeliveryForm = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                
             }
         } catch (error) {
             console.error('Error al enviar el formulario:', error);
@@ -272,6 +275,7 @@ const DeliveryForm = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
+    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -285,18 +289,19 @@ const DeliveryForm = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             if (!data.data || !Array.isArray(data.data.products)) {
                 console.warn("Carrito vacío o no válido, asignando array vacío.");
-                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             setUserCart(data.data);
             return data.data;
+    
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
@@ -310,7 +315,7 @@ const DeliveryForm = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
         }
     };
@@ -355,11 +360,6 @@ const DeliveryForm = () => {
         fetchUser(cookieValue);
         fetchCategories();
         fetchDeliveryForm();
-        if(cookieValue) {
-            login()
-            } else {
-            logout()
-        }
         window.scrollTo(0, 0);
     }, []);
 
@@ -372,8 +372,21 @@ const DeliveryForm = () => {
         }));
     };
 
-    const capitalizeFirstLetter = (text) => {
-        return text.charAt(0).toUpperCase() + text.slice(1);
+    const corregirCapitalizacion = (texto) => {
+        if (!texto) return '';
+    
+        const excepciones = ['de', 'del', 'la', 'el', 'y', 'en', 'a', 'los', 'las', 'por', 'con', 'para', 'al', 'un', 'una'];
+    
+        return texto
+            .toLocaleLowerCase('es-AR')
+            .split(' ')
+            .map((palabra, index) => {
+                if (excepciones.includes(palabra) && index !== 0) {
+                    return palabra;
+                }
+                return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+            })
+            .join(' ');
     };
     
     const handleDeleteAddress = async (addressId) => {
@@ -395,6 +408,11 @@ const DeliveryForm = () => {
                     className: "custom-toast",
                 });
                 fetchDeliveryForm();
+                setDeliveryAddressFormData({
+                    street: '',
+                    street_number: '',
+                    locality: ''
+                })
             } else {
                 toast('Error al eliminar el domicilio', {
                     position: "top-right",
@@ -425,6 +443,12 @@ const DeliveryForm = () => {
         }
     };
 
+    const disabledInputAddress = {
+        backgroundColor: 'white',
+        color: 'black',
+        cursor: 'not-allowed'
+    }
+
     return (
         
         <>
@@ -444,6 +468,7 @@ const DeliveryForm = () => {
             </div>
             <DeliveryAddress
             deliveryAddressFormData={deliveryAddressFormData}
+            isLoadingDeliveryForm={isLoadingDeliveryForm}
             />
 
             <div className='deliveryFormContainer'>
@@ -489,7 +514,7 @@ const DeliveryForm = () => {
                                                 className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__radio"
                                             />
                                             <span className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__address">
-                                                {capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}
+                                                {corregirCapitalizacion(item.street)} {corregirCapitalizacion(item.street_number)}, {corregirCapitalizacion(item.locality)}
                                             </span>
                                         </label>
                                         <button
@@ -516,7 +541,7 @@ const DeliveryForm = () => {
                     {
                         isLoaded && 
                         <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
-                            <input id='inputSearchAddress' className='deliveryFormContainer__deliveryForm__inputStreet' type="text" placeholder='Dirección' />
+                            <input id='inputSearchAddress' className='deliveryFormContainer__deliveryForm__inputStreet' type="text" placeholder='Buscar dirección' />
                         </StandaloneSearchBox>
                     }
 
@@ -524,37 +549,37 @@ const DeliveryForm = () => {
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Calle:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.street} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='street' type="text" placeholder='Calle' />
+                                <input value={formData.street} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='street' type="text" placeholder='Calle' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Número:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.street_number} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='street_number' type="text" placeholder='Número' />
+                                <input value={formData.street_number} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='street_number' type="text" placeholder='Número' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Localidad:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.locality} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='locality' type="text" placeholder='Localidad' />
+                                <input value={formData.locality} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='locality' type="text" placeholder='Localidad' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Provincia:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.province} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='province' type="text" placeholder='Provincia' />
+                                <input value={formData.province} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='province' type="text" placeholder='Provincia' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>País:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.country} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='country' type="text" placeholder='País' />
+                                <input value={formData.country} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='country' type="text" placeholder='País' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__label'>Código postal:</div>
                             <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer'>
-                                <input value={formData.postal_code} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' name='postal_code' type="text" placeholder='Código postal' />
+                                <input value={formData.postal_code} onChange={handleInputChange} className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput__inputContainer__input' style={disabledInputAddress} disabled name='postal_code' type="text" placeholder='Código postal' />
                             </div>
                         </div>
                         <div className='deliveryFormContainer__deliveryForm__gridLabelInput__labelInput'>

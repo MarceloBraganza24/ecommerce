@@ -3,24 +3,24 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,showLogOutContainer}) => {
+const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
+    const [quantity, setQuantity] = useState(null);
+    const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+    useEffect(() => {
+        if (Array.isArray(userCart.products)) {
+            const totalCount = userCart.products.reduce((sum, p) => sum + p.quantity, 0);
+            setQuantity(totalCount);
+            setIsLoadingUser(false);
+        }
+    }, [userCart]);
+
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
-    let totalQuantity;
-    if(isLoggedIn) {
-        totalQuantity = (userCart.products && Array.isArray(userCart.products)) ? userCart.products.reduce((sum, producto) => sum + producto.quantity, 0) : 0;
-    } else {
-        totalQuantity = 0
-    }
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
-
-    const getTotalQuantity = () => {
-        if (!userCart.products || !Array.isArray(userCart.products)) return null;
-        return userCart.products.reduce((sum, producto) => sum + producto.quantity, 0);
-    }
         
     const handleBtnShowHMenuOptions = () => {
 
@@ -51,9 +51,6 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
         const handleScrollShowCategories = () => setShowCategories(false);
         window.addEventListener("scroll", handleScrollShowCategories);
         window.addEventListener("scroll", handleScrollShowHMenuOptions);
-        if(isLoggedIn) {
-            setShowLogOutContainer(true)
-        } 
         return () => {
             window.removeEventListener("scroll", handleScrollShowCategories);
             window.removeEventListener("scroll", handleScrollShowHMenuOptions);
@@ -70,7 +67,7 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
 
                     <div className='header__logo-menu__hMenuContainer'>
                         {
-                            isLoading ?
+                            isLoading && (role == 'admin') ?
                             <Spinner/>
                             :
                             role == 'admin' && showLogOutContainer &&
@@ -115,21 +112,20 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                                 <img className='header__rightMenu__menu__cart__logo__prop' src="/src/assets/cart.png" alt="" />
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
-                                    {
-                                        isLoading ? (
-                                            <Spinner />
-                                        ) : !isLoggedIn ? (
-                                            <div className='header__rightMenu__menu__cart__number__prop'>0</div>
-                                        ) : !userCart.products ? (
-                                            <Spinner />
-                                        ) : (
-                                            <div className='header__rightMenu__menu__cart__number__prop'>
-                                                {getTotalQuantity()}
-                                            </div>
-                                        )
-                                    }
+                                {
+                                    isLoadingUser || quantity === null ?
+                                        <Spinner />
+                                    :
+                                    <div className='header__rightMenu__menu__cart__number__prop'>
+                                        {
+                                            !isLoggedIn || isLoggedIn === undefined ?
+                                                0
+                                            : 
+                                                quantity
+                                        }
+                                    </div>
+                                }
                             </div>
-
                         </div>
                         {
                             isLoading ?

@@ -1,17 +1,12 @@
 import {useEffect,useState,useContext} from 'react'
 import NavBar from './NavBar'
 import Footer from './Footer'
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom'
 
 
 const About = () => {
-    const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [cookieValue, setCookieValue] = useState('');
-    const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
@@ -27,7 +22,7 @@ const About = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-            //console.log(data)
+    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -41,18 +36,19 @@ const About = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             if (!data.data || !Array.isArray(data.data.products)) {
                 console.warn("Carrito vacío o no válido, asignando array vacío.");
-                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
-            setUserCart(data.data); // ✅ Asignamos los productos al estado del carrito
+            setUserCart(data.data);
             return data.data;
+    
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
@@ -66,7 +62,7 @@ const About = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
         }
     };

@@ -32,6 +32,7 @@ export const ShoppingCartContext = ({children}) => {
             const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
                 method: "DELETE",
             });
+            const data = await response.json();
             if (response.ok) {
                 fetchCartByUserId(user_id)
             }

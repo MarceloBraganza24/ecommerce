@@ -7,19 +7,14 @@ import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
 import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom'
 import Spinner from './Spinner';
 
 const Cart = () => {
-    const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [inputCoupon, setInputCoupon] = useState('');
     const [validatedCoupon, setValidatedCoupon] = useState({});
     const [userCart, setUserCart] = useState({});
     const [cookieValue, setCookieValue] = useState('');
-    //console.log(userCart.user_id)
-    const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -35,13 +30,8 @@ const Cart = () => {
         street_number: "",
         locality: "",
     });
-    const [formData, setFormData] = useState({
-        street: "",
-        street_number: "",
-        locality: ""
-    });
 
-    const {cart, deleteAllItemCart} = useContext(CartContext);
+    const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
 
     useEffect(() => {
@@ -55,8 +45,6 @@ const Cart = () => {
     // const [error, setError] = useState(null);
 
 
-    //const total = userCart?.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0);
-    //const totalQuantity = userCart?.reduce((sum, producto) => sum + producto.quantity, 0);
     const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
     : 0;
     const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
@@ -197,9 +185,10 @@ const Cart = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true)
+            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
+    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -213,18 +202,19 @@ const Cart = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             if (!data.data || !Array.isArray(data.data.products)) {
                 console.warn("Carrito vacío o no válido, asignando array vacío.");
-                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
-            setUserCart(data.data); // ✅ Asignamos los productos al estado del carrito
+            setUserCart(data.data);
             return data.data;
+    
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
@@ -238,12 +228,13 @@ const Cart = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
         } finally {
-            setIsLoadingProducts(false)
+            setIsLoadingProducts(false);
         }
     };
+    
 
     const fetchCategories = async () => {
         try {
@@ -355,11 +346,6 @@ const Cart = () => {
         fetchCategories();
         fetchDeliveryForm();
         //cotizarEnvio()
-        if(cookieValue) {
-            login()
-        } else {
-            logout()
-        }
         window.scrollTo(0, 0);
     }, []);
   

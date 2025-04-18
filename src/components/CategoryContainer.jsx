@@ -4,17 +4,12 @@ import { useParams,useNavigate, Link } from 'react-router-dom'
 import NavBar from './NavBar';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const CategoryContainer = () => {
-    const [currentPage, setCurrentPage] = useState(1);  // 👈 Estado para manejar la página actual
-    const [totalPages, setTotalPages] = useState(1);  // 👈 Estado para almacenar el total de páginas
 
     const [cookieValue, setCookieValue] = useState('');
-    const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
@@ -26,11 +21,6 @@ const CategoryContainer = () => {
         street: "",
         street_number: "",
         locality: "",
-    });
-    const [formData, setFormData] = useState({
-        street: "",
-        street_number: "",
-        locality: ""
     });
     const [pageInfo, setPageInfo] = useState({
         page: 1,
@@ -46,10 +36,6 @@ const CategoryContainer = () => {
 
     const {category} = useParams()
     const productsByCategory = products.filter((product) => product.category == category)
-
-    useEffect(() => {
-        fetchProducts();
-    }, [currentPage, category]);
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -81,9 +67,10 @@ const CategoryContainer = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
+            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-            //console.log(data)
+    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -97,18 +84,19 @@ const CategoryContainer = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setUserCart([]); // Si hay un error, aseguramos que el carrito esté vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             if (!data.data || !Array.isArray(data.data.products)) {
                 console.warn("Carrito vacío o no válido, asignando array vacío.");
-                setUserCart([]); // Si el carrito no tiene productos, lo dejamos vacío
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
                 return [];
             }
     
             setUserCart(data.data);
             return data.data;
+    
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             toast('Error en la conexión', {
@@ -122,8 +110,10 @@ const CategoryContainer = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            setUserCart([]); // Si hay un error en la petición, dejamos el carrito vacío
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
+        } finally {
+            setIsLoadingProducts(false);
         }
     };
 
