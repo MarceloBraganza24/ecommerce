@@ -8,11 +8,19 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
     const [isLoadingUser, setIsLoadingUser] = useState(true);
 
     useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (!userCart || !Array.isArray(userCart.products)) {
+                setQuantity(0);
+                setIsLoadingUser(false);
+            }
+        }, 1000);
         if (Array.isArray(userCart.products)) {
             const totalCount = userCart.products.reduce((sum, p) => sum + p.quantity, 0);
             setQuantity(totalCount);
             setIsLoadingUser(false);
+            clearTimeout(timeout); // Cancela el timeout si ya tenemos info
         }
+        return () => clearTimeout(timeout); // Limpieza por si desmonta
     }, [userCart]);
 
     const [showHMenuOptions, setShowHMenuOptions] = useState(false);

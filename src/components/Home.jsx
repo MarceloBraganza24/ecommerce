@@ -27,6 +27,7 @@ const Home = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
     const [cookieValue, setCookieValue] = useState('');
+    //console.log(cookieValue)
     const [products, setProducts] = useState([]);
     const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
@@ -75,7 +76,6 @@ const Home = () => {
             setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -176,7 +176,6 @@ const Home = () => {
             setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&limit=9`)
             const productsAll = await response.json();
-            //console.log(productsAll.data)
             setPaginatedProducts(productsAll.data.docs)
             setPageInfo({
                 page: productsAll.data.page,
@@ -248,7 +247,6 @@ const Home = () => {
               setIsVisible(false);
             }
         };
-      
         window.addEventListener('scroll', toggleVisibility);
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);

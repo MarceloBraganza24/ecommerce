@@ -1,8 +1,5 @@
 import {useEffect,useState,useContext} from 'react'
-import NavBar from './NavBar'
-import Footer from './Footer'
 import { Link,useNavigate } from 'react-router-dom';
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 
 const Login = () => {
@@ -11,7 +8,6 @@ const Login = () => {
         email: '',
         password: '',
     });
-    const {login} = useContext(IsLoggedContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -60,6 +56,7 @@ const Login = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/sessions/login`, {
                 method: 'POST',         
+                credentials: 'include', // 👈 necesario para recibir cookies
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -71,11 +68,6 @@ const Login = () => {
             })
             const data = await response.json();
             if (response.ok) {
-                const tokenJWT = data.data;
-                const expirationDate = new Date();
-                expirationDate.setDate(expirationDate.getDate() + 1);
-                const cookieJWT = `TokenJWT=${tokenJWT}; expires=${expirationDate.toUTCString()}`;
-                document.cookie = cookieJWT;
                 navigate("/");
                 toast('Bienvenido, has iniciado sesion con éxito!', {
                     position: "top-right",
@@ -88,7 +80,6 @@ const Login = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                login();
             }
             if(data.error === 'incorrect credentials') {
                 toast('Alguno de los datos ingresados es incorrecto. Inténtalo nuevamente!', {

@@ -33,9 +33,17 @@ const CategoryContainer = () => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-
+    
     const {category} = useParams()
     const productsByCategory = products.filter((product) => product.category == category)
+
+    useEffect(() => {
+        if (category) {
+            setProducts([]); // Limpiá productos anteriores
+            setIsLoadingProducts(true);
+            fetchProducts();
+        }
+    }, [category]);
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -67,7 +75,7 @@ const CategoryContainer = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true);
+            //setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
     
@@ -186,7 +194,7 @@ const CategoryContainer = () => {
 
     const fetchProducts = async (page = 1) => {
         try {
-            setIsLoadingProducts(true);  
+            //setIsLoadingProducts(true);  
             const url = new URL(`http://localhost:8081/api/products/by`, window.location.origin);
             const params = new URLSearchParams();
     
@@ -198,6 +206,7 @@ const CategoryContainer = () => {
             
             const response = await fetch(url);
             const data = await response.json();
+            //console.log(data)
             if (response.ok) {
                 setProducts(data.data);  // 👈 Guarda los productos correctamente
                 setPageInfo({
@@ -350,12 +359,15 @@ const CategoryContainer = () => {
                             <>
                             <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet'>
                                 <div className='categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__label'>Aún no existen productos con esta categoría</div>
-                                <Link
+                                {
+                                    user.role == 'admin' &&
+                                    <Link
                                     to={`/cpanel/products`}
                                     className="categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__link"
                                     >
-                                    Agregar productos
-                                </Link>
+                                        Agregar productos
+                                    </Link>
+                                }
                             </div>
                             </>
                             
