@@ -92,7 +92,7 @@ const ItemDetailContainer = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true);
+            //setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
     

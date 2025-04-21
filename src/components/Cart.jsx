@@ -29,7 +29,11 @@ const Cart = () => {
         street: "",
         street_number: "",
         locality: "",
+        province: "",
+        country: "",
+        postal_code: "",
     });
+    console.log(deliveryAddressFormData)
 
     const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
@@ -39,20 +43,41 @@ const Cart = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
-    
-    //const [codigoPostal, setCodigoPostal] = useState("");
-    // const [costoEnvio, setCostoEnvio] = useState(null);
-    // const [error, setError] = useState(null);
-
 
     const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
     : 0;
     const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
     const discountPercentage = validatedCoupon.discount;
     const totalWithDiscount = total - (total * (discountPercentage / 100));
+    
+    /* function calcularPesoTotal(carrito) {
+        const pesoPorUnidadKg = 0.6; // 600 gramos
+        let total = 0;
+      
+        carrito.forEach(item => {
+          total += item.cantidad * pesoPorUnidadKg;
+        });
+      
+        return total;
+    }
+    const pesoTotal = calcularPesoTotal(userCart.products);
+
+    const calcularEnvio = async (direccionCliente) => {
+        const envioData = await fetch("https://tu-cloudrun-url/calcular-envio", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              direccionCliente,
+              pesoTotal
+            }),
+        });
+        envioData()
+    } */
 
     useEffect(() => {
         if (user?.selected_addresses) {
+            // const direccionCliente = `${user.selected_addresses.street} ${user.selected_addresses.street_number}, ${user.selected_addresses.locality}, ${user.selected_addresses.province}, ${user.selected_addresses.postal_code}, ${user.selected_addresses.country}`;
+            // calcularEnvio(direccionCliente)
             // Buscar la dirección en deliveryForms para asegurarnos de que tenga un _id
             const matchedAddress = deliveryForms.find(item => 
                 item.street === user.selected_addresses.street &&
@@ -65,7 +90,10 @@ const Cart = () => {
                 setDeliveryAddressFormData({
                     street: user.selected_addresses.street,
                     street_number: user.selected_addresses.street_number,
-                    locality: user.selected_addresses.locality
+                    locality: user.selected_addresses.locality,
+                    province: user.selected_addresses.province,
+                    country: user.selected_addresses.country,
+                    postal_code: user.selected_addresses.postal_code,
                 })
             } else {
                 setSelectedAddress(user.selected_addresses); // Usa la dirección guardada
@@ -160,32 +188,10 @@ const Cart = () => {
         }
     }
 
-    /* const cotizarEnvio = async () => {
-        setError(null);
-        setCostoEnvio(null);
     
-        try {
-          const response = await fetch("http://localhost:8081/api/shipping/cotizar-envio", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ destino: codigoPostal, peso: 1 }), // Peso en kg
-          });
-    
-          const data = await response.json();
-    
-          if (response.ok) {
-            setCostoEnvio(`Costo: $${data.precio} - Entrega en ${data.tiempo_estimado} días`);
-          } else {
-            setError(data.error || "No se pudo calcular el costo.");
-          }
-        } catch (err) {
-          setError("Error en la conexión con el servidor.");
-        }
-    }; */
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
     
