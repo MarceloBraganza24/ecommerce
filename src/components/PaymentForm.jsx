@@ -1,224 +1,4 @@
-/* import { useEffect,useContext, useRef } from "react";
-import { CartContext } from '../context/ShoppingCartContext';
-
-const PaymentForm = () => {
-    const {cart} = useContext(CartContext);
-    const cardForm = useRef(null);
-    const totalAmount = cart.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-    );
-
-    useEffect(() => {
-        const mp = new window.MercadoPago("TEST-45f14b6b-51ab-458d-8e4b-6129dc586136");
-    
-        cardForm.current = mp.cardForm({
-            amount: "1000", // Precio final del producto
-            autoMount: true,
-            form: {
-            id: "form-checkout", // El ID de tu form
-            cardholderName: {
-                id: "form-checkout__cardholderName",
-                placeholder: "Nombre del titular"
-            },
-            cardholderEmail: {
-                id: "form-checkout__cardholderEmail",
-                placeholder: "Email"
-            },
-            cardNumber: {
-                id: "form-checkout__cardNumber",
-                placeholder: "Número de la tarjeta"
-            },
-            expirationDate: {
-                id: "form-checkout__expirationDate",
-                placeholder: "MM/YY"
-            },
-            securityCode: {
-                id: "form-checkout__securityCode",
-                placeholder: "CVV"
-            },
-            installments: {
-                id: "form-checkout__installments"
-            },
-            identificationType: {
-                id: "form-checkout__identificationType"
-            },
-            identificationNumber: {
-                id: "form-checkout__identificationNumber",
-                placeholder: "Número de documento"
-            },
-            issuer: {
-                id: "form-checkout__issuer"
-            }
-            },
-            callbacks: {
-                onFormMounted: error => {
-                  if (error) return console.warn("Error al montar el formulario: ", error);
-                },
-                onSubmit: event => {
-                    event.preventDefault();
-                
-                    const {
-                        paymentMethodId,
-                        issuerId,
-                        cardholderEmail,
-                        amount,
-                        token,
-                        installments,
-                        identificationNumber,
-                        identificationType
-                    } = cardForm.current.getCardFormData();
-                
-                    // 🚀 Mandás al backend el token del pago + carrito completo
-                    fetch("http://localhost:3001/process-payment", {
-                        method: "POST",
-                        headers: {
-                        "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                        token,
-                        issuer_id: issuerId,
-                        payment_method_id: paymentMethodId,
-                        transaction_amount: totalAmount, // Total calculado en el carrito
-                        installments: Number(installments),
-                        description: "Compra en mi tienda",
-                        payer: {
-                            email: cardholderEmail,
-                            identification: {
-                            type: identificationType,
-                            number: identificationNumber
-                            }
-                        },
-                        // 🚀 Mandás los items del carrito para guardar después
-                        items: cart 
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(result => {
-                        if (result.status === "approved") {
-                            // Mostrás mensaje de éxito o redirigís
-                            alert("¡Pago exitoso!");
-                        } else {
-                            alert("Hubo un problema con el pago");
-                        }
-                        })
-                        .catch(error => {
-                        console.error(error);
-                    });
-                }
-            }
-        });
-    }, []);
-
-    return (
-        
-        <>
-
-            <div className='headerPurchase'>
-                            
-                <img className='headerPurchase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
-                
-            </div>
-
-            <div className="paymentFormContainer">
-
-                <div className="paymentFormContainer__paymentForm">
-
-                    <div className="paymentFormContainer__paymentForm__title">
-                        <div className="paymentFormContainer__paymentForm__title__prop">Datos del pago</div>
-                    </div>
-
-                    <div className="paymentFormContainer__paymentForm__form">
-
-                        <form id="form-checkout"className="paymentFormContainer__paymentForm__form__gridLabelInput">
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__cardholderName" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Nombre</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" type="text" id="form-checkout__cardholderName" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__cardholderEmail" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Email</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" type="email" id="form-checkout__cardholderEmail" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__cardNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Número de la tarjeta</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__cardNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__expirationDate" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Fecha de vencimiento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__expirationDate" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__securityCode" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Código de seguridad</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input type="text" id="form-checkout__securityCode" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__installments" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Cuotas</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select id="form-checkout__installments" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input"></select>
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__identificationType" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Tipo de documento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select id="form-checkout__identificationType" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input"></select>
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__identificationNumber" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Número de documento</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <input className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" type="text" id="form-checkout__identificationNumber" />
-                                </div>
-                            </div>
-
-                            <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput'>
-                                <label htmlFor="form-checkout__issuer" className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__label">Banco emisor</label>
-                                <div className='paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer'>
-                                    <select className="paymentFormContainer__paymentForm__form__gridLabelInput__labelInput__inputContainer__input" id="form-checkout__issuer"></select>
-                                </div>
-                            </div>
-
-                            <div></div>
-                            
-                            <div className="paymentFormContainer__paymentForm__form__gridLabelInput__btn">
-                                <button className="paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop" type="submit">Pagar</button>
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
-            </div>
-        
-        </>
-        
-    )
-
-}
-
-export default PaymentForm */
-
-
-import React, { useEffect, useState,useContext } from 'react';
+/* import React, { useEffect, useState,useContext } from 'react';
 import { CartContext } from '../context/ShoppingCartContext';
 
 const PaymentForm = () => {
@@ -389,28 +169,19 @@ const PaymentForm = () => {
         e.preventDefault();
         if (loading) return;
         setLoading(true);
-
+    
         if (!cardExpirationMonth || !cardExpirationYear || !securityCode || !cardNumber) {
             alert('Por favor completá todos los datos.');
+            setLoading(false);
             return;
         }
-
+    
         if (!validateForm()) {
-            return; // Corta el flujo si hay algún error
-        }
-
-        let token = null;
-        try {
-            const tokenResult = await mp.createCardToken(cardData);
-            token = tokenResult.id;
-        } catch (tokenError) {
-            console.error('Error creando el token de la tarjeta:', tokenError);
-            alert('Error con los datos de la tarjeta. Revisá los campos.');
+            setLoading(false);
             return;
         }
-  
-        try {
-            const cardData = {
+    
+        const cardData = {
             cardNumber,
             cardholderName,
             cardExpirationMonth,
@@ -418,47 +189,58 @@ const PaymentForm = () => {
             securityCode,
             identificationType: docType,
             identificationNumber: docNumber
-            };
+        };
     
-            /* const { id: token } = await mp.createCardToken(cardData); */
+        let token = null;
+        try {
+            const tokenResult = await mp.createCardToken(cardData);
+            token = tokenResult.id;
+        } catch (tokenError) {
+            console.error('Error creando el token de la tarjeta:', tokenError);
+            alert('Error con los datos de la tarjeta. Revisá los campos.');
+            setLoading(false);
+            return;
+        }
     
-            // Payload para enviar al backend
+        try {
             const paymentData = {
-            token,
-            transaction_amount: amount,
-            description: 'Compra Ecommerce',
-            installments: Number(selectedInstallment),
-            payment_method_id: paymentMethodId,
-            issuer_id: issuerId,
-            payer: {
-                email: 'marceebraga@gmail.com', // Email del cliente
-                identification: {
-                type: docType,
-                number: docNumber
-                }
-            },
-            items: cart
+                token,
+                transaction_amount: amount,
+                description: 'Compra Ecommerce',
+                installments: Number(selectedInstallment),
+                payment_method_id: paymentMethodId,
+                issuer_id: issuerId,
+                payer: {
+                    email: 'marceebraga@gmail.com', // Email del cliente
+                    identification: {
+                        type: docType,
+                        number: docNumber
+                    }
+                },
+                items: cart
             };
     
-            // Enviás el pago al backend
             const response = await fetch('http://localhost:3001/process-payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentData)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentData)
             });
     
             const result = await response.json();
     
             if (result.status === 'approved') {
-            alert('¡Pago exitoso! 🎉');
+                alert('¡Pago exitoso! 🎉');
             } else {
-            alert('Pago rechazado ❌');
+                alert('Pago rechazado ❌');
             }
         } catch (error) {
             console.error('Error al procesar el pago:', error);
             alert('Error en el pago ❌');
+        } finally {
+            setLoading(false);
         }
     };
+    
 
     return (
         
@@ -490,7 +272,7 @@ const PaymentForm = () => {
                                     type="text"
                                     value={cardNumber}
                                     onChange={handleCardNumberChange}
-                                    maxLength={16}
+                                    maxLength={19}
                                     required
                                     placeholder='Número de tarjeta'
                                 />
@@ -626,7 +408,6 @@ const PaymentForm = () => {
                             <div></div>
                             
                             <div className="paymentFormContainer__paymentForm__form__gridLabelInput__btn">
-                                {/* <button className='paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop' type="submit" style={styles.button}>Pagar ${amount}</button> */}
                                 <button
                                     className='paymentFormContainer__paymentForm__form__gridLabelInput__btn__prop'
                                     type="submit"
@@ -679,5 +460,91 @@ const styles = {
       cursor: 'pointer'
     }
   };
+
+export default PaymentForm */
+
+
+import React, { useEffect } from 'react';
+
+const publicKey = 'TEST-45f14b6b-51ab-458d-8e4b-6129dc586136';
+
+const PaymentForm = () => {
+
+    useEffect(() => {
+        const mp = new window.MercadoPago(publicKey);
+        mp.cardForm({
+            amount: '1000', // Podés actualizar este valor con el total del carrito
+            autoMount: true,
+            form: {
+                id: 'form-pago',
+                cardholderName: { id: 'cardholderName' },
+                cardholderEmail: { id: 'cardholderEmail' },
+                cardNumber: { id: 'cardNumber' },
+                expirationDate: { id: 'expirationDate' },
+                securityCode: { id: 'securityCode' },
+                installments: { id: 'installments' },
+                identificationType: { id: 'identificationType' },
+                identificationNumber: { id: 'identificationNumber' },
+            },
+            callbacks: {
+                onFormMounted: error => {
+                if (error) console.error('Error al montar el formulario', error);
+                },
+                onSubmit: async event => {
+                event.preventDefault();
+        
+                const cardFormData = await mp.cardForm().getCardFormData();
+        
+                const response = await fetch('/api/payments/generate-purchase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                    token: cardFormData.token,
+                    payment_method_id: cardFormData.paymentMethodId,
+                    transaction_amount: parseFloat(cardFormData.amount),
+                    installments: Number(cardFormData.installments),
+                    payer: {
+                        email: cardFormData.payer.email,
+                        identification: {
+                        type: cardFormData.payer.identification.type,
+                        number: cardFormData.payer.identification.number,
+                        },
+                    },
+                    }),
+                });
+        
+                const resultado = await response.json();
+                console.log('Resultado del pago:', resultado);
+        
+                if (resultado.status === 'approved') {
+                    alert('¡Pago aprobado!');
+                } else {
+                    alert(`Estado del pago: ${resultado.status}`);
+                }
+                },
+            },
+        });
+    }, []);
+    
+
+    return (
+        
+        <>
+            <form id="form-pago" onSubmit={handleSubmit}>
+                <input type="text" id="cardholderName" placeholder="Nombre del titular" />
+                <input type="email" id="cardholderEmail" placeholder="Email" />
+                <input type="text" id="cardNumber" placeholder="Número de tarjeta" />
+                <input type="text" id="expirationDate" placeholder="MM/AA" />
+                <input type="text" id="securityCode" placeholder="CVV" />
+                <select id="identificationType"></select>
+                <input type="text" id="identificationNumber" placeholder="DNI" />
+                <select id="installments"></select>
+                <button type="submit">Pagar</button>
+            </form>
+        </>
+        
+    )
+
+}
 
 export default PaymentForm

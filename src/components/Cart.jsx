@@ -33,7 +33,7 @@ const Cart = () => {
         country: "",
         postal_code: "",
     });
-    console.log(deliveryAddressFormData)
+    //console.log(deliveryAddressFormData)
 
     const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
