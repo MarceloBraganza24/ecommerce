@@ -1,5 +1,5 @@
 import {useState,useContext,useEffect} from 'react'
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
@@ -24,6 +24,7 @@ const Shipping = () => {
         street_number: "",
         locality: ""
     });
+    const navigate = useNavigate();
 
     const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
     : 0;
@@ -299,7 +300,8 @@ const Shipping = () => {
         const cookieValue = getCookie('TokenJWT');
         if(cookieValue) {
             setCookieValue(cookieValue)
-        } 
+        }
+        if(!cookieValue)navigate('/') 
         fetchUser(cookieValue);
         fetchDeliveryForm();
         fetchSellerAddresses();

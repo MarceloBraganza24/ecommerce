@@ -1,14 +1,6 @@
-/* import React, { useEffect, useState,useContext } from 'react';
-import { CartContext } from '../context/ShoppingCartContext';
+import React, { useEffect, useState,useContext } from 'react';
 
 const PaymentForm = () => {
-
-    const {cart} = useContext(CartContext);
-    const totalAmount = cart.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-    );
-
     const [mp, setMp] = useState(null);
 
     const [cardNumber, setCardNumber] = useState('');
@@ -28,11 +20,114 @@ const PaymentForm = () => {
     const [issuers, setIssuers] = useState([]);
 
     const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState('');
+    const [userCart, setUserCart] = useState({});
   
-    const amount = totalAmount; // Monto total a pagar
+    const [amount, setAmount] = useState(0);
+
+    useEffect(() => {
+        
+        if(userCart.products && Array.isArray(userCart.products)) {
+            const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0): 0;
+            setAmount(total)
+            /* const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
+            setTotalQuantity(totalQuantity)
+            const discountPercentage = validatedCoupon.discount;
+            const totalWithDiscount = total - (total * (discountPercentage / 100));
+            setTotalWithDiscount(totalWithDiscount) */
+        }
+
+    }, [userCart]);
+
+    const fetchCartByUserId = async (user_id) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
+            const data = await response.json();
+    
+            if (!response.ok) {
+                console.error("Error al obtener el carrito:", data);
+                toast('Error al cargar el carrito del usuario actual', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
+                return [];
+            }
+    
+            if (!data.data || !Array.isArray(data.data.products)) {
+                console.warn("Carrito vacío o no válido, asignando array vacío.");
+                setUserCart({ user_id, products: [] }); // 👈 cambio clave
+                return [];
+            }
+    
+            setUserCart(data.data);
+            return data.data;
+    
+        } catch (error) {
+            console.error("Error al obtener el carrito:", error);
+            toast('Error en la conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            setUserCart({ user_id, products: [] }); // 👈 cambio clave
+            return [];
+        }
+    };
+
+    const fetchUser = async (cookieValue) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                console.log('set is loading false')
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
   
     // Inicializamos MercadoPago SDK
     useEffect(() => {
+        const getCookie = (name) => {
+            const cookieName = name + "=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+            }
+            return "";
+        };
+        const cookieValue = getCookie('TokenJWT');
+        /* if(cookieValue) {
+            setCookieValue(cookieValue)
+        }  */
+        fetchUser(cookieValue);
         const mpInstance = new window.MercadoPago('TEST-45f14b6b-51ab-458d-8e4b-6129dc586136', {
             locale: 'es-AR'
         });
@@ -43,17 +138,22 @@ const PaymentForm = () => {
             if (types.length > 0) setDocType(types[0].id);
         });
     }, []);
-
+    
+    const cleanedCardNumber = cardNumber.replace(/\s+/g, '');
     const validateForm = () => {
         const cardNumberRegex = /^[0-9]{13,19}$/;
         const nameRegex = /^[A-Za-zÁÉÍÓÚÑáéíóúñ ]{3,50}$/;
         const cvvRegex = /^[0-9]{3,4}$/;
         const docNumberRegex = /^[0-9]{6,11}$/;
-      
-        if (!cardNumberRegex.test(cardNumber)) {
-          alert('Número de tarjeta inválido');
-          return false;
-        }
+        
+        /* if (!cardNumberRegex.test(cardNumber)) {
+            alert('Número de tarjeta inválido');
+            return false;
+            } */
+        if (!cardNumberRegex.test(cleanedCardNumber)) {
+            alert('Número de tarjeta inválido');
+            return false;
+          }
       
         if (!nameRegex.test(cardholderName)) {
           alert('Nombre del titular inválido');
@@ -182,7 +282,7 @@ const PaymentForm = () => {
         }
     
         const cardData = {
-            cardNumber,
+            cardNumber: cleanedCardNumber,
             cardholderName,
             cardExpirationMonth,
             cardExpirationYear,
@@ -205,28 +305,31 @@ const PaymentForm = () => {
         try {
             const paymentData = {
                 token,
-                transaction_amount: amount,
+                transaction_amount: Number(amount),
                 description: 'Compra Ecommerce',
                 installments: Number(selectedInstallment),
                 payment_method_id: paymentMethodId,
                 issuer_id: issuerId,
                 payer: {
-                    email: 'marceebraga@gmail.com', // Email del cliente
+                    //email: 'marceebraga@gmail.com', // Email del cliente
+                    email: user.email, // Email del cliente
                     identification: {
                         type: docType,
                         number: docNumber
                     }
                 },
-                items: cart
+                items: userCart.products
             };
+            console.log(paymentData)
     
-            const response = await fetch('http://localhost:3001/process-payment', {
+            const response = await fetch('http://localhost:8081/api/payments/generate-purchase', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(paymentData)
             });
     
             const result = await response.json();
+            console.error(result)
     
             if (result.status === 'approved') {
                 alert('¡Pago exitoso! 🎉');
@@ -461,19 +564,31 @@ const styles = {
     }
   };
 
-export default PaymentForm */
+export default PaymentForm
 
 
-import React, { useEffect } from 'react';
+/* import React, { useEffect, useState, useRef } from 'react';
 
 const publicKey = 'TEST-45f14b6b-51ab-458d-8e4b-6129dc586136';
 
 const PaymentForm = () => {
+    const [loading, setLoading] = useState(false);
+    const formRef = useRef(null);
 
     useEffect(() => {
+        if (!window.MercadoPago) {
+            console.error('Mercado Pago SDK aún no está disponible');
+            return;
+        }
+        // Verificamos si el formulario ya fue montado
+        if (formRef.current && formRef.current.querySelector('iframe')) {
+            console.log('Formulario ya montado, evitando montaje duplicado');
+            return;
+        }
         const mp = new window.MercadoPago(publicKey);
+    
         mp.cardForm({
-            amount: '1000', // Podés actualizar este valor con el total del carrito
+            amount: '1000', // podés reemplazar con el total de tu carrito
             autoMount: true,
             form: {
                 id: 'form-pago',
@@ -485,66 +600,103 @@ const PaymentForm = () => {
                 installments: { id: 'installments' },
                 identificationType: { id: 'identificationType' },
                 identificationNumber: { id: 'identificationNumber' },
+                issuer: { id: 'issuer' },
             },
             callbacks: {
                 onFormMounted: error => {
-                if (error) console.error('Error al montar el formulario', error);
+                  if (error) return console.warn('Form mounted handling error: ', error);
+                  console.log('Formulario montado correctamente');
                 },
                 onSubmit: async event => {
-                event.preventDefault();
-        
-                const cardFormData = await mp.cardForm().getCardFormData();
-        
-                const response = await fetch('/api/payments/generate-purchase', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                    token: cardFormData.token,
-                    payment_method_id: cardFormData.paymentMethodId,
-                    transaction_amount: parseFloat(cardFormData.amount),
-                    installments: Number(cardFormData.installments),
-                    payer: {
-                        email: cardFormData.payer.email,
-                        identification: {
-                        type: cardFormData.payer.identification.type,
-                        number: cardFormData.payer.identification.number,
-                        },
-                    },
-                    }),
-                });
-        
-                const resultado = await response.json();
-                console.log('Resultado del pago:', resultado);
-        
-                if (resultado.status === 'approved') {
-                    alert('¡Pago aprobado!');
-                } else {
-                    alert(`Estado del pago: ${resultado.status}`);
-                }
+                    event.preventDefault();
+                    setLoading(true);
+            
+                    try {
+                        const cardFormData = await mp.cardForm().getCardFormData();
+            
+                        if (
+                        !cardFormData.token ||
+                        !cardFormData.payer.email ||
+                        !cardFormData.payer.identification.number
+                        ) {
+                        alert('Por favor completá todos los campos.');
+                        setLoading(false);
+                        return;
+                        }
+            
+                        const response = await fetch('http://localhost:8081/api/payments/generate-purchase', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                token: cardFormData.token,
+                                payment_method_id: cardFormData.paymentMethodId,
+                                issuer_id: cardFormData.issuer.id,
+                                transaction_amount: parseFloat(cardFormData.amount),
+                                installments: Number(cardFormData.installments),
+                                payer: {
+                                    email: cardFormData.payer.email,
+                                    identification: {
+                                        type: cardFormData.payer.identification.type,
+                                        number: cardFormData.payer.identification.number,
+                                    },
+                                },
+                            }),
+                        });
+            
+                        const resultado = await response.json();
+            
+                        switch (resultado.status) {
+                            case 'approved':
+                                alert('✅ ¡Pago aprobado! Muchas gracias por tu compra.');
+                                break;
+                            case 'in_process':
+                                alert('⏳ Tu pago está en proceso. Te avisaremos cuando se confirme.');
+                                break;
+                            case 'rejected':
+                                alert('❌ El pago fue rechazado. Probá con otra tarjeta.');
+                                break;
+                            default:
+                                alert(`⚠️ Estado del pago: ${resultado.status}`);
+                        }
+                    } catch (error) {
+                        console.error('Error al enviar el pago', error);
+                        alert('Hubo un error al procesar el pago. Intentá nuevamente.');
+                    } finally {
+                        setLoading(false);
+                    }
                 },
+                onFetching: (resource) => {
+                  console.log('Fetching resource: ', resource);
+                  return () => console.log('Stop fetching');
+                },
+                onValidityChange: (data) => {
+                  // Podés usarlo para mostrar errores de validación en tiempo real si querés
+                  console.log('Validez actual del form: ', data);
+                }
             },
         });
+        return () => {
+            formRef.current = null;
+        };
     }, []);
     
-
     return (
-        
-        <>
-            <form id="form-pago" onSubmit={handleSubmit}>
-                <input type="text" id="cardholderName" placeholder="Nombre del titular" />
-                <input type="email" id="cardholderEmail" placeholder="Email" />
-                <input type="text" id="cardNumber" placeholder="Número de tarjeta" />
-                <input type="text" id="expirationDate" placeholder="MM/AA" />
-                <input type="text" id="securityCode" placeholder="CVV" />
-                <select id="identificationType"></select>
-                <input type="text" id="identificationNumber" placeholder="DNI" />
-                <select id="installments"></select>
-                <button type="submit">Pagar</button>
-            </form>
-        </>
-        
-    )
+        <form id="form-pago" ref={formRef}>
+            <input type="text" id="cardholderName" placeholder="Nombre del titular" />
+            <input type="email" id="cardholderEmail" placeholder="Email" />
+            <input type="text" id="cardNumber" placeholder="Número de tarjeta" />
+            <input type="text" id="expirationDate" placeholder="MM/AA" />
+            <input type="text" id="securityCode" placeholder="CVV" />
+            <select id="identificationType"></select>
+            <input type="text" id="identificationNumber" placeholder="DNI" />
+            <select id="issuer"></select>
+            <select id="installments"></select>
+            <button type="submit" disabled={loading}>
+                {loading ? 'Procesando...' : 'Pagar'}
+            </button>
+        </form>
+    );
 
 }
 
-export default PaymentForm
+export default PaymentForm */

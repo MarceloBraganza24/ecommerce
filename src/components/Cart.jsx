@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
@@ -33,7 +32,6 @@ const Cart = () => {
         country: "",
         postal_code: "",
     });
-    //console.log(deliveryAddressFormData)
 
     const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
@@ -44,41 +42,32 @@ const Cart = () => {
         }
     }, [user.isLoggedIn]);
 
-    const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
+    const [total, setTotal] = useState('');
+    const [totalQuantity, setTotalQuantity] = useState('');
+    const [totalWithDiscount, setTotalWithDiscount] = useState('');
+    
+    useEffect(() => {
+        
+        if(userCart.products && Array.isArray(userCart.products) && validatedCoupon) {
+            const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0): 0;
+            setTotal(total)
+            const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
+            setTotalQuantity(totalQuantity)
+            const discountPercentage = validatedCoupon.discount;
+            const totalWithDiscount = total - (total * (discountPercentage / 100));
+            setTotalWithDiscount(totalWithDiscount)
+        }
+
+    }, [userCart,validatedCoupon]);
+
+    /* const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
     : 0;
     const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
     const discountPercentage = validatedCoupon.discount;
-    const totalWithDiscount = total - (total * (discountPercentage / 100));
+    const totalWithDiscount = total - (total * (discountPercentage / 100)); */
     
-    /* function calcularPesoTotal(carrito) {
-        const pesoPorUnidadKg = 0.6; // 600 gramos
-        let total = 0;
-      
-        carrito.forEach(item => {
-          total += item.cantidad * pesoPorUnidadKg;
-        });
-      
-        return total;
-    }
-    const pesoTotal = calcularPesoTotal(userCart.products);
-
-    const calcularEnvio = async (direccionCliente) => {
-        const envioData = await fetch("https://tu-cloudrun-url/calcular-envio", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              direccionCliente,
-              pesoTotal
-            }),
-        });
-        envioData()
-    } */
-
     useEffect(() => {
         if (user?.selected_addresses) {
-            // const direccionCliente = `${user.selected_addresses.street} ${user.selected_addresses.street_number}, ${user.selected_addresses.locality}, ${user.selected_addresses.province}, ${user.selected_addresses.postal_code}, ${user.selected_addresses.country}`;
-            // calcularEnvio(direccionCliente)
-            // Buscar la dirección en deliveryForms para asegurarnos de que tenga un _id
             const matchedAddress = deliveryForms.find(item => 
                 item.street === user.selected_addresses.street &&
                 item.street_number === user.selected_addresses.street_number &&
@@ -351,7 +340,6 @@ const Cart = () => {
         fetchUser(cookieValue);
         fetchCategories();
         fetchDeliveryForm();
-        //cotizarEnvio()
         window.scrollTo(0, 0);
     }, []);
   

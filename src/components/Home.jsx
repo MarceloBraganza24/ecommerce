@@ -417,6 +417,8 @@ const Home = () => {
                             <div className="catalogContainer__grid__catalog__filteredProductsList">
                                 {objetosFiltrados.map((product) => (
                                     <ItemProduct
+                                    user_id={user._id} 
+                                    fetchCartByUserId={fetchCartByUserId}
                                     id={product._id}
                                     images={product.images}
                                     title={product.title}
@@ -474,6 +476,8 @@ const Home = () => {
                                             {items.slice(0, 10).map((product) => (
                                             <SwiperSlide key={product._id}>
                                                 <ItemProduct
+                                                user_id={user._id} 
+                                                fetchCartByUserId={fetchCartByUserId}
                                                 id={product._id}
                                                 images={product.images}
                                                 title={product.title}

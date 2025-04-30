@@ -27,7 +27,7 @@ export const ShoppingCartContext = ({children}) => {
     
     
 
-    const deleteItemCart = async (user_id,id,fetchCartByUserId) => {
+    /* const deleteItemCart = async (user_id,id,fetchCartByUserId) => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
                 method: "DELETE",
@@ -38,6 +38,34 @@ export const ShoppingCartContext = ({children}) => {
             }
         } catch (error) {
             console.error(error);
+        }
+    }; */
+    const deleteItemCart = async (user_id, id, fetchCartByUserId) => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
+                method: "DELETE",
+            });
+            const data = await response.json();
+            if (response.ok) {
+                fetchCartByUserId(user_id);
+                toast('Has eliminado el producto del carrito!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                return true; // ✅ indica que todo salió bien
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error(error);
+            return false;
         }
     };
 

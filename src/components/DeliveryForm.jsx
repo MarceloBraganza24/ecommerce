@@ -9,6 +9,8 @@ import Spinner from './Spinner';
 const DeliveryForm = () => {
     const [user, setUser] = useState('');
     const [cookieValue, setCookieValue] = useState('');
+    const [loadingDeleteId, setLoadingDeleteId] = useState(null);
+    const [loadingSaveDeliveryForm, setLoadingSaveDeliveryForm] = useState(false);
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [deliveryFormsById, setDeliveryFormsById] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -205,7 +207,36 @@ const DeliveryForm = () => {
     }
 
     const handleBtnSaveDeliveryForm = async() => {
+        if(formData.street == '') {
+            toast('Debes ingresar una dirección', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        if(formData.street != '' && (formData.name == '' || formData.phone == '')) {
+            toast('Debes ingresar los datos de contacto', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
         try {
+            setLoadingSaveDeliveryForm(true)
             const formattedData = {
                 ...formData,
                 phone: Number(formData.phone) || 0, // Convierte a número
@@ -268,6 +299,8 @@ const DeliveryForm = () => {
             }
         } catch (error) {
             console.error('Error al enviar el formulario:', error);
+        } finally {
+            setLoadingSaveDeliveryForm(false)
         }
     }
 
@@ -391,6 +424,8 @@ const DeliveryForm = () => {
     
     const handleDeleteAddress = async (addressId) => {
         try {
+            
+            setLoadingDeleteId(addressId);
             const response = await fetch(`http://localhost:8081/api/deliveryForm/${addressId}`, {
                 method: 'DELETE',
             });
@@ -440,6 +475,8 @@ const DeliveryForm = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setLoadingDeleteId(null);
         }
     };
 
@@ -520,11 +557,12 @@ const DeliveryForm = () => {
                                         <button
                                             className="deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__btn"
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Evita que el click en eliminar seleccione la dirección
+                                                e.stopPropagation();
                                                 handleDeleteAddress(item._id);
                                             }}
+                                            disabled={loadingDeleteId === item._id}
                                         >
-                                            Eliminar
+                                            {loadingDeleteId === item._id ? <Spinner/> : "Eliminar"}
                                         </button>
                                     </li>
                                 ))}
@@ -616,8 +654,15 @@ const DeliveryForm = () => {
                     </div>
 
                     <div className='deliveryFormContainer__deliveryForm__btnContainer'>
-                        <button onClick={handleBtnSaveDeliveryForm} className='deliveryFormContainer__deliveryForm__btnContainer__btn'>Guardar</button>
+                        <button
+                            className="deliveryFormContainer__deliveryForm__btnContainer__btn"
+                            onClick={handleBtnSaveDeliveryForm}
+                            disabled={loadingSaveDeliveryForm}
+                        >
+                            {loadingSaveDeliveryForm ? "Guardando..." : "Guardar"}
+                        </button>
                     </div>
+                    
 
                 </div>
 

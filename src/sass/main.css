@@ -1455,10 +1455,8 @@ h2 {
 .itemProduct {
   background-color: ghostwhite;
   width: 300px;
-  height: 450px;
+  height: 500px;
   display: grid;
-  grid-template-rows: 6fr 1fr 1fr 1fr;
-  grid-template-rows: 300px 37px 37px 37px 37px;
   padding-bottom: 2vh;
   border-radius: 2vh;
   box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
@@ -1470,9 +1468,6 @@ h2 {
 }
 .itemProduct__imgContainer {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   border-top-left-radius: 2vh;
   border-top-right-radius: 2vh;
@@ -1513,10 +1508,15 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 1vh;
 }
 .itemProduct__btnContainer__btn {
   background-color: #1b509c;
-  width: 50%;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
   font-size: 16px;
   padding: 0.5vh 0vh;
@@ -1721,6 +1721,9 @@ h2 {
 }
 .itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop {
   width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #1b509c;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -1733,6 +1736,9 @@ h2 {
 }
 .itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__propCart {
   width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #b2d2ff;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -2311,6 +2317,9 @@ h2 {
 .deliveryFormContainer__deliveryForm__existingAddresses__itemAddress__addressContainer__btn {
   background-color: #1b509c;
   padding: 1vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 0.5vh;
   color: white;
   font-size: 14px;
@@ -3024,6 +3033,12 @@ h2 {
 .header__rightMenu__menu__cart__logo__prop:hover {
   transform: scale(1.1);
   cursor: pointer;
+}
+.header__rightMenu__menu__cart__spinner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .header__rightMenu__menu__cart__number {
   width: 100%;

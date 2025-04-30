@@ -1,18 +1,88 @@
-import React from 'react'
+import {useState} from 'react'
 import { Link } from 'react-router-dom';
-
+import Spinner from './Spinner';
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination } from "swiper/modules";
+import { toast } from 'react-toastify';
 
 
 
-const ItemProduct = ({id,images,title,description,price}) => {
+const ItemProduct = ({user_id,fetchCartByUserId,id,images,title,description,price}) => {
+    const [loading, setLoading] = useState(null);
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
+    const addToCartAndSave = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para agregar productos al carrito", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
+        }
+    
+        const newItem = {
+            product: id,
+            quantity: 1,
+        };
+    
+        try {
+            const response = await fetch("http://localhost:8081/api/carts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id, products: [newItem] }),
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                toast("Has agregado el producto al carrito!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchCartByUserId(user_id);
+                return true;
+            } else {
+                throw new Error(data.message || "Error desconocido");
+            }
+        } catch (error) {
+            toast("Error al guardar el producto en el carrito!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
+        }
+    };
+
+    const handleAddToCart = async () => {
+        setLoading("addToCartAndSave");
+        const success = await addToCartAndSave();
+        setLoading(null);
     };
 
     return (
@@ -22,8 +92,6 @@ const ItemProduct = ({id,images,title,description,price}) => {
             <div className="itemProduct">
 
                 <div className="itemProduct__imgContainer">
-
-                    {/* <img src={img} alt="img_product" className='itemProduct__imgContainer__img' /> */}
 
                     <Swiper
                         navigation
@@ -63,6 +131,14 @@ const ItemProduct = ({id,images,title,description,price}) => {
                     <Link className='itemProduct__btnContainer__btn' to={`/item/${id}`}>
                         Ver Detalle
                     </Link>
+
+                    <button 
+                        onClick={handleAddToCart} 
+                        disabled={loading === 'addToCartAndSave'} 
+                        className='itemProduct__btnContainer__btn'
+                    >
+                        {loading === 'addToCartAndSave' ? <Spinner/> : "Agregar al Carrito"}
+                    </button>
 
                 </div>
 

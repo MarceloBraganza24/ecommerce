@@ -1366,10 +1366,10 @@ h2 {
 .itemProduct {
     background-color: ghostwhite;
     width: 300px;
-    height: 450px;
+    height: 500px;
     display: grid;
-    grid-template-rows: 6fr 1fr 1fr 1fr;
-    grid-template-rows: 300px 37px 37px 37px 37px;
+    //grid-template-rows: 6fr 1fr 1fr 1fr;
+    //grid-template-rows: 300px 37px 37px 37px 37px;
     padding-bottom: 2vh;
     border-radius: 2vh;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
@@ -1380,7 +1380,7 @@ h2 {
     }
     &__imgContainer {
         width: 100%;
-        @include disFC();
+        //@include disFC();
         overflow: hidden;
         border-top-left-radius: 2vh;
         border-top-right-radius: 2vh;
@@ -1413,9 +1413,12 @@ h2 {
     &__btnContainer {
         width: 100%;
         @include disFC();
+        flex-direction: column;
+        gap: 1vh;
         &__btn {
             background-color: #1b509c;
-            width: 50%;
+            width: 60%;
+            @include disFC();
             color: white;
             font-size: 16px;
             padding: 0.5vh 0vh;
@@ -1603,6 +1606,7 @@ h2 {
                     gap: 1vh;
                     &__prop {
                         width: 60%;
+                        @include disFC();
                         background-color: #1b509c;
                         padding: 1vh;
                         border-radius: 0.5vh;
@@ -1615,6 +1619,7 @@ h2 {
                     }
                     &__propCart {
                         width: 60%;
+                        @include disFC();
                         background-color: #b2d2ff;
                         padding: 1vh;
                         border-radius: 0.5vh;
@@ -2142,6 +2147,7 @@ h2 {
                     &__btn {
                         background-color: #1b509c;
                         padding: 1vh;
+                        @include disFC();
                         border-radius: 0.5vh;
                         color: white;
                         font-size: 14px;

@@ -1,10 +1,12 @@
 import {useState} from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Spinner from './Spinner';
 
 const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId}) => {
 
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(null);
     const [count, setCount] = useState(1);
     const [ultimoToast, setUltimoToast] = useState(0);
     const tiempoEspera = 2000;
@@ -35,7 +37,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         setCount((prevCount) => Math.max(prevCount - 1, 1));
     };
 
-    const addToCartAndSave = async () => {
+    /* const addToCartAndSave = async () => {
         if(!user_id) {
             toast("Debes iniciar sesión para agregar productos al carrito", {
                 position: "top-right",
@@ -50,6 +52,9 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
             });
             return
         }
+        
+        setLoading("addToCartAndSave");
+
         const newItem = {
             product: id, 
             quantity: count,
@@ -89,11 +94,81 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setLoading(null);
+        }
+    }; */
+
+    const addToCartAndSave = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para agregar productos al carrito", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
+        }
+    
+        const newItem = {
+            product: id,
+            quantity: count,
+        };
+    
+        try {
+            const response = await fetch("http://localhost:8081/api/carts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id, products: [newItem] }),
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                toast("Has agregado el producto al carrito!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchCartByUserId(user_id);
+                return true;
+            } else {
+                throw new Error(data.message || "Error desconocido");
+            }
+        } catch (error) {
+            toast("Error al guardar el producto en el carrito!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
         }
     };
     
+    const handleAddToCart = async () => {
+        setLoading("addToCartAndSave");
+        const success = await addToCartAndSave();
+        setLoading(null);
+    };
+    
 
-    const addToCartAndContinue = async () => {
+    /* const addToCartAndContinue = async () => {
         if(!user_id) {
             toast("Debes iniciar sesión para realizar una compra", {
                 position: "top-right",
@@ -108,11 +183,48 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
             });
             return
         }
-        await addToCartAndSave();
-        setTimeout(() => {
-            navigate("/shipping");
-        }, 1500);
+        setLoading("addToCartAndContinue"); // <--- botón de comprar
+
+        const success = await addToCartAndSave();
+    
+        if (success) {
+            setTimeout(() => {
+                navigate("/shipping");
+            }, 1500);
+        } else {
+            setLoading(null); // en caso de error
+        }
+    }; */
+
+    const addToCartAndContinue = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para realizar una compra", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+    
+        setLoading("addToCartAndContinue");
+    
+        const success = await addToCartAndSave();
+    
+        if (success) {
+            setTimeout(() => {
+                navigate("/shipping");
+            }, 2000);
+        } else {
+            setLoading(null); // solo en caso de fallo
+        }
     };
+    
     
   return (
 
@@ -138,9 +250,25 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         </div> 
 
         <div className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart'>
-            <button onClick={addToCartAndContinue} className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'>Comprar ahora</button>
-            <button onClick={addToCartAndSave} className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__propCart'>Agregar al Carrito</button>
+            <button 
+                onClick={addToCartAndContinue} 
+                disabled={loading === 'addToCartAndContinue'} 
+                className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__prop'
+            >
+                {loading === 'addToCartAndContinue' ? <Spinner/> : "Comprar ahora"}
+            </button>
+
+            <button 
+                onClick={handleAddToCart} 
+                disabled={loading === 'addToCartAndSave'} 
+                className='itemDetailContainer__itemDetail__infoContainer__info__btnAddToCart__propCart'
+            >
+                {loading === 'addToCartAndSave' ? <Spinner/> : "Agregar al Carrito"}
+            </button>
+
         </div>
+
+
     </>
 
   )

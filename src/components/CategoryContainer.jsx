@@ -323,6 +323,8 @@ const CategoryContainer = () => {
 
                                     productsByCategory.map((product) => (
                                         <ItemProduct
+                                        user_id={user._id} 
+                                        fetchCartByUserId={fetchCartByUserId}
                                         id={product._id}
                                         images={product.images}
                                         title={product.title}
