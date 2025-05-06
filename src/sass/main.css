@@ -1812,6 +1812,9 @@ h2 {
 .cartContainer__cart__btnContainer__btn {
   background-color: #1b509c;
   width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -2143,6 +2146,20 @@ h2 {
   justify-content: end;
   padding-top: 2vh;
 }
+.shippingContainer__deliveryMethodContainer__btnContinue__propRedirectBtn {
+  background-color: #1b509c;
+  width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
 .shippingContainer__deliveryMethodContainer__btnContinue__prop {
   background-color: #1b509c;
   width: 20%;
@@ -2197,6 +2214,81 @@ h2 {
 .shippingContainer__accountSummaryContainer__accountSummary__item__value {
   text-align: end;
   padding: 2vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemCoupon {
+  width: 90%;
+  display: flex;
+  align-self: center;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon {
+  padding: 1vh 0vh 0vh 2vh;
+  color: black;
+  text-decoration: underline;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon:hover {
+  color: #0e3061;
+  cursor: pointer;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  gap: 2vh;
+  padding: 1vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input {
+  width: 50%;
+  height: 30px;
+  align-self: center;
+  text-align: center;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input::-moz-placeholder {
+  text-align: center;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input::placeholder {
+  text-align: center;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn {
+  width: 20%;
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn:hover {
+  background-color: #124285;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid {
+  width: 90%;
+  display: grid;
+  align-self: center;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 1vh;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid__label {
+  font-size: 16px;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid__value {
+  font-size: 16px;
+  justify-self: end;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotalBefore {
+  font-size: 16px;
+  align-self: center;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal {
+  font-size: 22px;
+}
+.shippingContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal {
+  font-size: 22px;
+  justify-self: end;
 }
 
 .deliveryAddressContainer {

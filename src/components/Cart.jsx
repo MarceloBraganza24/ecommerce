@@ -35,6 +35,13 @@ const Cart = () => {
 
     const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+    const [loadingBtnDeleteAllItemCart, setLoadingBtnDeleteAllItemCart] = useState(false);
+    
+    const handleDeleteAll = async () => {
+        setLoadingBtnDeleteAllItemCart(true); // 👈 Activamos el "vaciando..."
+        await deleteAllItemCart(userCart?.user_id, fetchCartByUserId);
+        setLoadingBtnDeleteAllItemCart(false); // 👈 Volvemos al estado normal
+    };
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -59,12 +66,6 @@ const Cart = () => {
         }
 
     }, [userCart,validatedCoupon]);
-
-    /* const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
-    : 0;
-    const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
-    const discountPercentage = validatedCoupon.discount;
-    const totalWithDiscount = total - (total * (discountPercentage / 100)); */
     
     useEffect(() => {
         if (user?.selected_addresses) {
@@ -89,95 +90,6 @@ const Cart = () => {
             }
         }
     }, [user, deliveryForms]);
-
-    const handleInputCoupon = (e) => {
-        setInputCoupon(e.target.value)
-    }
-
-    const handleBtnAddCoupon = () => {
-        if(showInputCouponContainer) {
-            setShowInputCouponContainer(false)
-        } else {
-            setShowInputCouponContainer(true)
-        }
-    }
-
-    const handleBtnChangeCoupon = () => {
-        setShowInputCouponContainer(true)
-        setShowLabelAddCoupon(true)
-        setShowLabelValidatedCoupon(false)
-    }
-
-    const handleBtnValidateCoupon = async () => {
-        if(!inputCoupon) {
-            toast('Debes ingresar el código del cupón', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return
-        }
-        try {
-            setIsLoadingValidateCoupon(true)
-            const response = await fetch("http://localhost:8081/api/coupons/validate-coupon", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ codeCoupon: inputCoupon }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                toast('Cupón válido', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                setValidatedCoupon(data.data)
-                setShowLabelAddCoupon(false)
-                setShowInputCouponContainer(false)
-                setShowLabelValidatedCoupon(true)
-            } else {
-                toast('Cupón inválido', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            }
-        } catch (error) {
-            toast('Error al validar el cupón', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        } finally {
-            setIsLoadingValidateCoupon(false)
-        }
-    }
-
-    
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -442,7 +354,13 @@ const Cart = () => {
                         </div>
 
                         <div className='cartContainer__cart__btnContainer'>
-                            <button onClick={()=>deleteAllItemCart(userCart?.user_id,fetchCartByUserId)} className='cartContainer__cart__btnContainer__btn'>Vaciar Carrito</button>
+                            <button 
+                                onClick={handleDeleteAll} 
+                                className='cartContainer__cart__btnContainer__btn'
+                                disabled={loadingBtnDeleteAllItemCart} // 👈 Opcional: desactiva el botón mientras carga
+                            >
+                                {loadingBtnDeleteAllItemCart ? <Spinner/> : 'Vaciar Carrito'}
+                            </button>
                         </div>
 
                     </div>
@@ -476,71 +394,13 @@ const Cart = () => {
 
                             </div>
 
-                            {
-                                showLabelAddCoupon &&
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon'>
-                                    <div onClick={handleBtnAddCoupon} className='cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop'>Ingresar código de cupón</div>
-                                </div>
-                            }
+                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
 
-                            {
-                                showInputCouponContainer &&
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer'>
-                                    <input placeholder='Código cupón' value={inputCoupon} onChange={handleInputCoupon} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input' type="text" />
-                                    
-                                    <button onClick={handleBtnValidateCoupon} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn'>
-                                        {isLoadingValidateCoupon ? (
-                                            <>
-                                                <Spinner />
-                                            </>
-                                        ) : (
-                                            'Validar'
-                                        )}
-                                    </button>
-                                </div>
-                            }
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
 
-                            {
-                                showLabelValidatedCoupon &&
-                                <>
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon'>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop'>Cupón válido con {validatedCoupon.discount}% de descuento</div>
-                                </div>
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemCupon'>
-                                    <div onClick={handleBtnChangeCoupon} className='cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop'>Cambiar cupón</div>
-                                </div>
-                                </>
-                            }
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
 
-                            {
-                                showLabelValidatedCoupon ?
-                                <>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotalBefore'></div>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'><span style={{fontSize:'14px',alignSelf:'center'}}>antes</span> <span style={{textDecoration:'line-through'}}>$ {total}</span></div>
-
-                                    </div>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL <span style={{fontSize:'14px'}}>(con descuento)</span></div>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {totalWithDiscount}</div>
-
-                                    </div>
-                                </>
-                                :
-                                <>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
-
-                                    </div>
-                                </>
-                            }
+                            </div>
 
 
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>

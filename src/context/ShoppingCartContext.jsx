@@ -24,22 +24,6 @@ export const ShoppingCartContext = ({children}) => {
         }
     };
     
-    
-    
-
-    /* const deleteItemCart = async (user_id,id,fetchCartByUserId) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
-                method: "DELETE",
-            });
-            const data = await response.json();
-            if (response.ok) {
-                fetchCartByUserId(user_id)
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }; */
     const deleteItemCart = async (user_id, id, fetchCartByUserId) => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/remove-product/${user_id}/${id}`, {
@@ -74,9 +58,6 @@ export const ShoppingCartContext = ({children}) => {
             const response = await fetch(`http://localhost:8081/api/carts/${user_id}`, {
                 method: "DELETE",
             });
-    
-            // console.log("Response status:", response.status); // 🛠 Verificar status
-            // console.log("Response headers:", response.headers.get("content-type")); // 🛠 Verificar si devuelve JSON
     
             let data = null;
             if (response.headers.get("content-type")?.includes("application/json")) {
@@ -118,44 +99,6 @@ export const ShoppingCartContext = ({children}) => {
             fetchCartByUserId(user_id);
         }
     };
-    
-
-    /* const deleteAllItemCart = async(user_id,fetchCartByUserId) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/carts/${user_id}`, {
-                method: "DELETE",
-            });
-            const data = await response.json();
-            console.log(response)
-            if (response.ok) {
-                toast('El carrito está vacío!', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                fetchCartByUserId(user_id)
-            }
-        } catch (error) {
-            toast('Error al eliminar el producto del carrito!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            fetchCartByUserId(user_id)
-        }
-    } */
 
     return (
 

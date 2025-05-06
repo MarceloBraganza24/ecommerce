@@ -1691,6 +1691,7 @@ h2 {
             &__btn {
                 background-color: #1b509c;
                 width: 150px;
+                @include disFC();
                 color: white;
                 padding: 1vh;
                 border-radius: 0.5vh;
@@ -1984,6 +1985,18 @@ h2 {
             display: flex;
             justify-content: end;
             padding-top: 2vh;
+            &__propRedirectBtn {
+                background-color: #1b509c;
+                width: 45%;
+                @include disFC();
+                color: white;
+                padding: 1vh;
+                border-radius: 0.5vh;
+                font-size: 16px;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: none;    
+            }
             &__prop {
                 background-color: #1b509c;
                 width: 20%;
@@ -2035,6 +2048,74 @@ h2 {
                 &__value {
                     text-align: end;
                     padding: 2vh;
+                }
+            }
+            &__itemCoupon {
+                width: 90%;
+                display: flex;
+                align-self: center;
+                &__labelCoupon {
+                    padding: 1vh 0vh 0vh 2vh;
+                    color: black;
+                    text-decoration: underline;
+                    &:hover {
+                        color: #0e3061;
+                        cursor: pointer;
+                    }
+                }
+            }
+            &__inputCouponContainer {
+                width: 90%;
+                @include disFC();
+                align-self: center;
+                gap: 2vh;
+                padding: 1vh;
+                &__input {
+                    width: 50%;
+                    height: 30px;
+                    align-self: center;
+                    text-align: center;
+                    &::placeholder {
+                        text-align: center;
+                    }
+                }
+                &__btn {
+                    width: 20%;
+                    background-color: #1b509c;
+                    padding: 1vh;
+                    border-radius: 0.5vh;
+                    color: white;
+                    font-size: 14px;
+                    @include disFC();
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #124285;
+                    }
+                }
+            }
+            &__itemGrid {
+                width: 90%;
+                display: grid;
+                align-self: center;
+                grid-template-columns: 1fr 1fr;
+                padding-top: 1vh;
+                &__label {
+                    font-size: 16px;
+                }
+                &__value {
+                    font-size: 16px;
+                    justify-self: end;
+                }
+                &__labelTotalBefore {
+                    font-size: 16px;
+                    align-self: center;
+                }
+                &__labelTotal {
+                    font-size: 22px;
+                }
+                &__valueTotal {
+                    font-size: 22px;
+                    justify-self: end;
                 }
             }
         }

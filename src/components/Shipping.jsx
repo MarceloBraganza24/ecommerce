@@ -4,7 +4,15 @@ import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
 const Shipping = () => {
+    const [loadingCheckOut, setLoadingCheckOut] = useState(false);
+    const [showLabelAddCoupon, setShowLabelAddCoupon] = useState(true);
+    const [showInputCouponContainer, setShowInputCouponContainer] = useState(false);
+    const [isLoadingValidateCoupon, setIsLoadingValidateCoupon] = useState(false);
+    const [showLabelValidatedCoupon, setShowLabelValidatedCoupon] = useState(false);
+    const [inputCoupon, setInputCoupon] = useState('');
+    const [validatedCoupon, setValidatedCoupon] = useState({});
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
+    //console.log(metodoEntrega)
     const [userCart, setUserCart] = useState({});
     const [user, setUser] = useState('');
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
@@ -14,21 +22,95 @@ const Shipping = () => {
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
-    const [formData, setFormData] = useState({
-        street: "",
-        street_number: "",
-        locality: ""
-    });
+    //console.log(selectedSellerAddress)
+    //let sellerAddressData = {};
     const [sellerAddressData, setSellerAddressData] = useState({
         street: "",
         street_number: "",
-        locality: ""
+        locality: "",
+        province: "",
+        postal_code: ""
+    });
+    //console.log(sellerAddressData)
+    
+    useEffect(() => {
+        
+        if(sellerAddresses.length == 1) {
+            setSellerAddressData({street: sellerAddressData[0].street})
+            //console.log('sellerAddressData: ',sellerAddressData)
+        }
+        
+        /* const [calleCompleta, locality, province] = selectedSellerAddress.split(',').map(e => e.trim());
+        const callePartes = calleCompleta.split(' ');
+        sellerAddressData.street_number = callePartes.pop();
+        sellerAddressData.street = callePartes.join(' ');
+        sellerAddressData.locality = locality
+        sellerAddressData.province = province */
+
+    }, [selectedSellerAddress,sellerAddresses]);
+
+    const [formShippingAddressData, setFormShippingAddressData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+        province: "",
+        postal_code: ""
     });
     const navigate = useNavigate();
 
-    const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0)
-    : 0;
-    const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
+    const [total, setTotal] = useState('');
+    const [totalQuantity, setTotalQuantity] = useState('');
+    const [totalWithDiscount, setTotalWithDiscount] = useState('');
+
+    const handleCheckout = async () => {
+        setLoadingCheckOut(true)
+        try {
+            const response = await fetch(`http://localhost:8081/api/payments/create-preference-purchase`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: userCart.products, // tu array de productos
+                    user: { email: user.email },
+                    discount: validatedCoupon.discount,
+                    shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : sellerAddressData,
+                    deliveryMethod: metodoEntrega
+                })
+            });
+        
+            const data = await response.json();
+            if (data.init_point) {
+                window.location.href = data.init_point; // Redirige al Checkout Pro
+            } else {
+                toast('Ha ocurrido un error al intentar hacer el pago, intente nuevamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                }); 
+            }
+        } catch (error) {
+          console.error("Error en checkout:", error);
+        }
+        //setLoadingCheckOut(false)
+    };
+    
+    useEffect(() => {
+        
+        if(userCart.products && Array.isArray(userCart.products) && validatedCoupon) {
+            const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0): 0;
+            setTotal(total)
+            const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
+            setTotalQuantity(totalQuantity)
+            const discountPercentage = validatedCoupon.discount;
+            const totalWithDiscount = total - (total * (discountPercentage / 100));
+            setTotalWithDiscount(totalWithDiscount)
+        }
+
+    }, [userCart,validatedCoupon]);
 
     const corregirCapitalizacion = (texto) => {
         if (!texto) return '';
@@ -121,38 +203,6 @@ const Shipping = () => {
         }
     };
 
-    /* const fetchDeliveryForm = async () => {
-        try {
-            setIsLoadingDeliveryForm(true)
-            const response = await fetch('http://localhost:8081/api/deliveryForm');
-            const deliveryForm = await response.json();
-            if (response.ok) {
-                setFormData({
-                    street: deliveryForm.data[0].street || "",
-                    street_number: deliveryForm.data[0].street_number || "",
-                    locality: deliveryForm.data[0].locality || ""
-                });
-            } else {
-                toast('Error al cargar el formulario de entrega', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            }
-
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoadingDeliveryForm(false)
-        }
-    }; */
-
     const fetchSellerAddresses = async () => {
         try {
             setIsLoadingSellerAddresses(true)
@@ -160,11 +210,6 @@ const Shipping = () => {
             const data = await response.json();
             if (response.ok) {
                 setSellerAddresses(data.data); 
-                setSellerAddressData({
-                    street: data.data[0].street || "",
-                    street_number: data.data[0].street_number || "",
-                    locality: data.data[0].locality || ""
-                });
             } else {
                 toast('Error al cargar domicilios', {
                     position: "top-right",
@@ -181,48 +226,11 @@ const Shipping = () => {
 
         } catch (error) {
             console.error(error);
-            toast('Error en la conexión', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
         } finally {
             setIsLoadingSellerAddresses(false)
         }
     };
 
-    /* useEffect(() => {
-        if(user && deliveryForms) {
-            setIsLoadingGeneralData(false)
-        }
-        const matchedAddress = deliveryForms?.find(item => 
-            item.street === user.selected_addresses?.street &&
-            item.street_number === user.selected_addresses?.street_number &&
-            item.locality === user.selected_addresses?.locality
-        );
-
-        if (matchedAddress) {
-            setFormData({
-                street: user.selected_addresses.street || "",
-                street_number: user.selected_addresses.street_number || "",
-                locality: user.selected_addresses.locality || ""
-            });
-        } else {
-            setFormData({
-                street: "",
-                street_number: "",
-                locality: ""
-            });
-        }
-
-
-    }, [user, deliveryForms]); */
     useEffect(() => {
         if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
             setIsLoadingGeneralData(false)
@@ -234,32 +242,25 @@ const Shipping = () => {
         );
 
         if (matchedAddress) {
-            setFormData({
+            setFormShippingAddressData({
                 street: user.selected_addresses.street || "",
                 street_number: user.selected_addresses.street_number || "",
-                locality: user.selected_addresses.locality || ""
+                locality: user.selected_addresses.locality || "",
+                province: user.selected_addresses.province || "",
+                postal_code: user.selected_addresses.postal_code || ""
             });
         } else {
-            setFormData({
+            setFormShippingAddressData({
                 street: "",
                 street_number: "",
-                locality: ""
+                locality: "",
+                province: "",
+                postal_code: ""
             });
         }
 
 
     }, [user,userCart,sellerAddresses,total,totalQuantity]);
-
-    /* useEffect(() => {
-        if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
-            setIsLoadingGeneralData(false)
-            setFormData({
-                street: user.selected_addresses.street || "",
-                street_number: user.selected_addresses.street_number || "",
-                locality: user.selected_addresses.locality || ""
-            });
-        }
-    }, [user,userCart,sellerAddresses,total,totalQuantity]); */
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -311,6 +312,216 @@ const Shipping = () => {
         setSelectedSellerAddress(event.target.value);
     };
 
+    const handleInputCoupon = (e) => {
+        setInputCoupon(e.target.value)
+    }
+
+    const handleBtnChangeCoupon = () => {
+        setShowInputCouponContainer(true)
+        setShowLabelAddCoupon(true)
+        setShowLabelValidatedCoupon(false)
+    }
+
+    const handleBtnAddCoupon = () => {
+        if(showInputCouponContainer) {
+            setShowInputCouponContainer(false)
+        } else {
+            setShowInputCouponContainer(true)
+        }
+    }
+
+    const handleBtnValidateCoupon = async () => {
+        if(!inputCoupon) {
+            toast('Debes ingresar el código del cupón', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        try {
+            setIsLoadingValidateCoupon(true)
+            const response = await fetch("http://localhost:8081/api/coupons/validate-coupon", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ codeCoupon: inputCoupon }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast('Cupón válido', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setValidatedCoupon(data.data)
+                setShowLabelAddCoupon(false)
+                setShowInputCouponContainer(false)
+                setShowLabelValidatedCoupon(true)
+            } else {
+                toast('Cupón inválido', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            toast('Error al validar el cupón', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        } finally {
+            setIsLoadingValidateCoupon(false)
+        }
+    }
+
+    const handleBtnContinuePurchase = async () => {
+        if(metodoEntrega == 'domicilio' && formShippingAddressData.street == '') {
+            toast('Debes añadir o seleccionar un domicilio de entrega!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        if(metodoEntrega == 'vendedor' && sellerAddresses.length == 0) {
+            toast('No es posible retirar en el domicilio del vendedor, seleccione enviar a domicilio!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        if(metodoEntrega == 'vendedor' && (selectedSellerAddress == 'Selecciona una opción' || selectedSellerAddress == '')) {
+            toast('Debes seleccionar un domicilio del vendedor!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        //handleCheckout()
+        /* toast('Has realizado la compra con éxito!', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            className: "custom-toast",
+        });
+        setTimeout(() => {
+            window.location.href = '/purchaseCompleted'
+        }, 2500); */
+        try {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const purchase_datetime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+            const newPurchase = {
+                mp_payment_id: 'asdad65asd41as6d14a6sd1496s',
+                status: 'approved',
+                amount: totalWithDiscount?totalWithDiscount:total,
+                payer_email: user.email,
+                items: userCart.products,
+                purchase_datetime,
+                shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : sellerAddressData,
+                deliveryMethod: metodoEntrega
+            }
+            const response = await fetch("http://localhost:8081/api/purchases", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newPurchase),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast('Los datos de la compra han sido guardados exitosamente!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                //setValidatedCoupon(data.data)
+            }/*  else {
+                toast('Cupón inválido', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } */
+        } catch (error) {
+            toast('Error al guardar los datos de la compra', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    }
 
     return (
 
@@ -362,11 +573,11 @@ const Shipping = () => {
                                 <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>
                                     <Spinner/>
                                 </div>
-                                : formData.street == '' ?
+                                : formShippingAddressData.street == '' ?
                                 <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>Aún no hay un domicilio seleccionado</div>
                                 :
                                 <>
-                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{corregirCapitalizacion(formData.street)} {corregirCapitalizacion(formData.street_number)}, {corregirCapitalizacion(formData.locality)}</div>
+                                <div className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__address'>{corregirCapitalizacion(formShippingAddressData.street)} {corregirCapitalizacion(formShippingAddressData.street_number)}, {corregirCapitalizacion(formShippingAddressData.locality)}</div>
                                 </>
                             }
                         </div>
@@ -398,21 +609,27 @@ const Shipping = () => {
                                 <select className='shippingContainer__deliveryMethodContainer__deliveryMethod__addressContainer__select' id="addressSelect" value={selectedSellerAddress} onChange={handleSelectSellerAddressChange}>
                                     {
                                         sellerAddresses.length > 1 ?
+                                            <>
+                                                <option value="">Selecciona una opción</option>
+                                                {sellerAddresses.map((address, index) => (
+                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}`}>
+                                                        {address.street} {address.street_number}, {address.locality}, {address.province}
+                                                    </option>
+                                                ))}
+                                            </>
+                                        : sellerAddresses.length == 1 ?
+                                            <>
+                                                {sellerAddresses.map((address, index) => (
+                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}`}>
+                                                        {address.street} {address.street_number}, {address.locality}, {address.province}
+                                                    </option>
+                                                ))}
+                                            </>
+                                        : 
                                         <>
-                                        <option value="">Selecciona una opción</option>
-                                        {sellerAddresses.map((address, index) => (
-                                            <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
-                                            {address.street} {address.street_number}, {address.locality}
-                                        </option>
-                                        ))}
-                                        </>
-                                        :
-                                        <>
-                                        {sellerAddresses.map((address, index) => (
-                                            <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}`}>
-                                            {address.street} {address.street_number}, {address.locality}
-                                        </option>
-                                        ))}
+                                            <option>
+                                                Aún no existe ningun domicilio del vendedor!
+                                            </option>
                                         </>
                                     }
                                 </select>
@@ -422,9 +639,25 @@ const Shipping = () => {
                     </div>
 
                     <div className='shippingContainer__deliveryMethodContainer__btnContinue'>
-                        <Link to={'/paymentForm'} className='shippingContainer__deliveryMethodContainer__btnContinue__prop'>
-                            Continuar
-                        </Link>
+                        {
+                            loadingCheckOut ?
+                                <button 
+                                    onClick={handleBtnContinuePurchase}
+                                    disabled={loadingCheckOut}
+                                    className='shippingContainer__deliveryMethodContainer__btnContinue__propRedirectBtn'
+                                >
+                                Redirigiendo a Mercado Pago&nbsp;&nbsp;<Spinner/>
+                                </button>
+                            :
+                                <button 
+                                    onClick={handleBtnContinuePurchase}
+                                    disabled={loadingCheckOut}
+                                    className='shippingContainer__deliveryMethodContainer__btnContinue__prop'
+                                >
+                                Ir a pagar
+                                </button>
+                        }
+
                     </div>
 
                 </div>
@@ -460,12 +693,70 @@ const Shipping = () => {
 
                         </div>
 
-                        <div className="shippingContainer__accountSummaryContainer__accountSummary__item">
+                        {
+                            showLabelAddCoupon &&
+                            <div className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon'>
+                                <div onClick={handleBtnAddCoupon} className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon'>Ingresar código de cupón</div>
+                            </div>
+                        }
 
-                            <div className="shippingContainer__accountSummaryContainer__accountSummary__item__label">Pagás</div>
-                            <div className="shippingContainer__accountSummaryContainer__accountSummary__item__value">$ {total}</div>
+                        {
+                            showInputCouponContainer &&
+                            <div className='shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer'>
+                                <input placeholder='Código cupón' value={inputCoupon} onChange={handleInputCoupon} className='shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input' type="text" />
+                                
+                                <button onClick={handleBtnValidateCoupon} className='shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn'>
+                                    {isLoadingValidateCoupon ? (
+                                        <>
+                                            <Spinner />
+                                        </>
+                                    ) : (
+                                        'Validar'
+                                    )}
+                                </button>
+                            </div>
+                        }
 
-                        </div>
+                        {
+                            showLabelValidatedCoupon &&
+                            <>
+                            <div className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon'>
+                                <div className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon'>Cupón válido con {validatedCoupon.discount}% de descuento</div>
+                            </div>
+                            <div className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon'>
+                                <div onClick={handleBtnChangeCoupon} className='shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon'>Cambiar cupón</div>
+                            </div>
+                            </>
+                        }
+
+                        {
+                            showLabelValidatedCoupon ?
+                            <>
+                                <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotalBefore'></div>
+
+                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'><span style={{fontSize:'14px',alignSelf:'center'}}>antes</span> <span style={{textDecoration:'line-through'}}>$ {total}</span></div>
+
+                                </div>
+                                <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL <span style={{fontSize:'14px'}}>(con descuento)</span></div>
+
+                                    <div className='shippingContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {totalWithDiscount}</div>
+
+                                </div>
+                            </>
+                            :
+                            <>
+                                <div className="shippingContainer__accountSummaryContainer__accountSummary__item">
+
+                                    <div className="shippingContainer__accountSummaryContainer__accountSummary__item__label">Pagás</div>
+                                    <div className="shippingContainer__accountSummaryContainer__accountSummary__item__value">$ {total}</div>
+
+                                </div>
+                            </>
+                        }
 
                     </div>
 
