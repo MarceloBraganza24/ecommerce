@@ -30,6 +30,7 @@ const CPanel = () => {
         street_number: "",
         locality: "",
         province: "",
+        postal_code: "",
     });
 
     const capitalizeFirstLetter = (text) => {
@@ -444,6 +445,7 @@ const CPanel = () => {
                 street_number: addressData.street_number,
                 locality: addressData.locality,
                 province: addressData.province,
+                postal_code: addressData.postal_code,
                 sellerAddress_datetime 
             }
             const response = await fetch('http://localhost:8081/api/sellerAddresses', {
@@ -481,6 +483,7 @@ const CPanel = () => {
                     street_number: '',
                     locality: '',
                     province: '',
+                    postal_code: '',
                 });
                 document.getElementById('inputCreateAddress').value = ''
                 fetchSellerAddresses()
@@ -598,11 +601,13 @@ const CPanel = () => {
         const street_number = prop.find(dm => dm.types[0] == "street_number")
         const locality = prop.find(dm => dm.types[0] == "locality")
         const province = prop.find(dm => dm.types[0] == "administrative_area_level_1")
+        const postal_code = prop.find(dm => dm.types[0] == "postal_code")
         setAddressData({
             street: street.long_name || "",
             street_number: street_number.long_name || "",
             locality: locality.long_name || "",
             province: province.long_name || "",
+            postal_code: postal_code.long_name || "",
         });
     }
 

@@ -12,7 +12,6 @@ const Shipping = () => {
     const [inputCoupon, setInputCoupon] = useState('');
     const [validatedCoupon, setValidatedCoupon] = useState({});
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
-    //console.log(metodoEntrega)
     const [userCart, setUserCart] = useState({});
     const [user, setUser] = useState('');
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
@@ -22,8 +21,6 @@ const Shipping = () => {
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
-    //console.log(selectedSellerAddress)
-    //let sellerAddressData = {};
     const [sellerAddressData, setSellerAddressData] = useState({
         street: "",
         street_number: "",
@@ -31,21 +28,36 @@ const Shipping = () => {
         province: "",
         postal_code: ""
     });
-    //console.log(sellerAddressData)
+    const [selectedSellerAddressData, setSelectedSellerAddressData] = useState({
+        street: "",
+        street_number: "",
+        locality: "",
+        province: "",
+        postal_code: ""
+    });
     
     useEffect(() => {
         
         if(sellerAddresses.length == 1) {
-            setSellerAddressData({street: sellerAddressData[0].street})
-            //console.log('sellerAddressData: ',sellerAddressData)
+            setSellerAddressData({
+                street: sellerAddresses[0].street,
+                street_number: sellerAddresses[0].street_number,
+                locality: sellerAddresses[0].locality,
+                province: sellerAddresses[0].province,
+                postal_code: sellerAddresses[0].postal_code
+            })
         }
         
-        /* const [calleCompleta, locality, province] = selectedSellerAddress.split(',').map(e => e.trim());
+        const [calleCompleta, locality, province,postal_code] = selectedSellerAddress.split(',').map(e => e.trim());
         const callePartes = calleCompleta.split(' ');
-        sellerAddressData.street_number = callePartes.pop();
-        sellerAddressData.street = callePartes.join(' ');
-        sellerAddressData.locality = locality
-        sellerAddressData.province = province */
+        
+        setSelectedSellerAddressData({
+            street: callePartes.join(' '),
+            street_number: callePartes.pop(),
+            locality: locality,
+            province: province,
+            postal_code,
+        })
 
     }, [selectedSellerAddress,sellerAddresses]);
 
@@ -72,7 +84,7 @@ const Shipping = () => {
                     items: userCart.products, // tu array de productos
                     user: { email: user.email },
                     discount: validatedCoupon.discount,
-                    shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : sellerAddressData,
+                    shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
                     deliveryMethod: metodoEntrega
                 })
             });
@@ -95,7 +107,6 @@ const Shipping = () => {
         } catch (error) {
           console.error("Error en checkout:", error);
         }
-        //setLoadingCheckOut(false)
     };
     
     useEffect(() => {
@@ -428,7 +439,7 @@ const Shipping = () => {
             });
             return
         }
-        if(metodoEntrega == 'vendedor' && (selectedSellerAddress == 'Selecciona una opción' || selectedSellerAddress == '')) {
+        if(metodoEntrega == 'vendedor' && (sellerAddressData.street == '') && (selectedSellerAddress == 'Selecciona una opción' || selectedSellerAddress == '')) {
             toast('Debes seleccionar un domicilio del vendedor!', {
                 position: "top-right",
                 autoClose: 2000,
@@ -442,7 +453,7 @@ const Shipping = () => {
             });
             return
         }
-        //handleCheckout()
+        handleCheckout()
         /* toast('Has realizado la compra con éxito!', {
             position: "top-right",
             autoClose: 2000,
@@ -457,7 +468,7 @@ const Shipping = () => {
         setTimeout(() => {
             window.location.href = '/purchaseCompleted'
         }, 2500); */
-        try {
+        /* try {
             const date = new Date();
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -473,9 +484,10 @@ const Shipping = () => {
                 payer_email: user.email,
                 items: userCart.products,
                 purchase_datetime,
-                shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : sellerAddressData,
+                shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
                 deliveryMethod: metodoEntrega
             }
+            //console.log(newPurchase)
             const response = await fetch("http://localhost:8081/api/purchases", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -494,20 +506,11 @@ const Shipping = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2500);
                 //setValidatedCoupon(data.data)
-            }/*  else {
-                toast('Cupón inválido', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            } */
+            }
         } catch (error) {
             toast('Error al guardar los datos de la compra', {
                 position: "top-right",
@@ -520,7 +523,7 @@ const Shipping = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-        }
+        } */
     }
 
     return (
@@ -612,7 +615,7 @@ const Shipping = () => {
                                             <>
                                                 <option value="">Selecciona una opción</option>
                                                 {sellerAddresses.map((address, index) => (
-                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}`}>
+                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}, ${address.postal_code}`}>
                                                         {address.street} {address.street_number}, {address.locality}, {address.province}
                                                     </option>
                                                 ))}
@@ -620,7 +623,7 @@ const Shipping = () => {
                                         : sellerAddresses.length == 1 ?
                                             <>
                                                 {sellerAddresses.map((address, index) => (
-                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}`}>
+                                                    <option key={index} value={`${address.street} ${address.street_number}, ${address.locality}, ${address.province}, ${address.postal_code}`}>
                                                         {address.street} {address.street_number}, {address.locality}, {address.province}
                                                     </option>
                                                 ))}
