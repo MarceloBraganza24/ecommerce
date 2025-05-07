@@ -85,7 +85,8 @@ const Shipping = () => {
                     user: { email: user.email },
                     discount: validatedCoupon.discount,
                     shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
-                    deliveryMethod: metodoEntrega
+                    deliveryMethod: metodoEntrega,
+                    user_cart_id: userCart._id
                 })
             });
         
@@ -454,18 +455,8 @@ const Shipping = () => {
             return
         }
         handleCheckout()
-        /* toast('Has realizado la compra con éxito!', {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-            className: "custom-toast",
-        });
-        setTimeout(() => {
+        
+        /* setTimeout(() => {
             window.location.href = '/purchaseCompleted'
         }, 2500); */
         /* try {
@@ -482,12 +473,11 @@ const Shipping = () => {
                 status: 'approved',
                 amount: totalWithDiscount?totalWithDiscount:total,
                 payer_email: user.email,
-                items: userCart.products,
+                userCart,
                 purchase_datetime,
                 shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
                 deliveryMethod: metodoEntrega
             }
-            //console.log(newPurchase)
             const response = await fetch("http://localhost:8081/api/purchases", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -509,7 +499,6 @@ const Shipping = () => {
                 setTimeout(() => {
                     window.location.reload();
                 }, 2500);
-                //setValidatedCoupon(data.data)
             }
         } catch (error) {
             toast('Error al guardar los datos de la compra', {
