@@ -77,12 +77,13 @@ const Shipping = () => {
     const handleCheckout = async () => {
         setLoadingCheckOut(true)
         try {
+            console.log(user)
             const response = await fetch(`http://localhost:8081/api/payments/create-preference-purchase`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     items: userCart.products, // tu array de productos
-                    user: { email: user.email },
+                    user: user,
                     discount: validatedCoupon.discount,
                     shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
                     deliveryMethod: metodoEntrega,

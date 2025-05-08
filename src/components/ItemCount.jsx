@@ -100,6 +100,20 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
     }; */
 
     const addToCartAndSave = async () => {
+        if(stock == 0) {
+            toast("No hay stock disponible en este producto!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
         if (!user_id) {
             toast("Debes iniciar sesión para agregar productos al carrito", {
                 position: "top-right",
@@ -197,6 +211,20 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
     }; */
 
     const addToCartAndContinue = async () => {
+        if(stock == 0) {
+            toast("No hay stock disponible en este producto!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
         if (!user_id) {
             toast("Debes iniciar sesión para realizar una compra", {
                 position: "top-right",

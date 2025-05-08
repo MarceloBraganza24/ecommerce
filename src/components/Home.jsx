@@ -420,6 +420,7 @@ const Home = () => {
                                     user_id={user._id} 
                                     fetchCartByUserId={fetchCartByUserId}
                                     id={product._id}
+                                    stock={product.stock}
                                     images={product.images}
                                     title={product.title}
                                     description={product.description}
@@ -479,6 +480,7 @@ const Home = () => {
                                                 user_id={user._id} 
                                                 fetchCartByUserId={fetchCartByUserId}
                                                 id={product._id}
+                                                stock={product.stock}
                                                 images={product.images}
                                                 title={product.title}
                                                 description={product.description}

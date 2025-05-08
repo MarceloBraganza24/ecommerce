@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 
 
 
-const ItemProduct = ({user_id,fetchCartByUserId,id,images,title,description,price}) => {
+const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,description,price}) => {
     const [loading, setLoading] = useState(null);
 
     const capitalizeFirstLetter = (text) => {
@@ -18,6 +18,20 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,images,title,description,pric
     };
 
     const addToCartAndSave = async () => {
+        if(stock == 0) {
+            toast("No hay stock disponible en este producto!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
         if (!user_id) {
             toast("Debes iniciar sesión para agregar productos al carrito", {
                 position: "top-right",

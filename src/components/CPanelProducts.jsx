@@ -216,7 +216,9 @@ const CPanelProducts = () => {
         const cookieValue = getCookie('TokenJWT');
         if(cookieValue) {
             setCookieValue(cookieValue)
-        } 
+        } else {
+            navigate('/')
+        }
         fetchUser(cookieValue);
         fetchProducts();
         fetchCategories();
