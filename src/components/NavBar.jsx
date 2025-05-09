@@ -164,6 +164,7 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                     </div>
                     <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
                     <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Panel de control</Link>
+                    <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Ventas</Link>
                 </div>
             }
 

@@ -20,6 +20,7 @@ import PaymentForm from './components/PaymentForm.jsx';
 import CPanelProducts from './components/CPanelProducts.jsx';
 import { IsLoggedInContext } from './context/IsLoggedContext.jsx';
 import CPanel from './components/CPanel.jsx';
+import Tickets from './components/Tickets.jsx';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
                         <Route exact path="/paymentForm" element={<PaymentForm/>}/>
                         <Route exact path="/cpanel/products" element={<CPanelProducts/>}/>
                         <Route exact path="/cpanel" element={<CPanel/>}/>
+                        <Route exact path="/tickets" element={<Tickets/>}/>
 
                     </Routes>
 
