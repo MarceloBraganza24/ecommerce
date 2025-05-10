@@ -2,6 +2,7 @@ import {useContext,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import { Link } from 'react-router-dom';
 import Spinner from './Spinner';
+import { toast } from 'react-toastify';
 
 const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCartByUserId}) => {
 
@@ -14,6 +15,25 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCa
         await updateQuantity(user_id, id, newQuantity, fetchCartByUserId);
         setLoadingQuantity(false);
     };
+
+    const handleIncrement = () => {
+        if (quantity < stock) {
+            handleUpdateQuantity(quantity + 1);
+        } else {
+            toast('No quedan más unidades disponibles para agregar!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
 
     const handleDelete = async () => {
         setLoadingDelete(true);
@@ -43,13 +63,21 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCa
 
                 <div className='itemCart__quantity'>
 
-                    <button
+                    {/* <button
                         className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
                         onClick={() => handleUpdateQuantity(quantity + 1)}
                         disabled={loadingQuantity}
                     >
                         +
+                    </button> */}
+                    <button
+                        className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
+                        onClick={handleIncrement}
+                        disabled={loadingQuantity}
+                    >
+                        +
                     </button>
+
 
                     <div className="itemCart__quantity">
                         {loadingQuantity ? <Spinner/> : quantity} 
@@ -73,9 +101,6 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCa
                     <div className='itemCart__subtotal__prop'>${quantity * price}</div>
                 </div>
 
-                {/* <div className='itemCart__btn'>
-                    <button onClick={()=>deleteItemCart(user_id,id,fetchCartByUserId)} className='itemCart__btn__prop'>X</button>
-                </div> */}
                 <div className='itemCart__btn'>
                     <button 
                         onClick={handleDelete}

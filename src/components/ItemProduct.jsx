@@ -10,8 +10,11 @@ import { toast } from 'react-toastify';
 
 
 
-const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,description,price}) => {
+const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,description,price,userCart}) => {
     const [loading, setLoading] = useState(null);
+    const productoEnCarrito = userCart?.products?.find(p => p.product._id === id);
+    const cantidadEnCarrito = productoEnCarrito?.quantity || 0;
+    const cantidadDisponible = stock - cantidadEnCarrito;
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
@@ -20,6 +23,20 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
     const addToCartAndSave = async () => {
         if(stock == 0) {
             toast("No hay stock disponible en este producto!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+        if (1 > cantidadDisponible) {
+            toast(`No quedan más unidades disponibles para agregar!`, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,

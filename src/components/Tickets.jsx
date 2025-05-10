@@ -360,7 +360,7 @@ const Tickets = () => {
                 </div>
 
                 <div className='cPanelProductsContainer__quantityProducts'>
-                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de ventas: {objetosFiltrados.length}</div>        
+                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de ventas: {filteredByDate.length}</div>        
                 </div>
 
                 <div className="cPanelProductsContainer__dateFilter">
@@ -378,7 +378,7 @@ const Tickets = () => {
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Código</div>
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Estado</div>
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Precio</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Comprador</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Operador</div>
                             {/* <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Lugar de venta</div> */}
 
                         </div>

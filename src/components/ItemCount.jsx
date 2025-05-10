@@ -3,7 +3,11 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import Spinner from './Spinner';
 
-const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId}) => {
+const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId,userCart}) => {
+
+    const productoEnCarrito = userCart?.products?.find(p => p.product._id === id);
+    const cantidadEnCarrito = productoEnCarrito?.quantity || 0;
+    const cantidadDisponible = stock - cantidadEnCarrito;
 
     const navigate = useNavigate();
     const [loading, setLoading] = useState(null);
@@ -37,71 +41,23 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         setCount((prevCount) => Math.max(prevCount - 1, 1));
     };
 
-    /* const addToCartAndSave = async () => {
-        if(!user_id) {
-            toast("Debes iniciar sesión para agregar productos al carrito", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return
-        }
-        
-        setLoading("addToCartAndSave");
-
-        const newItem = {
-            product: id, 
-            quantity: count,
-        };
-    
-        try {
-            const response = await fetch("http://localhost:8081/api/carts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id, products: [newItem] }),
-            });
-    
-            const data = await response.json();
-            if(response.ok){
-                toast("Has agregado el producto al carrito!", {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                fetchCartByUserId(user_id)
-            }
-        } catch (error) {
-            toast("Error al guardar el producto en el carrito!", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        } finally {
-            setLoading(null);
-        }
-    }; */
-
     const addToCartAndSave = async () => {
         if(stock == 0) {
             toast("No hay stock disponible en este producto!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+        if (count > cantidadDisponible) {
+            toast(`No quedan más unidades disponibles para agregar!`, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -180,11 +136,10 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         const success = await addToCartAndSave();
         setLoading(null);
     };
-    
 
-    /* const addToCartAndContinue = async () => {
-        if(!user_id) {
-            toast("Debes iniciar sesión para realizar una compra", {
+    const addToCartAndContinue = async () => {
+        if(stock == 0) {
+            toast("No hay stock disponible en este producto!", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -195,24 +150,10 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
                 theme: "dark",
                 className: "custom-toast",
             });
-            return
+            return;
         }
-        setLoading("addToCartAndContinue"); // <--- botón de comprar
-
-        const success = await addToCartAndSave();
-    
-        if (success) {
-            setTimeout(() => {
-                navigate("/shipping");
-            }, 1500);
-        } else {
-            setLoading(null); // en caso de error
-        }
-    }; */
-
-    const addToCartAndContinue = async () => {
-        if(stock == 0) {
-            toast("No hay stock disponible en este producto!", {
+        if (count > cantidadDisponible) {
+            toast(`No quedan más unidades disponibles para agregar!`, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,

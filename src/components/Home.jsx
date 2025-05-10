@@ -425,6 +425,7 @@ const Home = () => {
                                     title={product.title}
                                     description={product.description}
                                     price={product.price}
+                                    userCart={userCart}
                                     />
                                 ))}
                                 <div className='cPanelProductsContainer__btnsPagesContainer'>
@@ -485,6 +486,7 @@ const Home = () => {
                                                 title={product.title}
                                                 description={product.description}
                                                 price={product.price}
+                                                userCart={userCart}
                                                 />
                                             </SwiperSlide>
                                             ))}

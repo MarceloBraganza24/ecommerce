@@ -1897,18 +1897,18 @@ h2 {
   font-size: 22px;
   justify-self: end;
 }
-.cartContainer__accountSummaryContainer__accountSummary__itemCupon {
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount {
   width: 100%;
   display: flex;
   padding-top: 1vh;
 }
-.cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop {
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop {
   font-size: 16px;
   color: black;
   text-decoration: underline;
   cursor: pointer;
 }
-.cartContainer__accountSummaryContainer__accountSummary__itemCupon__prop:hover {
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop:hover {
   color: #1b509c;
 }
 .cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer {

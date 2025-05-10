@@ -47,11 +47,11 @@ const ItemTicket = ({ticket,fetchTickets}) => {
             <div className="cPanelProductsContainer__productsTable__itemContainer">
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(ticket.code)}</div>
+                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{ticket.code}</div>
                 </div>
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__description">{capitalizeFirstLetter(ticket.status)}</div>
+                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__description">{ticket.status}</div>
                 </div>
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">

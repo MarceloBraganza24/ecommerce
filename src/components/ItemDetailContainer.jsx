@@ -282,7 +282,7 @@ const ItemDetailContainer = () => {
                 />
             </div>
             {
-                user && 
+                user && (user.role != 'admin') &&
                 <DeliveryAddress
                 deliveryAddressFormData={deliveryAddressFormData}
                 isLoadingDeliveryForm={isLoadingDeliveryForm}
@@ -403,6 +403,7 @@ const ItemDetailContainer = () => {
                                         price={productById?.price}
                                         stock={productById?.stock}
                                         fetchCartByUserId={fetchCartByUserId}
+                                        userCart={userCart}
                                         />
 
                                     </div>

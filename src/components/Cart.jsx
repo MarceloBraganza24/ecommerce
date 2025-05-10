@@ -1,7 +1,7 @@
 import {useContext,useEffect,useState} from 'react'
 import {CartContext} from '../context/ShoppingCartContext'
 import ItemCart from './ItemCart';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import Footer from './Footer';
 import DeliveryAddress from './DeliveryAddress';
@@ -9,9 +9,10 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const Cart = () => {
+    const navigate = useNavigate();
     const [user, setUser] = useState('');
-    const [inputCoupon, setInputCoupon] = useState('');
-    const [validatedCoupon, setValidatedCoupon] = useState({});
+    const [inputDiscount, setInputDiscount] = useState('');
+    const [discountApplied, setDiscountApplied] = useState('');
     const [userCart, setUserCart] = useState({});
     const [cookieValue, setCookieValue] = useState('');
     const [categories, setCategories] = useState([]);
@@ -19,9 +20,9 @@ const Cart = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
-    const [showLabelAddCoupon, setShowLabelAddCoupon] = useState(true);
-    const [showLabelValidatedCoupon, setShowLabelValidatedCoupon] = useState(false);
-    const [showInputCouponContainer, setShowInputCouponContainer] = useState(false);
+    const [showLabelAddCoupon, setShowLabelAddDiscount] = useState(true);
+    const [showLabelDiscountApplied, setShowLabelApplyDiscount] = useState(false);
+    const [showInputDiscountContainer, setShowInputDiscountContainer] = useState(false);
     const [isLoadingValidateCoupon, setIsLoadingValidateCoupon] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
@@ -55,17 +56,17 @@ const Cart = () => {
     
     useEffect(() => {
         
-        if(userCart.products && Array.isArray(userCart.products) && validatedCoupon) {
+        if(userCart.products && Array.isArray(userCart.products)) {
             const total = Array.isArray(userCart.products)?userCart.products.reduce((acumulador, producto) => acumulador + (producto.product.price * producto.quantity), 0): 0;
             setTotal(total)
             const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
             setTotalQuantity(totalQuantity)
-            const discountPercentage = validatedCoupon.discount;
-            const totalWithDiscount = total - (total * (discountPercentage / 100));
-            setTotalWithDiscount(totalWithDiscount)
+            // const discountPercentage = validatedCoupon.discount;
+            // const totalWithDiscount = total - (total * (discountPercentage / 100));
+            // setTotalWithDiscount(totalWithDiscount)
         }
 
-    }, [userCart,validatedCoupon]);
+    }, [userCart]);
     
     useEffect(() => {
         if (user?.selected_addresses) {
@@ -254,6 +255,108 @@ const Cart = () => {
         fetchDeliveryForm();
         window.scrollTo(0, 0);
     }, []);
+
+    const handleBtnConfirmSale = async () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+        const purchase_datetime = currentDate;
+
+        const newTicket = {
+            amount: showLabelDiscountApplied?totalWithDiscount:total,
+            payer_email: user.email,
+            items: userCart.products,
+            deliveryMethod: 'vendedor',
+            purchase_datetime,
+            user_cart_id: userCart._id
+        }
+        try {
+            const response = await fetch(`http://localhost:8081/api/tickets/saveSale`, {
+                method: 'POST',         
+                credentials: 'include', // 👈 necesario para recibir cookies
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newTicket)
+            })
+            const data = await response.json();
+            if (response.ok) {
+                toast('Has registrado la venta con éxito!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setTimeout(() => {
+                    navigate('/tickets')
+                }, 2500);
+            }
+            /* if(data.error === 'incorrect credentials') {
+                toast('Alguno de los datos ingresados es incorrecto. Inténtalo nuevamente!', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } */
+        } catch (error) {
+          console.error('Error:', error);
+        }
+    }
+
+    const handleBtnAddDiscount = () => {
+        if(showInputDiscountContainer) {
+            setShowInputDiscountContainer(false)
+        } else {
+            setShowInputDiscountContainer(true)
+            //setTotalWithDiscount('')
+        }
+    }
+
+    const handleInputDiscount = (e) => {
+        setInputDiscount(e.target.value)
+    }
+
+    const handleBtnChangeDiscount = () => {
+        setShowInputDiscountContainer(true)
+        setShowLabelAddDiscount(true)
+        setShowLabelApplyDiscount(false)
+    }
+
+    const handleBtnApplyDiscount = async () => {
+        if(!inputDiscount) {
+            toast('Debes ingresar un descuento!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return
+        }
+        setShowLabelAddDiscount(false)
+        setShowInputDiscountContainer(false)
+        setShowLabelApplyDiscount(true)
+        setTotalWithDiscount(total - (total * inputDiscount / 100))
+    }
   
     return (
 
@@ -272,7 +375,7 @@ const Cart = () => {
                 />
             </div>
             {
-                user && 
+                user && (user.role != 'admin') &&
                 <DeliveryAddress
                 deliveryAddressFormData={deliveryAddressFormData}
                 isLoadingDeliveryForm={isLoadingDeliveryForm}
@@ -394,19 +497,80 @@ const Cart = () => {
 
                             </div>
 
-                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+                            {
+                                showLabelAddCoupon &&
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
+                                    <div onClick={handleBtnAddDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop'>Ingresar descuento</div>
+                                </div>
+                            }
 
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
+                            {
+                                showInputDiscountContainer &&
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer'>
+                                    <input placeholder='Descuento (%)' value={inputDiscount} onChange={handleInputDiscount} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input' type="text" />
+                                    
+                                    <button onClick={handleBtnApplyDiscount} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn'>
+                                        {isLoadingValidateCoupon ? (
+                                            <>
+                                                <Spinner />
+                                            </>
+                                        ) : (
+                                            'Aplicar'
+                                        )}
+                                    </button>
+                                </div>
+                            }
 
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
+                            {
+                                showLabelDiscountApplied &&
+                                <>
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount'>Has aplicado un descuento del {inputDiscount}%</div>
+                                </div>
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
+                                    <div onClick={handleBtnChangeDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount' style={{cursor: 'pointer', textDecoration: 'underline'}}>Cambiar descuento</div>
+                                </div>
+                                </>
+                            }
 
-                            </div>
 
+                            {
+                                !showLabelDiscountApplied ?
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
+
+                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
+
+                                    </div>
+                                :
+                                    <>
+                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotalBefore'></div>
+
+                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'><span style={{fontSize:'14px',alignSelf:'center'}}>antes</span> <span style={{textDecoration:'line-through'}}>$ {total}</span></div>
+
+                                        </div>
+                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
+
+                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL <span style={{fontSize:'14px'}}>(con descuento)</span></div>
+
+                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {totalWithDiscount}</div>
+
+                                        </div>
+                                    </>
+                            }
 
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
-                                <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
-                                    Continuar compra
-                                </Link>
+                                {
+                                    user.role == 'admin' ?
+                                        <button onClick={handleBtnConfirmSale} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>Confirmar venta</button>
+                                    :
+                                        <Link to={'/cart'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
+                                            Continuar compra
+                                        </Link>
+                                }
                             </div>
 
                         </div>

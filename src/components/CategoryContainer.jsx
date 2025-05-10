@@ -292,7 +292,7 @@ const CategoryContainer = () => {
                 />
             </div>
             {
-                user && 
+                user && (user.role != 'admin') &&
                 <DeliveryAddress
                 deliveryAddressFormData={deliveryAddressFormData}
                 isLoadingDeliveryForm={isLoadingDeliveryForm}
@@ -331,6 +331,7 @@ const CategoryContainer = () => {
                                         title={product.title}
                                         description={product.description}
                                         price={product.price}
+                                        userCart={userCart}
                                         />
                                     ))
                                 }      
