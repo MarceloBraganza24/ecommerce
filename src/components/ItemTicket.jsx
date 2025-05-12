@@ -15,19 +15,19 @@ const ItemTicket = ({ticket,fetchTickets}) => {
         setLoading(true);
             
         try {
-            const res = await fetch(`http://localhost:8081/api/products/${ticket._id}`, {
+            const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}`, {
                 method: 'DELETE'
             });
             if (res.ok) {
-                toast('Has eliminado el producto con éxito', {
+                toast('Has eliminado la venta con éxito', {
                     position: "top-right",
                     autoClose: 2000,
                     theme: "dark",
                     className: "custom-toast",
                 });
-                fetchProducts();
+                fetchTickets();
             } else {
-                toast('No se ha podido borrar el producto, intente nuevamente', {
+                toast('No se ha podido borrar la venta, intente nuevamente', {
                     position: "top-right",
                     autoClose: 2000,
                     theme: "dark",
@@ -44,43 +44,43 @@ const ItemTicket = ({ticket,fetchTickets}) => {
 
     return (
         <>
-            <div className="cPanelProductsContainer__productsTable__itemContainer">
+            <div className="cPanelSalesContainer__salesTable__itemContainer">
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{ticket.code}</div>
+                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{ticket.code}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__description">{ticket.status}</div>
+                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__description">{ticket.status?ticket.status:'-'}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">$ {ticket.amount}</div>
+                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">$ {ticket.amount}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{ticket.payer_email}</div>
+                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{ticket.payer_email}</div>
                 </div>
 
-                {/* <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(ticket.deliveryMethod)}</div>
+                {/* <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{capitalizeFirstLetter(ticket.deliveryMethod)}</div>
                 </div> */}
 
-                <div className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer'>
-                    {/* <button onClick={() => setShowUpdateModal(true)} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Editar</button> */}
-                    {/* <button onClick={handleBtnDeleteProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Borrar</button> */}
+                <div className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer'>
+                    {/* <button onClick={() => setShowUpdateModal(true)} className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'>Editar</button> */}
+                    {/* <button onClick={handleBtnDeleteProduct} className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'>Borrar</button> */}
 
                     {loading ? (
                         <button
                         disabled
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         <Spinner/>
                         </button>
                     ) : (
                         <button
                         onClick={handleBtnDeleteProduct}
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         Borrar
                         </button>

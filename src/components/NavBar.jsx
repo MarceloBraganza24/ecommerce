@@ -75,10 +75,12 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
 
                     <div className='header__logo-menu__hMenuContainer'>
                         {
-                            isLoading && (role == 'admin') ?
+                            /* isLoading && (role == 'admin') ? */
+                            isLoading ?
                             <Spinner/>
                             :
-                            role == 'admin' && showLogOutContainer &&
+                            /* role == 'admin' && showLogOutContainer && */
+                            showLogOutContainer &&
                             <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
@@ -162,9 +164,16 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                     <div className='hMenuOptionsContainer__btnCloseMenu'>
                         <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
                     </div>
-                    <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
-                    <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Panel de control</Link>
-                    <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Ventas</Link>
+                    {
+                        role == 'admin' ?
+                        <>
+                            <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
+                            <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Panel de control</Link>
+                            <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Ventas</Link>
+                        </>
+                        :
+                        <Link to={`/myPurchases`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Mis compras</Link>
+                    }
                 </div>
             }
 

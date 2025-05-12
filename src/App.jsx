@@ -21,6 +21,7 @@ import CPanelProducts from './components/CPanelProducts.jsx';
 import { IsLoggedInContext } from './context/IsLoggedContext.jsx';
 import CPanel from './components/CPanel.jsx';
 import Tickets from './components/Tickets.jsx';
+import MyPurchases from './components/MyPurchases.jsx';
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
                         <Route exact path="/cpanel/products" element={<CPanelProducts/>}/>
                         <Route exact path="/cpanel" element={<CPanel/>}/>
                         <Route exact path="/tickets" element={<Tickets/>}/>
+                        <Route exact path="/myPurchases" element={<MyPurchases/>}/>
 
                     </Routes>
 

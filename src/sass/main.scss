@@ -656,6 +656,174 @@ h2 {
         }
     }
 }
+.cPanelSalesContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    &__title {
+        width: 100%;
+        @include disFC();
+        padding: 2vh 0vh;
+        &__prop {
+            font-size: 40px;
+        }
+    }
+    &__inputSearchSale {
+        width: 100%;
+        @include disFC();
+        padding-bottom: 2vh;
+        &__input {
+            width: 50%;
+            height: 35px;
+            border-radius: 0.5vh;
+            text-align: center;
+            font-size: 22px;
+            &::placeholder {
+                text-align: center;
+                font-size: 18px;
+            }
+        }
+    }
+    &__btnCreateSale {
+        width: 100%;
+        @include disFC();
+        padding-bottom: 2vh;
+        &__btn {
+            background-color: #124285;
+            color: white;
+            padding: 0.5vh 10vh;
+            border-radius: 0.5vh;
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            &:hover {
+                background-color: #0e3061;
+            }
+        }
+    }
+    &__dateFilter {
+        @include disFC();
+        padding-bottom: 2vh;
+        gap: 2vh;
+        &__btn {
+            width: 10%;
+            @include disFC();
+            background-color: #124285;
+            color: white;
+            padding: 0.5vh 10vh;
+            border-radius: 0.5vh;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            &:hover {
+                background-color: #0e3061;
+            }
+        }
+        &__date {
+            font-size: 20px;
+        }
+    }
+    &__quantitySales {
+        width: 100%;
+        @include disFC();
+        padding-bottom: 2vh;
+        &__prop {
+            font-size: 18px;
+        }
+    }
+    &__headerTableContainer {
+        width: 100%;
+        @include disFC();
+        &__headerTable {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            border-bottom: 0.3vh solid #d6d5d5;
+            padding: 1vh 0vh;
+            &__item {
+                font-size: 18px;
+                font-weight: bold;
+                text-align: center;
+            }
+        }
+    }
+    &__salesTable {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        &__itemContainer {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            border-bottom: 0.3vh solid #d6d5d5;
+            padding: 1vh 0vh;
+            &__item {
+                width: 100%;
+                @include disFC();
+                &__img {
+                    width: 60px;
+                    height: 50px;
+                }
+                &__label {
+                    text-align: center;
+                    font-size: 16px;
+                }
+                &__labelLong {
+                    text-align: center;
+                    font-size: 14px;
+                }
+                &__description {
+                    text-align: center;
+                    font-size: 12px;
+                }
+            }
+            &__btnsContainer {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                &__btn {
+                    background-color: #124285;
+                    color: white;
+                    padding: 0.5vh 1vh;
+                    border-radius: 0.5vh;
+                    text-align: center;
+                    cursor: pointer;
+                    &:hover {
+                        background-color: #0e3061;
+                    }
+                }
+            }
+        }
+        &__isLoadingLabel {
+            @include disFC();
+            padding-top: 2vh;
+        }
+    }
+    &__btnsPagesContainer {
+        width: 100%;
+        display: flex;
+        gap: 2vh;
+        align-items: center;
+        justify-content: center;
+        //padding: 2vh 0vh;
+        padding-top: 4vh;
+        &__btn {
+            background-color: #124285;
+            color: white;
+            padding: 1vh 3vh;
+            border-radius: 0.5vh;
+            text-align: center;
+            cursor: pointer;
+            &:hover {
+                background-color: #0e3061;
+            }
+        }
+    }
+}
 .updateProductModalContainer {
     background-color: rgb(0, 0, 0, 0.5);
     width: 100%;

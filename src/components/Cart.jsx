@@ -37,6 +37,8 @@ const Cart = () => {
     const {deleteAllItemCart} = useContext(CartContext);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [loadingBtnDeleteAllItemCart, setLoadingBtnDeleteAllItemCart] = useState(false);
+
+    const [loadingBtnConfirmSale, setLoadingBtnConfirmSale] = useState(false);
     
     const handleDeleteAll = async () => {
         setLoadingBtnDeleteAllItemCart(true); // 👈 Activamos el "vaciando..."
@@ -275,6 +277,7 @@ const Cart = () => {
             user_cart_id: userCart._id
         }
         try {
+            setLoadingBtnConfirmSale(true)
             const response = await fetch(`http://localhost:8081/api/tickets/saveSale`, {
                 method: 'POST',         
                 credentials: 'include', // 👈 necesario para recibir cookies
@@ -300,22 +303,11 @@ const Cart = () => {
                     navigate('/tickets')
                 }, 2500);
             }
-            /* if(data.error === 'incorrect credentials') {
-                toast('Alguno de los datos ingresados es incorrecto. Inténtalo nuevamente!', {
-                    position: "top-right",
-                    autoClose: 2500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            } */
         } catch (error) {
           console.error('Error:', error);
-        }
+        }/*  finally {
+            setLoadingBtnConfirmSale(false)
+        } */
     }
 
     const handleBtnAddDiscount = () => {
@@ -565,7 +557,13 @@ const Cart = () => {
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
                                 {
                                     user.role == 'admin' ?
-                                        <button onClick={handleBtnConfirmSale} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>Confirmar venta</button>
+                                        <button 
+                                            onClick={handleBtnConfirmSale} 
+                                            className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'
+                                            disabled={loadingBtnConfirmSale}
+                                        >
+                                            {loadingBtnConfirmSale ? <Spinner/> : 'Confirmar venta'}
+                                        </button>
                                     :
                                         <Link to={'/cart'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
                                             Continuar compra
