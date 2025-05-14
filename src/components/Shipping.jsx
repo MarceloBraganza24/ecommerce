@@ -77,7 +77,7 @@ const Shipping = () => {
     const handleCheckout = async () => {
         setLoadingCheckOut(true)
         try {
-            console.log(user)
+            //console.log(user)
             const response = await fetch(`http://localhost:8081/api/payments/create-preference-purchase`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -635,7 +635,7 @@ const Shipping = () => {
                         {
                             loadingCheckOut ?
                                 <button 
-                                    onClick={handleBtnContinuePurchase}
+                                    //onClick={handleBtnContinuePurchase}
                                     disabled={loadingCheckOut}
                                     className='shippingContainer__deliveryMethodContainer__btnContinue__propRedirectBtn'
                                 >

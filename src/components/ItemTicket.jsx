@@ -6,6 +6,29 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email}) => {
     const [loading, setLoading] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
+    //const titles = ticket.items.map(item => item.title).join(", ");
+    /* const titles = ticket.items.map(item => 
+        item.product && item.product.title 
+            ? item.product.title.charAt(0).toUpperCase() + item.product.title.slice(1).toLowerCase() 
+            : ''
+    ).join(", "); */
+
+    /* const titles = ticket.items.map(item => 
+    item.product?.title 
+        ? item.product.title.charAt(0).toUpperCase() + item.product.title.slice(1).toLowerCase() 
+        : ''
+    ); */
+    const titles = ticket.items.map(item => {
+    const title = item.product?.title
+        ? item.product.title.charAt(0).toUpperCase() + item.product.title.slice(1).toLowerCase()
+        : '';
+
+        const quantity = item.quantity ?? 0;
+
+        return `${title} x ${quantity}`;
+    });
+
+    console.log(ticket.items)
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
@@ -54,9 +77,32 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email}) => {
                     <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">{ticket.code}</div>
                 </div>
 
-                <div className="myPurchasesContainer__purchasesTable__itemContainer__item">
-                    <div className="myPurchasesContainer__purchasesTable__itemContainer__item__description">{ticket.status?ticket.status:'-'}</div>
+                {/* <div className="myPurchasesContainer__purchasesTable__itemContainer__item">
+                    <div className="myPurchasesContainer__purchasesTable__itemContainer__item__products">{titles?titles:'-'}</div>
+                </div> */}
+                {/* <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct">
+                    <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products">
+                        {titles && titles.length > 0
+                        ? titles.map((linea, index) => <div className='myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__product' key={index}>{linea}</div>)
+                        : '-'}
+                    </div>
+                </div> */}
+                <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products">
+                    {ticket.items.map((item, index) => (
+                        <div key={index} className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine">
+                            <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title">
+                                {item.product?.title
+                                ? item.product.title.charAt(0).toUpperCase() + item.product.title.slice(1).toLowerCase()
+                                : '-'}
+                            </div>
+                            <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__quantity">
+                                x {item.quantity}
+                            </div>
+                        </div>
+                    ))}
                 </div>
+
+
 
                 <div className="myPurchasesContainer__purchasesTable__itemContainer__item">
                     <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">$ {ticket.amount}</div>

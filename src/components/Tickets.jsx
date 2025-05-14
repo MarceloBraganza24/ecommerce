@@ -78,6 +78,9 @@ const Tickets = () => {
             ticketDate.getDate() === selectedDate.getDate()
         );
     });
+
+    const ticketsOrdenados = [...filteredByDate].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
+
     //console.log(filteredByDate)
 
     useEffect(() => {
@@ -313,14 +316,14 @@ const Tickets = () => {
                 </div>
 
                 {
-                    filteredByDate.length != 0 &&
+                    ticketsOrdenados.length != 0 &&
                     <div className='cPanelSalesContainer__headerTableContainer'>
 
                         <div className="cPanelSalesContainer__headerTableContainer__headerTable">
 
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Código</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Estado</div>
+                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Productos</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Precio</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Operador</div>
 
@@ -339,11 +342,11 @@ const Tickets = () => {
                                     Cargando ventas&nbsp;&nbsp;<Spinner/>
                                 </div>
                             </>
-                        : filteredByDate.length != 0 ?
+                        : ticketsOrdenados.length != 0 ?
 
                             <>
                                 {
-                                    filteredByDate.map((ticket) => {
+                                    ticketsOrdenados.map((ticket) => {
                                         const currentDate = new Date(ticket.purchase_datetime);
                                         const formattedDate = currentDate.toLocaleDateString('es-AR', {
                                             day: '2-digit',

@@ -304,7 +304,8 @@ const Cart = () => {
                 }, 2500);
             }
         } catch (error) {
-          console.error('Error:', error);
+            console.error('Error:', error);
+            setLoadingBtnConfirmSale(false)
         }/*  finally {
             setLoadingBtnConfirmSale(false)
         } */
@@ -490,7 +491,7 @@ const Cart = () => {
                             </div>
 
                             {
-                                showLabelAddCoupon &&
+                                showLabelAddCoupon && user.role == 'admin' &&
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
                                     <div onClick={handleBtnAddDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop'>Ingresar descuento</div>
                                 </div>
@@ -565,7 +566,7 @@ const Cart = () => {
                                             {loadingBtnConfirmSale ? <Spinner/> : 'Confirmar venta'}
                                         </button>
                                     :
-                                        <Link to={'/cart'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
+                                        <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
                                             Continuar compra
                                         </Link>
                                 }

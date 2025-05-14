@@ -67,6 +67,7 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
         const newItem = {
             product: id,
             quantity: 1,
+            title
         };
     
         try {

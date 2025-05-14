@@ -3,7 +3,7 @@ import NavBar from './NavBar'
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 import ItemTicket from './ItemTicket';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MyPurchases = () => {
     const navigate = useNavigate();
@@ -44,6 +44,7 @@ const MyPurchases = () => {
     const objetosFiltrados = filtrarPorTitle(inputFilteredPurchases);
 
     const ticketsOrdenados = [...objetosFiltrados].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
+
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -273,7 +274,7 @@ const MyPurchases = () => {
 
                             <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
                             <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Código</div>
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Estado</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Productos</div>
                             <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Precio</div>
                             <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Operador</div>
 
@@ -325,8 +326,8 @@ const MyPurchases = () => {
                                             <div key={ticket._id}>
                                                 {isNewDateGroup && (
                                                     <div className="myPurchasesContainer__purchasesTable__dayContainer">
-                                                        {/* <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'>📅 {formattedDate}</strong> */}
-                                                        <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'></strong>
+                                                        <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'>📅 {formattedDate}</strong>
+                                                        {/* <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'></strong> */}
                                                     </div>
                                                 )}
                                                 <ItemTicket
@@ -361,7 +362,10 @@ const MyPurchases = () => {
                             
                         :
                             <div className="myPurchasesContainer__purchasesTable__isLoadingLabel">
-                                Aún no existen compras
+                                <div>Aún no existen compras</div>
+                                <Link to={'/#catalog'} className='myPurchasesContainer__purchasesTable__isLoadingLabel__label'>
+                                    Ir a comprar
+                                </Link>
                             </div>
 
                     }

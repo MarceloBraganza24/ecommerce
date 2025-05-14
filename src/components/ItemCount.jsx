@@ -88,6 +88,7 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         const newItem = {
             product: id,
             quantity: count,
+            title
         };
     
         try {

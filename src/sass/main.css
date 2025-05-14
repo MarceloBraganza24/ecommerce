@@ -813,7 +813,7 @@ h2 {
 .cPanelSalesContainer__headerTableContainer__headerTable {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
 }
@@ -831,7 +831,7 @@ h2 {
 .cPanelSalesContainer__salesTable__itemContainer {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
 }
@@ -1023,9 +1023,23 @@ h2 {
   text-align: center;
   font-size: 14px;
 }
-.myPurchasesContainer__purchasesTable__itemContainer__item__description {
-  text-align: center;
-  font-size: 12px;
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct {
+  width: 100%;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products {
+  display: flex;
+  flex-direction: column;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title {
+  font-size: 16px;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__quantity {
+  justify-self: end;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__btnsContainer {
   width: 100%;
@@ -1048,7 +1062,16 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   padding-top: 2vh;
+}
+.myPurchasesContainer__purchasesTable__isLoadingLabel__label {
+  font-size: 22px;
+  color: black;
+  padding-top: 1vh;
+}
+.myPurchasesContainer__purchasesTable__isLoadingLabel__label:hover {
+  color: #0e3061;
 }
 .myPurchasesContainer__btnsPagesContainer {
   width: 100%;
