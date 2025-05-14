@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const Tickets = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [tickets, setTickets] = useState([]);
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -16,14 +17,13 @@ const Tickets = () => {
         nextPage: null,
         prevPage: null
     });   
-    //console.log(pageInfo)
+    // console.log(tickets)
+    // console.log(pageInfo)
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState('');
     const [categories, setCategories] = useState([]);
-    const [tickets, setTickets] = useState([]);
-    //console.log(tickets)
     const [userCart, setUserCart] = useState({});
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [cookieValue, setCookieValue] = useState('');
@@ -63,9 +63,6 @@ const Tickets = () => {
         setSelectedDate(nextDate);
     };
 
-    /* const formatDateToString = (date) => {
-        return date.toISOString().split('T')[0]; // formato YYYY-MM-DD
-    }; */
     const formatDateToString = (date) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Enero = 0
@@ -73,11 +70,6 @@ const Tickets = () => {
         return `${year}-${month}-${day}`;
     };
 
-    
-    /* const filteredByDate = objetosFiltrados.filter(ticket => {
-        const ticketDate = new Date(ticket.purchase_datetime).toISOString().split('T')[0];
-        return ticketDate === formatDateToString(selectedDate);
-    }); */
     const filteredByDate = objetosFiltrados.filter(ticket => {
         const ticketDate = new Date(ticket.purchase_datetime);
         return (
@@ -86,7 +78,13 @@ const Tickets = () => {
             ticketDate.getDate() === selectedDate.getDate()
         );
     });
+    //console.log(filteredByDate)
 
+    useEffect(() => {
+        if (user?.email) {
+            fetchTickets(1, "", user.email);
+        }
+    }, [user]);
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -259,12 +257,11 @@ const Tickets = () => {
         const cookieValue = getCookie('TokenJWT');
         if(cookieValue) {
             setCookieValue(cookieValue)
+            fetchUser(cookieValue);
         } else {
             navigate('/')
         }
-        fetchUser(cookieValue);
         fetchCategories();
-        fetchTickets();
     }, []);
 
     const handleInputFilteredSales = (e) => {
@@ -321,6 +318,7 @@ const Tickets = () => {
 
                         <div className="cPanelSalesContainer__headerTableContainer__headerTable">
 
+                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Código</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Estado</div>
                             <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Precio</div>
@@ -345,17 +343,35 @@ const Tickets = () => {
 
                             <>
                                 {
-                                    filteredByDate.map((ticket) => (
-                                        <ItemTicket
-                                        ticket={ticket}
-                                        fetchTickets={fetchTickets}
-                                        />
-                                    ))
+                                    filteredByDate.map((ticket) => {
+                                        const currentDate = new Date(ticket.purchase_datetime);
+                                        const formattedDate = currentDate.toLocaleDateString('es-AR', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric'
+                                        });
+
+                                        const formattedTime = currentDate.toLocaleTimeString('es-AR', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        });
+
+                                        return (
+                                            <ItemTicket
+                                                ticket={ticket}
+                                                fechaHora={`${formattedDate} ${formattedTime}`}
+                                                fetchTickets={fetchTickets}
+                                                email={user.email}
+                                            />
+                                        );
+                                        
+                                    })
                                 }
                                 <div className='cPanelSalesContainer__btnsPagesContainer'>
                                     <button className='cPanelSalesContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasPrevPage}
-                                        onClick={() => fetchTickets(pageInfo.prevPage)}
+                                        onClick={() => fetchTickets(pageInfo.prevPage, "", user.email)}
                                         >
                                         Anterior
                                     </button>
@@ -364,7 +380,7 @@ const Tickets = () => {
 
                                     <button className='cPanelSalesContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasNextPage}
-                                        onClick={() => fetchTickets(pageInfo.nextPage)}
+                                        onClick={() => fetchTickets(pageInfo.nextPage, "", user.email)}
                                         >
                                         Siguiente
                                     </button>

@@ -900,6 +900,176 @@ h2 {
   background-color: #0e3061;
 }
 
+.myPurchasesContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.myPurchasesContainer__title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh 0vh;
+}
+.myPurchasesContainer__title__prop {
+  font-size: 40px;
+}
+.myPurchasesContainer__inputSearchPurchase {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2vh;
+}
+.myPurchasesContainer__inputSearchPurchase__input {
+  width: 50%;
+  height: 35px;
+  border-radius: 0.5vh;
+  text-align: center;
+  font-size: 22px;
+}
+.myPurchasesContainer__inputSearchPurchase__input::-moz-placeholder {
+  text-align: center;
+  font-size: 18px;
+}
+.myPurchasesContainer__inputSearchPurchase__input::placeholder {
+  text-align: center;
+  font-size: 18px;
+}
+.myPurchasesContainer__btnCreatePurchase {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2vh;
+}
+.myPurchasesContainer__btnCreatePurchase__btn {
+  background-color: #124285;
+  color: white;
+  padding: 0.5vh 10vh;
+  border-radius: 0.5vh;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+.myPurchasesContainer__btnCreatePurchase__btn:hover {
+  background-color: #0e3061;
+}
+.myPurchasesContainer__quantityPurchases {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 2vh;
+}
+.myPurchasesContainer__quantityPurchases__prop {
+  font-size: 18px;
+}
+.myPurchasesContainer__headerTableContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.myPurchasesContainer__headerTableContainer__headerTable {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  border-bottom: 0.3vh solid #d6d5d5;
+  padding: 1vh 0vh;
+}
+.myPurchasesContainer__headerTableContainer__headerTable__item {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+.myPurchasesContainer__purchasesTable {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+.myPurchasesContainer__purchasesTable__dayContainer {
+  background-color: rgb(214, 213, 213);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh 0vh;
+}
+.myPurchasesContainer__purchasesTable__itemContainer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  border-bottom: 0.3vh solid #d6d5d5;
+  padding: 1vh 0vh;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__item {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__item__img {
+  width: 60px;
+  height: 50px;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__item__label {
+  text-align: center;
+  font-size: 16px;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__item__labelLong {
+  text-align: center;
+  font-size: 14px;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__item__description {
+  text-align: center;
+  font-size: 12px;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__btnsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__btnsContainer__btn {
+  background-color: #124285;
+  color: white;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  text-align: center;
+  cursor: pointer;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__btnsContainer__btn:hover {
+  background-color: #0e3061;
+}
+.myPurchasesContainer__purchasesTable__isLoadingLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2vh;
+}
+.myPurchasesContainer__btnsPagesContainer {
+  width: 100%;
+  display: flex;
+  gap: 2vh;
+  align-items: center;
+  justify-content: center;
+  padding-top: 4vh;
+}
+.myPurchasesContainer__btnsPagesContainer__btn {
+  background-color: #124285;
+  color: white;
+  padding: 1vh 3vh;
+  border-radius: 0.5vh;
+  text-align: center;
+  cursor: pointer;
+}
+.myPurchasesContainer__btnsPagesContainer__btn:hover {
+  background-color: #0e3061;
+}
+
 .updateProductModalContainer {
   background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
@@ -2144,6 +2314,9 @@ h2 {
 .cartContainer__accountSummaryContainer__accountSummary__btn__prop {
   background-color: #1b509c;
   width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
   padding: 1vh;
   border-radius: 0.5vh;
@@ -3320,6 +3493,15 @@ h2 {
 .header__rightMenu__menu__item:hover {
   transform: scale(1.1);
   cursor: pointer;
+}
+.header__rightMenu__menu__itemLogin {
+  width: 100%;
+  height: auto;
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  align-self: center;
+  text-decoration: none;
 }
 .header__rightMenu__menu__cart {
   width: 100%;

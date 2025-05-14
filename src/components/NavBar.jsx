@@ -147,7 +147,7 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                                 <div className='header__rightMenu__menu__name'>BIENVENIDO/A<br />{first_name?capitalizeFirstLetter(first_name):''}</div>
                             </>
                             :
-                            <Link to={"/logIn"} className='header__rightMenu__menu__item'>
+                            <Link to={"/logIn"} className='header__rightMenu__menu__itemLogin'>
                                 LOG IN
                             </Link>
                         }

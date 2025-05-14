@@ -14,6 +14,7 @@ const MyPurchases = () => {
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [cookieValue, setCookieValue] = useState('');
     const [isLoadingTickets, setIsLoadingTickets] = useState(true);
+    const [inputFilteredPurchases, setInputFilteredPurchases] = useState('');
     const [tickets, setTickets] = useState([]);
     const [pageInfo, setPageInfo] = useState({
         page: 1,
@@ -23,12 +24,26 @@ const MyPurchases = () => {
         nextPage: null,
         prevPage: null
     });   
+    //console.log(tickets)
+    //console.log(pageInfo)
 
     useEffect(() => {
         if(user.isLoggedIn) {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    function filtrarPorTitle(valorIngresado) {
+        const valorMinusculas = valorIngresado.toLowerCase();
+        const objetosFiltrados = tickets.filter(objeto => {
+            const nombreMinusculas = objeto.payer_email.toLowerCase();
+            return nombreMinusculas.includes(valorMinusculas);
+        });
+        return objetosFiltrados;
+    }
+    const objetosFiltrados = filtrarPorTitle(inputFilteredPurchases);
+
+    const ticketsOrdenados = [...objetosFiltrados].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -214,6 +229,11 @@ const MyPurchases = () => {
         fetchCategories();
     }, []);
 
+    const handleInputFilteredPurchases = (e) => {
+        const value = e.target.value;
+        setInputFilteredPurchases(value)
+    }
+
     return (
 
         <>
@@ -231,42 +251,31 @@ const MyPurchases = () => {
                 />
             </div>
 
-            <div className='cPanelSalesContainer'>
+            <div className='myPurchasesContainer'>
                 
-                <div className='cPanelSalesContainer__title'>
-                    <div className='cPanelSalesContainer__title__prop'>Mis compras</div>        
+                <div className='myPurchasesContainer__title'>
+                    <div className='myPurchasesContainer__title__prop'>Mis compras</div>        
                 </div>
 
-                {/* <div className='cPanelSalesContainer__inputSearchSale'>
-                    <input type="text" onChange={handleInputFilteredSales} value={inputFilteredTickets} placeholder='Buscar por email' className='cPanelSalesContainer__inputSearchSale__input' name="" id="" />
-                </div> */}
-
-                {/* <div className='cPanelSalesContainer__btnCreateSale'>
-                    <Link to={'/#catalog'} className='cPanelSalesContainer__btnCreateSale__btn'>
-                        Crear venta
-                    </Link>
-                </div> */}
-
-                <div className='cPanelSalesContainer__quantitySales'>
-                    <div className='cPanelSalesContainer__quantitySales__prop'>Cantidad de compras: {tickets.length}</div>        
+                <div className='myPurchasesContainer__inputSearchPurchase'>
+                    <input type="text" onChange={handleInputFilteredPurchases} value={inputFilteredPurchases} placeholder='Buscar por email' className='myPurchasesContainer__inputSearchPurchase__input' name="" id="" />
                 </div>
 
-                {/* <div className="cPanelSalesContainer__dateFilter">
-                    <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToPreviousDay}>Anterior</button>
-                    <span className='cPanelSalesContainer__dateFilter__date'>{formatDateToString(selectedDate)}</span>
-                    <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToNextDay}>Siguiente</button>
-                </div> */}
+                <div className='myPurchasesContainer__quantityPurchases'>
+                    <div className='myPurchasesContainer__quantityPurchases__prop'>Cantidad de compras: {tickets.length}</div>        
+                </div>
 
                 {
                     tickets.length != 0 &&
-                    <div className='cPanelSalesContainer__headerTableContainer'>
+                    <div className='myPurchasesContainer__headerTableContainer'>
 
-                        <div className="cPanelSalesContainer__headerTableContainer__headerTable">
+                        <div className="myPurchasesContainer__headerTableContainer__headerTable">
 
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Código</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Estado</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Precio</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Operador</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Código</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Estado</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Precio</div>
+                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Operador</div>
 
                         </div>
 
@@ -274,12 +283,12 @@ const MyPurchases = () => {
                 }
 
 
-                <div className="cPanelSalesContainer__salesTable">
+                <div className="myPurchasesContainer__purchasesTable">
 
                     {
                         isLoadingTickets ? 
                             <>
-                                <div className="cPanelSalesContainer__salesTable__isLoadingLabel">
+                                <div className="myPurchasesContainer__purchasesTable__isLoadingLabel">
                                     Cargando ventas&nbsp;&nbsp;<Spinner/>
                                 </div>
                             </>
@@ -287,26 +296,63 @@ const MyPurchases = () => {
 
                             <>
                                 {
-                                    tickets.map((ticket) => (
-                                        <ItemTicket
-                                        ticket={ticket}
-                                        fetchTickets={fetchTickets}
-                                        />
-                                    ))
+                                    ticketsOrdenados.map((ticket, index) => {
+                                        const currentDate = new Date(ticket.purchase_datetime);
+                                        const formattedDate = currentDate.toLocaleDateString('es-AR', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric'
+                                        });
+
+                                        const formattedTime = currentDate.toLocaleTimeString('es-AR', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        });
+
+                                        // Verificar si es la primera iteración o si cambió la fecha
+                                        const previousDate = index > 0
+                                            ? new Date(ticketsOrdenados[index - 1].purchase_datetime).toLocaleDateString('es-AR', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric'
+                                            })
+                                            : null;
+
+                                        const isNewDateGroup = formattedDate !== previousDate;
+
+                                        return (
+                                            <div key={ticket._id}>
+                                                {isNewDateGroup && (
+                                                    <div className="myPurchasesContainer__purchasesTable__dayContainer">
+                                                        {/* <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'>📅 {formattedDate}</strong> */}
+                                                        <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'></strong>
+                                                    </div>
+                                                )}
+                                                <ItemTicket
+                                                    ticket={ticket}
+                                                    fechaHora={`${formattedDate} ${formattedTime}`}
+                                                    fetchTickets={fetchTickets}
+                                                    email={user.email}
+                                                />
+                                            </div>
+                                        );
+                                    })
                                 }
-                                <div className='cPanelSalesContainer__btnsPagesContainer'>
-                                    <button className='cPanelSalesContainer__btnsPagesContainer__btn'
+
+                                <div className='myPurchasesContainer__btnsPagesContainer'>
+                                    <button className='myPurchasesContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasPrevPage}
-                                        onClick={() => fetchTickets(pageInfo.prevPage)}
+                                        onClick={() => fetchTickets(pageInfo.prevPage, "", user.email)}
                                         >
                                         Anterior
                                     </button>
                                     
                                     <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
 
-                                    <button className='cPanelSalesContainer__btnsPagesContainer__btn'
+                                    <button className='myPurchasesContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasNextPage}
-                                        onClick={() => fetchTickets(pageInfo.nextPage)}
+                                        onClick={() => fetchTickets(pageInfo.nextPage, "", user.email)}
                                         >
                                         Siguiente
                                     </button>
@@ -314,7 +360,7 @@ const MyPurchases = () => {
                             </>
                             
                         :
-                            <div className="cPanelSalesContainer__salesTable__isLoadingLabel">
+                            <div className="myPurchasesContainer__purchasesTable__isLoadingLabel">
                                 Aún no existen compras
                             </div>
 
