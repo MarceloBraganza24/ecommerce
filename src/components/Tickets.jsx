@@ -305,27 +305,34 @@ const Tickets = () => {
                     </Link>
                 </div>
 
-                <div className='cPanelSalesContainer__quantitySales'>
-                    <div className='cPanelSalesContainer__quantitySales__prop'>Cantidad de ventas: {filteredByDate.length}</div>        
-                </div>
+                {
+                    ticketsOrdenados.length != 0 &&
+                    <div className='cPanelSalesContainer__quantitySales'>
+                        <div className='cPanelSalesContainer__quantitySales__prop'>Cantidad de ventas: {ticketsOrdenados.length}</div>        
+                    </div>
+                }
 
-                <div className="cPanelSalesContainer__dateFilter">
-                    <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToPreviousDay}>Anterior</button>
-                    <span className='cPanelSalesContainer__dateFilter__date'>{formatDateToString(selectedDate)}</span>
-                    <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToNextDay}>Siguiente</button>
-                </div>
+                {
+                    !isLoadingTickets &&
+                    <div className="cPanelSalesContainer__dateFilter">
+                        <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToPreviousDay}>Anterior</button>
+                        <span className='cPanelSalesContainer__dateFilter__date'>{formatDateToString(selectedDate)}</span>
+                        <button className='cPanelSalesContainer__dateFilter__btn' onClick={goToNextDay}>Siguiente</button>
+                    </div>
+                }
 
                 {
                     ticketsOrdenados.length != 0 &&
                     <div className='cPanelSalesContainer__headerTableContainer'>
 
-                        <div className="cPanelSalesContainer__headerTableContainer__headerTable">
+                        <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable">
 
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Código</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Productos</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Precio</div>
-                            <div className="cPanelSalesContainer__headerTableContainer__headerTable__item">Operador</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Fecha y hora</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Código</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Productos</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Precio</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Operador</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item">Rol</div>
 
                         </div>
 
@@ -366,6 +373,7 @@ const Tickets = () => {
                                                 fechaHora={`${formattedDate} ${formattedTime}`}
                                                 fetchTickets={fetchTickets}
                                                 email={user.email}
+                                                role={user.role}
                                             />
                                         );
                                         

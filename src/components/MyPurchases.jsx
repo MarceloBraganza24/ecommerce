@@ -24,8 +24,6 @@ const MyPurchases = () => {
         nextPage: null,
         prevPage: null
     });   
-    //console.log(tickets)
-    //console.log(pageInfo)
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -45,6 +43,8 @@ const MyPurchases = () => {
 
     const ticketsOrdenados = [...objetosFiltrados].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
 
+    const ticketsByVisibilityTrue = ticketsOrdenados.filter(ticket => ticket.visibility.user == true)
+    //console.log(ticketsByVisibilityTrue)
 
     const fetchUser = async (cookieValue) => {
         try {
@@ -262,21 +262,23 @@ const MyPurchases = () => {
                     <input type="text" onChange={handleInputFilteredPurchases} value={inputFilteredPurchases} placeholder='Buscar por email' className='myPurchasesContainer__inputSearchPurchase__input' name="" id="" />
                 </div>
 
-                <div className='myPurchasesContainer__quantityPurchases'>
-                    <div className='myPurchasesContainer__quantityPurchases__prop'>Cantidad de compras: {tickets.length}</div>        
-                </div>
+                {
+                    ticketsByVisibilityTrue.length != 0 &&
+                    <div className='myPurchasesContainer__quantityPurchases'>
+                        <div className='myPurchasesContainer__quantityPurchases__prop'>Cantidad de compras: {ticketsByVisibilityTrue.length}</div>        
+                    </div>
+                }
 
                 {
-                    tickets.length != 0 &&
+                    ticketsByVisibilityTrue.length != 0 &&
                     <div className='myPurchasesContainer__headerTableContainer'>
 
-                        <div className="myPurchasesContainer__headerTableContainer__headerTable">
+                        <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable">
 
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Fecha y hora</div>
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Código</div>
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Productos</div>
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Precio</div>
-                            <div className="myPurchasesContainer__headerTableContainer__headerTable__item">Operador</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Fecha y hora</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Código</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Productos</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Precio</div>
 
                         </div>
 
@@ -290,14 +292,14 @@ const MyPurchases = () => {
                         isLoadingTickets ? 
                             <>
                                 <div className="myPurchasesContainer__purchasesTable__isLoadingLabel">
-                                    Cargando ventas&nbsp;&nbsp;<Spinner/>
+                                    Cargando compras&nbsp;&nbsp;<Spinner/>
                                 </div>
                             </>
-                        : tickets.length != 0 ?
+                        : ticketsByVisibilityTrue.length != 0 ?
 
                             <>
                                 {
-                                    ticketsOrdenados.map((ticket, index) => {
+                                    ticketsByVisibilityTrue.map((ticket, index) => {
                                         const currentDate = new Date(ticket.purchase_datetime);
                                         const formattedDate = currentDate.toLocaleDateString('es-AR', {
                                             day: '2-digit',
@@ -335,6 +337,7 @@ const MyPurchases = () => {
                                                     fechaHora={`${formattedDate} ${formattedTime}`}
                                                     fetchTickets={fetchTickets}
                                                     email={user.email}
+                                                    role={user.role}
                                                 />
                                             </div>
                                         );

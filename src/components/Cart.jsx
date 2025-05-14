@@ -274,6 +274,7 @@ const Cart = () => {
             items: userCart.products,
             deliveryMethod: 'vendedor',
             purchase_datetime,
+            user_role: user.role,
             user_cart_id: userCart._id
         }
         try {
