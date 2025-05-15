@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Footer = () => {
+const Footer = ({sellerAddresses,isLoadingSellerAddresses}) => {
 
     return (
 
@@ -60,8 +60,12 @@ const Footer = () => {
 
                         <div className='footerContainer__contactContainer__contact__contactProps'>
 
-                            <div className='footerContainer__contactContainer__contact__contactProps__prop'>Mitre 1303</div>
-                            <div className='footerContainer__contactContainer__contact__contactProps__prop'>Coronel Suárez, Pcia de Buenos Aires</div>
+                            {sellerAddresses.map((address) => (
+                                <div className='footerContainer__contactContainer__contact__contactProps__prop'>
+                                    - {address.street} {address.street_number}, {address.locality}, {address.province}
+                                </div>
+                            ))}
+
                             <div className='footerContainer__contactContainer__contact__contactProps__prop'>Teléfono: +54 9 2926 450236</div>
                             <div className='footerContainer__contactContainer__contact__contactProps__prop'>ecommerce@gmail.com</div>
 

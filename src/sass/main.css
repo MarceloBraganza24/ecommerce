@@ -3422,7 +3422,7 @@ h2 {
   width: 100%;
   height: auto;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr;
   padding: 8vh 0vh;
 }
 .footerContainer__logoPhraseContainer {
@@ -3432,7 +3432,7 @@ h2 {
   align-items: center;
 }
 .footerContainer__logoPhraseContainer__logoPhrase {
-  width: 50%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   gap: 2vh;

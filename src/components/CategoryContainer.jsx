@@ -17,6 +17,8 @@ const CategoryContainer = () => {
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
+    const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
         street: "",
         street_number: "",
@@ -72,6 +74,34 @@ const CategoryContainer = () => {
             }
         }
     }, [user, deliveryForms]);
+
+    const fetchSellerAddresses = async () => {
+        try {
+            setIsLoadingSellerAddresses(true)
+            const response = await fetch('http://localhost:8081/api/sellerAddresses');
+            const data = await response.json();
+            if (response.ok) {
+                setSellerAddresses(data.data); 
+            } else {
+                toast('Error al cargar domicilios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingSellerAddresses(false)
+        }
+    };
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -250,30 +280,11 @@ const CategoryContainer = () => {
         }
     };
 
-    /* const fetchUser = async (cookieValue) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-            const data = await response.json();
-            if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingProducts(false)
-            } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }; */
-
     useEffect(() => {
         fetchCurrentUser();
         fetchCategories();
         fetchProducts();
+        fetchSellerAddresses();
         fetchDeliveryForm();
         window.scrollTo(0, 0);
     }, []);
@@ -386,7 +397,10 @@ const CategoryContainer = () => {
 
             </div>
 
-            <Footer/>
+            <Footer
+            sellerAddresses={sellerAddresses}
+            isLoadingSellerAddresses={isLoadingSellerAddresses}
+            />
             
         </>
 

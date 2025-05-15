@@ -273,20 +273,23 @@ const Shipping = () => {
 
     }, [user,userCart,sellerAddresses,total,totalQuantity]);
 
-    const fetchUser = async (cookieValue) => {
+    const fetchCurrentUser = async () => {
         try {
-            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
+            const response = await fetch('http://localhost:8081/api/sessions/current', {
+                method: 'GET',
+                credentials: 'include', // MUY IMPORTANTE para enviar cookies
+            });
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
-                //setIsLoading(false)
-                //setIsLoadingProducts(false)
+                setIsLoading(false)
+                setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {
                     setUser(user)
                     fetchCartByUserId(user._id);
                 }
-                //setIsLoading(false)
+                setIsLoading(false)
             }
         } catch (error) {
             console.error('Error:', error);
@@ -294,27 +297,7 @@ const Shipping = () => {
     };
 
     useEffect(() => {
-        const getCookie = (name) => {
-            const cookieName = name + "=";
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-            let cookie = cookieArray[i];
-            while (cookie.charAt(0) === ' ') {
-                cookie = cookie.substring(1);
-            }
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-            }
-            return "";
-        };
-        const cookieValue = getCookie('TokenJWT');
-        if(cookieValue) {
-            setCookieValue(cookieValue)
-        }
-        if(!cookieValue)navigate('/') 
-        fetchUser(cookieValue);
+        fetchCurrentUser()
         fetchDeliveryForm();
         fetchSellerAddresses();
     }, []);

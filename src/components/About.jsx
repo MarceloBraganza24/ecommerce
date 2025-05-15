@@ -11,12 +11,42 @@ const About = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
+    const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
 
     useEffect(() => {
         if(user.isLoggedIn) {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    const fetchSellerAddresses = async () => {
+        try {
+            setIsLoadingSellerAddresses(true)
+            const response = await fetch('http://localhost:8081/api/sellerAddresses');
+            const data = await response.json();
+            if (response.ok) {
+                setSellerAddresses(data.data); 
+            } else {
+                toast('Error al cargar domicilios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingSellerAddresses(false)
+        }
+    };
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -103,26 +133,6 @@ const About = () => {
         }
     };
 
-    /* const fetchUser = async (cookieValue) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-            const data = await response.json();
-            if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingProducts(false)
-            } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }; */
-
     const fetchCurrentUser = async () => {
         try {
             const response = await fetch('http://localhost:8081/api/sessions/current', {
@@ -149,6 +159,7 @@ const About = () => {
     useEffect(() => {
         fetchCurrentUser();
         fetchCategories();
+        fetchSellerAddresses();
         window.scrollTo(0, 0);
     }, []);
     
@@ -175,7 +186,10 @@ const About = () => {
                 </div>
             </div>
 
-            <Footer/>
+            <Footer
+            sellerAddresses={sellerAddresses}
+            isLoadingSellerAddresses={isLoadingSellerAddresses}
+            />
 
         </>
 

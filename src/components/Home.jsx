@@ -26,8 +26,8 @@ const Home = () => {
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
-    const [cookieValue, setCookieValue] = useState('');
-    //console.log(cookieValue)
+    const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [products, setProducts] = useState([]);
     const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
@@ -219,10 +219,39 @@ const Home = () => {
         }
     };
 
+    const fetchSellerAddresses = async () => {
+        try {
+            setIsLoadingSellerAddresses(true)
+            const response = await fetch('http://localhost:8081/api/sellerAddresses');
+            const data = await response.json();
+            if (response.ok) {
+                setSellerAddresses(data.data); 
+            } else {
+                toast('Error al cargar domicilios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingSellerAddresses(false)
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
         fetchCurrentUser();
         fetchProducts();
+        fetchSellerAddresses();
         fetchPaginatedProducts();
         const toggleVisibility = () => {
             if (window.scrollY > 300) {
@@ -319,7 +348,6 @@ const Home = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
                 />
 
                 {
@@ -497,7 +525,10 @@ const Home = () => {
 
             </div>
 
-            <Footer/>
+            <Footer
+            sellerAddresses={sellerAddresses}
+            isLoadingSellerAddresses={isLoadingSellerAddresses}
+            />
             
         </>
 
