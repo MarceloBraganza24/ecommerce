@@ -736,11 +736,12 @@ h2 {
     &__headerTableCPanelSalesContainer {
         width: 100%;
         @include disFC();
+        align-self: center;
         &__headerTable {
-            width: 100%;
+            width: 95%;
             display: grid;
             grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
-            border-bottom: 0.3vh solid #d6d5d5;
+            //border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
             &__item {
                 font-size: 18px;
@@ -754,17 +755,21 @@ h2 {
         display: flex;
         flex-direction: column;
         align-self: center;
+        gap: 0.5vh;
         &__dayContainer {
             background-color: rgb(214, 213, 213);
             @include disFC();
             padding: 2vh 0vh;
         }
         &__itemContainer {
-            width: 100%;
+            background-color: #d6d5d5;
+            width: 95%;
             display: grid;
+            align-self: center;
             grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
             border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
+            border-radius: 1vh;
             &__item {
                 width: 100%;
                 @include disFC();
@@ -790,6 +795,7 @@ h2 {
                     display: none; /* Oculta la barra de desplazamiento */
                 }
                 &__item {
+                    padding-left: 1vh;
                     font-size: 16px;
                 }
             }
@@ -929,10 +935,11 @@ h2 {
         width: 100%;
         @include disFC();
         &__headerTable {
-            width: 100%;
+            width: 95%;
             display: grid;
+            align-self: center;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-            border-bottom: 0.3vh solid #d6d5d5;
+            //border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
             &__item {
                 font-size: 18px;
@@ -943,20 +950,31 @@ h2 {
     }
     &__purchasesTable {
         width: 100%;
-        display: flex;
+        @include disFC();
         flex-direction: column;
-        align-self: center;
+        //align-self: center;
         &__dayContainer {
-            background-color: rgb(214, 213, 213);
+            width: 100%;
+            background-color: rgb(187, 187, 187);
             @include disFC();
             padding: 2vh 0vh;
+            margin-top: 1vh;
+        }
+        &__gridItemContainer {
+            display: flex;
+            flex-direction: column;
+            align-self: center;
         }
         &__itemContainer {
-            width: 100%;
+            background-color: #d6d5d5;
+            width: 95%;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
+            margin-top: 1vh;
+            border-radius: 1vh;
+            align-self: center;
             &__item {
                 width: 100%;
                 @include disFC();

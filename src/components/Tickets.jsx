@@ -33,10 +33,12 @@ const Tickets = () => {
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
-        const objetosFiltrados = tickets.filter(objeto => {
-            const nombreMinusculas = objeto.payer_email.toLowerCase();
-            return nombreMinusculas.includes(valorMinusculas);
+        const objetosFiltrados = tickets.filter(ticket => {
+            return ticket.items.some(item => 
+                item.product.title.toLowerCase().includes(valorMinusculas)
+            );
         });
+
         return objetosFiltrados;
     }
     const objetosFiltrados = filtrarPorTitle(inputFilteredTickets);
@@ -81,33 +83,11 @@ const Tickets = () => {
 
     const ticketsOrdenados = [...filteredByDate].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
 
-    //console.log(filteredByDate)
-
     useEffect(() => {
         if (user?.email) {
             fetchTickets(1, "", user.email);
         }
     }, [user]);
-
-    const fetchUser = async (cookieValue) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-            const data = await response.json();
-            if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingTickets(false)
-            } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
 
     const fetchCategories = async () => {
         try {
@@ -241,29 +221,32 @@ const Tickets = () => {
         }
     };
 
-    useEffect(() => {
-        const getCookie = (name) => {
-            const cookieName = name + "=";
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-            let cookie = cookieArray[i];
-            while (cookie.charAt(0) === ' ') {
-                cookie = cookie.substring(1);
+    const fetchCurrentUser = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/sessions/current', {
+                method: 'GET',
+                credentials: 'include', // MUY IMPORTANTE para enviar cookies
+            });
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingTickets(false)
+                navigate('/')
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
             }
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-            }
-            return "";
-        };
-        const cookieValue = getCookie('TokenJWT');
-        if(cookieValue) {
-            setCookieValue(cookieValue)
-            fetchUser(cookieValue);
-        } else {
-            navigate('/')
+        } catch (error) {
+            console.error('Error:', error);
         }
+    };
+
+    useEffect(() => {
+        fetchCurrentUser();
         fetchCategories();
     }, []);
 
@@ -285,7 +268,6 @@ const Tickets = () => {
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
-                fetchUser={fetchUser}
                 />
             </div>
 
@@ -296,7 +278,7 @@ const Tickets = () => {
                 </div>
 
                 <div className='cPanelSalesContainer__inputSearchSale'>
-                    <input type="text" onChange={handleInputFilteredSales} value={inputFilteredTickets} placeholder='Buscar por email' className='cPanelSalesContainer__inputSearchSale__input' name="" id="" />
+                    <input type="text" onChange={handleInputFilteredSales} value={inputFilteredTickets} placeholder='Buscar por título' className='cPanelSalesContainer__inputSearchSale__input' name="" id="" />
                 </div>
 
                 <div className='cPanelSalesContainer__btnCreateSale'>
@@ -306,9 +288,13 @@ const Tickets = () => {
                 </div>
 
                 {
-                    ticketsOrdenados.length != 0 &&
+                    ticketsOrdenados.length != 0 ?
                     <div className='cPanelSalesContainer__quantitySales'>
                         <div className='cPanelSalesContainer__quantitySales__prop'>Cantidad de ventas: {ticketsOrdenados.length}</div>        
+                    </div>
+                    :
+                    <div className='cPanelSalesContainer__quantitySales'>
+                        <div className='cPanelSalesContainer__quantitySales__prop'>&nbsp;</div>        
                     </div>
                 }
 
@@ -323,7 +309,7 @@ const Tickets = () => {
 
                 {
                     ticketsOrdenados.length != 0 &&
-                    <div className='cPanelSalesContainer__headerTableContainer'>
+                    <div className='cPanelSalesContainer__headerTableCPanelSalesContainer'>
 
                         <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable">
 

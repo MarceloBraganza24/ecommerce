@@ -77,7 +77,6 @@ const Shipping = () => {
     const handleCheckout = async () => {
         setLoadingCheckOut(true)
         try {
-            //console.log(user)
             const response = await fetch(`http://localhost:8081/api/payments/create-preference-purchase`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -245,7 +244,7 @@ const Shipping = () => {
     };
 
     useEffect(() => {
-        if(user.selected_addresses && userCart && sellerAddresses && total && totalQuantity) {
+        if( userCart && sellerAddresses && total && totalQuantity) {
             setIsLoadingGeneralData(false)
         }
         const matchedAddress = deliveryForms?.find(item => 
@@ -271,7 +270,6 @@ const Shipping = () => {
                 postal_code: ""
             });
         }
-
 
     }, [user,userCart,sellerAddresses,total,totalQuantity]);
 
@@ -456,64 +454,6 @@ const Shipping = () => {
             return
         }
         handleCheckout()
-        
-        /* setTimeout(() => {
-            window.location.href = '/purchaseCompleted'
-        }, 2500); */
-        /* try {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const purchase_datetime = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-            const newPurchase = {
-                mp_payment_id: 'asdad65asd41as6d14a6sd1496s',
-                status: 'approved',
-                amount: totalWithDiscount?totalWithDiscount:total,
-                payer_email: user.email,
-                userCart,
-                purchase_datetime,
-                shippingAddress: metodoEntrega == 'domicilio' ? formShippingAddressData : (sellerAddresses.length == 1 ? sellerAddressData : selectedSellerAddressData),
-                deliveryMethod: metodoEntrega
-            }
-            const response = await fetch("http://localhost:8081/api/purchases", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newPurchase),
-            });
-            const data = await response.json();
-            if (response.ok) {
-                toast('Los datos de la compra han sido guardados exitosamente!', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2500);
-            }
-        } catch (error) {
-            toast('Error al guardar los datos de la compra', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        } */
     }
 
     return (

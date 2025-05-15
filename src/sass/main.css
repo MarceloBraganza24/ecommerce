@@ -809,12 +809,12 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  align-self: center;
 }
 .cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable {
-  width: 100%;
+  width: 95%;
   display: grid;
   grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
-  border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
 }
 .cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item {
@@ -827,6 +827,7 @@ h2 {
   display: flex;
   flex-direction: column;
   align-self: center;
+  gap: 0.5vh;
 }
 .cPanelSalesContainer__salesTable__dayContainer {
   background-color: rgb(214, 213, 213);
@@ -836,11 +837,14 @@ h2 {
   padding: 2vh 0vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer {
-  width: 100%;
+  background-color: #d6d5d5;
+  width: 95%;
   display: grid;
+  align-self: center;
   grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
+  border-radius: 1vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer__item {
   width: 100%;
@@ -872,6 +876,7 @@ h2 {
   display: none; /* Oculta la barra de desplazamiento */
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemEllipsis__item {
+  padding-left: 1vh;
   font-size: 16px;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct {
@@ -1027,10 +1032,10 @@ h2 {
   align-items: center;
 }
 .myPurchasesContainer__headerTableMyPurchasesContainer__headerTable {
-  width: 100%;
+  width: 95%;
   display: grid;
+  align-self: center;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
 }
 .myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item {
@@ -1041,22 +1046,34 @@ h2 {
 .myPurchasesContainer__purchasesTable {
   width: 100%;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
-  align-self: center;
 }
 .myPurchasesContainer__purchasesTable__dayContainer {
-  background-color: rgb(214, 213, 213);
+  width: 100%;
+  background-color: rgb(187, 187, 187);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2vh 0vh;
+  margin-top: 1vh;
+}
+.myPurchasesContainer__purchasesTable__gridItemContainer {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
 }
 .myPurchasesContainer__purchasesTable__itemContainer {
-  width: 100%;
+  background-color: #d6d5d5;
+  width: 95%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
+  margin-top: 1vh;
+  border-radius: 1vh;
+  align-self: center;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__item {
   width: 100%;

@@ -13,10 +13,6 @@ const SignIn = () => {
         password: '',
     });
 
-    /* const handleChange = (e) => {
-        const { name, value } = e.target;
-        setCredentials({ ...credentials, [name]: value });
-    }; */
     const handleChange = (event) => {
         const { name, value } = event.target;
         

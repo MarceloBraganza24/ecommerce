@@ -33,10 +33,12 @@ const MyPurchases = () => {
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
-        const objetosFiltrados = tickets.filter(objeto => {
-            const nombreMinusculas = objeto.payer_email.toLowerCase();
-            return nombreMinusculas.includes(valorMinusculas);
+        const objetosFiltrados = tickets.filter(ticket => {
+            return ticket.items.some(item => 
+                item.product.title.toLowerCase().includes(valorMinusculas)
+            );
         });
+
         return objetosFiltrados;
     }
     const objetosFiltrados = filtrarPorTitle(inputFilteredPurchases);
@@ -44,27 +46,6 @@ const MyPurchases = () => {
     const ticketsOrdenados = [...objetosFiltrados].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
 
     const ticketsByVisibilityTrue = ticketsOrdenados.filter(ticket => ticket.visibility.user == true)
-    //console.log(ticketsByVisibilityTrue)
-
-    const fetchUser = async (cookieValue) => {
-        try {
-            const response = await fetch(`http://localhost:8081/api/sessions/current?cookie=${cookieValue}`)
-            const data = await response.json();
-            if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingTickets(false)
-            } else {
-                const user = data.data
-                if(user) {
-                    setUser(user)
-                    fetchCartByUserId(user._id);
-                }
-                setIsLoading(false)
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -159,7 +140,6 @@ const MyPurchases = () => {
 
     const fetchTickets = async (page = 1, search = "", email = "") => {
         try {
-            setIsLoadingTickets(true)
             const response = await fetch(`http://localhost:8081/api/tickets/byPageAndEmail?page=${page}&search=${search}&email=${email}`)
             const ticketsAll = await response.json();
             if (response.ok) {
@@ -184,8 +164,7 @@ const MyPurchases = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-            }
-
+            } 
         } catch (error) {
             console.error(error);
             toast('Error en la conexión', {
@@ -204,29 +183,32 @@ const MyPurchases = () => {
         }
     };
 
-    useEffect(() => {
-        const getCookie = (name) => {
-            const cookieName = name + "=";
-            const decodedCookie = decodeURIComponent(document.cookie);
-            const cookieArray = decodedCookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-            let cookie = cookieArray[i];
-            while (cookie.charAt(0) === ' ') {
-                cookie = cookie.substring(1);
+    const fetchCurrentUser = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/sessions/current', {
+                method: 'GET',
+                credentials: 'include', // MUY IMPORTANTE para enviar cookies
+            });
+            const data = await response.json();
+            if(data.error === 'jwt must be provided') { 
+                setIsLoading(false)
+                setIsLoadingTickets(false)
+                navigate('/')
+            } else {
+                const user = data.data
+                if(user) {
+                    setUser(user)
+                    fetchCartByUserId(user._id);
+                }
+                setIsLoading(false)
             }
-            if (cookie.indexOf(cookieName) === 0) {
-                return cookie.substring(cookieName.length, cookie.length);
-            }
-            }
-            return "";
-        };
-        const cookieValue = getCookie('TokenJWT');
-        if(cookieValue) {
-            setCookieValue(cookieValue)
-            fetchUser(cookieValue);
-        } else {
-            navigate('/')
+        } catch (error) {
+            console.error('Error:', error);
         }
+    };
+
+    useEffect(() => {
+        fetchCurrentUser();
         fetchCategories();
     }, []);
 
@@ -248,7 +230,6 @@ const MyPurchases = () => {
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
                 cookieValue={cookieValue}
-                fetchUser={fetchUser}
                 />
             </div>
 
@@ -259,7 +240,7 @@ const MyPurchases = () => {
                 </div>
 
                 <div className='myPurchasesContainer__inputSearchPurchase'>
-                    <input type="text" onChange={handleInputFilteredPurchases} value={inputFilteredPurchases} placeholder='Buscar por email' className='myPurchasesContainer__inputSearchPurchase__input' name="" id="" />
+                    <input type="text" onChange={handleInputFilteredPurchases} value={inputFilteredPurchases} placeholder='Buscar por título' className='myPurchasesContainer__inputSearchPurchase__input' name="" id="" />
                 </div>
 
                 {
@@ -271,7 +252,7 @@ const MyPurchases = () => {
 
                 {
                     ticketsByVisibilityTrue.length != 0 &&
-                    <div className='myPurchasesContainer__headerTableContainer'>
+                    <div className='myPurchasesContainer__headerTableMyPurchasesContainer'>
 
                         <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable">
 
@@ -325,7 +306,7 @@ const MyPurchases = () => {
                                         const isNewDateGroup = formattedDate !== previousDate;
 
                                         return (
-                                            <div key={ticket._id}>
+                                            <div key={ticket._id} className='myPurchasesContainer__purchasesTable__gridItemContainer'>
                                                 {isNewDateGroup && (
                                                     <div className="myPurchasesContainer__purchasesTable__dayContainer">
                                                         <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'>📅 {formattedDate}</strong>
@@ -366,9 +347,12 @@ const MyPurchases = () => {
                         :
                             <div className="myPurchasesContainer__purchasesTable__isLoadingLabel">
                                 <div>Aún no existen compras</div>
-                                <Link to={'/#catalog'} className='myPurchasesContainer__purchasesTable__isLoadingLabel__label'>
-                                    Ir a comprar
-                                </Link>
+                                {
+                                    ticketsByVisibilityTrue.length == 0 &&
+                                    <Link to={'/#catalog'} className='myPurchasesContainer__purchasesTable__isLoadingLabel__label'>
+                                        Ir a comprar
+                                    </Link>
+                                }
                             </div>
 
                     }

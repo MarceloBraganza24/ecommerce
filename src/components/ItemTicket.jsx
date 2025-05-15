@@ -218,14 +218,6 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                         <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">$ {ticket.amount}</div>
                     </div>
 
-                    {/* <div className="myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis">
-                        <div className="myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis__item">{ticket.payer_email}</div>
-                    </div>
-
-                    <div className="myPurchasesContainer__purchasesTable__itemContainer__item">
-                        <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">{ticket.user_role}</div>
-                    </div> */}
-
                     <div className='myPurchasesContainer__purchasesTable__itemContainer__btnsContainer'>
 
                         {loading ? (

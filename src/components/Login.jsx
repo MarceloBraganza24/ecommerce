@@ -36,21 +36,9 @@ const Login = () => {
     };
 
     const handleSubmit = async (e) => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
-        const last_connection = currentDate;
 
         e.preventDefault();
         if (!validateForm()) return;
-        const formData = new FormData();
-        formData.append('email', credentials.email);
-        formData.append('password', credentials.password);
-        formData.append('last_connection', last_connection);
     
     
         try {
@@ -63,7 +51,6 @@ const Login = () => {
                 body: JSON.stringify({
                     email: credentials.email,
                     password: credentials.password,
-                    last_connection: last_connection
                 })
             })
             const data = await response.json();
