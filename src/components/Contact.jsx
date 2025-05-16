@@ -8,10 +8,16 @@ const Contact = () => {
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
-    const [cookieValue, setCookieValue] = useState('');
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        message: ''
+    });
+
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -162,6 +168,59 @@ const Contact = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                toast('Consulta enviada con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setFormData({ nombre: '', apellido: '', email: '', mensaje: '' }); // Limpiar campos
+            } else {
+                toast('Error al enviar la consulta', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error("Error enviando el formulario:", error);
+            toast('Error de conexión', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+
     return (
 
         <>
@@ -175,7 +234,6 @@ const Contact = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
                 />
             </div>
             <div className="contactContainer">
@@ -197,23 +255,28 @@ const Contact = () => {
                                 </div>
 
                                 <div className='contactContainer__formMap__formContainer__form__prop__input'>
-                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="text" placeholder='Nombre' />
+                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="text" placeholder='Nombre' value={formData.first_name} onChange={(e) => setFormData({ ...formData, first_name: e.target.value })} />
                                 </div>
 
                                 <div className='contactContainer__formMap__formContainer__form__prop__input'>
-                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="text" placeholder='Apellido' />
+                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="text" placeholder='Apellido' value={formData.last_name} onChange={(e) => setFormData({ ...formData, last_name: e.target.value })} />
                                 </div>
 
                                 <div className='contactContainer__formMap__formContainer__form__prop__input'>
-                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="email" placeholder='Email' />
+                                    <input className='contactContainer__formMap__formContainer__form__prop__input__prop' type="email" placeholder='Email' value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                                 </div>
 
                                 <div className='contactContainer__formMap__formContainer__form__prop__input'>
-                                    <textarea className='contactContainer__formMap__formContainer__form__prop__input__textArea' name="" id="" placeholder='Mensaje'></textarea>
+                                    <textarea className='contactContainer__formMap__formContainer__form__prop__input__textArea' name="" id="" placeholder='Mensaje'  value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}></textarea>
                                 </div>
 
                                 <div className='contactContainer__formMap__formContainer__form__prop__btn'>
-                                    <button className='contactContainer__formMap__formContainer__form__prop__btn__prop'>Enviar</button>
+                                    <button
+                                        className='contactContainer__formMap__formContainer__form__prop__btn__prop'
+                                        onClick={handleSubmit}
+                                        >
+                                        Enviar
+                                    </button>
                                 </div>
 
                             </div>

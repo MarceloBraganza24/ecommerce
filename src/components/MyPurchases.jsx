@@ -16,6 +16,7 @@ const MyPurchases = () => {
     const [isLoadingTickets, setIsLoadingTickets] = useState(true);
     const [inputFilteredPurchases, setInputFilteredPurchases] = useState('');
     const [tickets, setTickets] = useState([]);
+    const [totalTickets, setTotalTickets] = useState('');
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -144,6 +145,7 @@ const MyPurchases = () => {
             const ticketsAll = await response.json();
             if (response.ok) {
                 setTickets(ticketsAll.data.docs); 
+                setTotalTickets(ticketsAll.data.totalDocs)
                 setPageInfo({
                     page: ticketsAll.data.page,
                     totalPages: ticketsAll.data.totalPages,
@@ -246,7 +248,7 @@ const MyPurchases = () => {
                 {
                     ticketsByVisibilityTrue.length != 0 &&
                     <div className='myPurchasesContainer__quantityPurchases'>
-                        <div className='myPurchasesContainer__quantityPurchases__prop'>Cantidad de compras: {ticketsByVisibilityTrue.length}</div>        
+                        <div className='myPurchasesContainer__quantityPurchases__prop'>Cantidad de compras: {totalTickets}</div>        
                     </div>
                 }
 
@@ -310,7 +312,6 @@ const MyPurchases = () => {
                                                 {isNewDateGroup && (
                                                     <div className="myPurchasesContainer__purchasesTable__dayContainer">
                                                         <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'>📅 {formattedDate}</strong>
-                                                        {/* <strong className='myPurchasesContainer__purchasesTable__dayContainer__day'></strong> */}
                                                     </div>
                                                 )}
                                                 <ItemTicket

@@ -17,7 +17,7 @@ const Tickets = () => {
         nextPage: null,
         prevPage: null
     });   
-    // console.log(tickets)
+    //console.log(totalTickets)
     // console.log(pageInfo)
 
     const navigate = useNavigate();

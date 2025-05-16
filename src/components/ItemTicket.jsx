@@ -87,8 +87,8 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                         <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{fechaHora}</div>
                     </div>
 
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__item">
-                        <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{ticket.code}</div>
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis">
+                        <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis__item">{ticket.code}</div>
                     </div>
 
                     <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products">
@@ -175,8 +175,8 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                         <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">{fechaHora}</div>
                     </div>
 
-                    <div className="myPurchasesContainer__purchasesTable__itemContainer__item">
-                        <div className="myPurchasesContainer__purchasesTable__itemContainer__item__label">{ticket.code}</div>
+                    <div className="myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis">
+                        <div className="myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis__item">{ticket.code}</div>
                     </div>
 
                     <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products">

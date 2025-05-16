@@ -866,17 +866,16 @@ h2 {
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemEllipsis {
   display: flex;
-  justify-content: center;
   align-items: center;
-  overflow-x: auto; /* Habilita scroll horizontal */
-  white-space: nowrap; /* Evita que el texto se parta */
-  max-width: 100%;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemEllipsis::-webkit-scrollbar {
   display: none; /* Oculta la barra de desplazamiento */
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemEllipsis__item {
-  padding-left: 1vh;
+  display: inline-block;
   font-size: 16px;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct {
@@ -888,6 +887,17 @@ h2 {
   gap: 0.5vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title::-webkit-scrollbar {
+  display: none; /* Oculta la barra de desplazamiento */
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title__prop {
+  display: inline-block;
   font-size: 16px;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img {
@@ -900,6 +910,7 @@ h2 {
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine {
   display: grid;
+  align-items: center;
   grid-template-columns: 1fr 3fr 1fr;
   cursor: pointer;
 }
@@ -1058,6 +1069,7 @@ h2 {
   align-items: center;
   padding: 2vh 0vh;
   margin-top: 1vh;
+  font-size: 18px;
 }
 .myPurchasesContainer__purchasesTable__gridItemContainer {
   display: flex;
@@ -1095,16 +1107,16 @@ h2 {
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis {
   display: flex;
-  justify-content: center;
   align-items: center;
-  overflow-x: auto; /* Habilita scroll horizontal */
-  white-space: nowrap; /* Evita que el texto se parta */
-  max-width: 100%;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis::-webkit-scrollbar {
   display: none; /* Oculta la barra de desplazamiento */
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemEllipsis__item {
+  display: inline-block;
   font-size: 16px;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct {
@@ -1116,6 +1128,17 @@ h2 {
   gap: 0.5vh;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title::-webkit-scrollbar {
+  display: none; /* Oculta la barra de desplazamiento */
+}
+.myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title__prop {
+  display: inline-block;
   font-size: 16px;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__img {
@@ -1128,6 +1151,7 @@ h2 {
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine {
   display: grid;
+  align-items: center;
   grid-template-columns: 1fr 3fr 1fr;
   cursor: pointer;
 }

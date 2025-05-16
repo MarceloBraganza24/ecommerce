@@ -12,6 +12,7 @@ const CPanelProducts = () => {
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState("");
     const [userCart, setUserCart] = useState({});
     const [cookieValue, setCookieValue] = useState('');
     const [pageInfo, setPageInfo] = useState({
@@ -75,6 +76,7 @@ const CPanelProducts = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}`)
             const productsAll = await response.json();
+            setTotalProducts(productsAll.data.totalDocs)
             setProducts(productsAll.data.docs)
             setPageInfo({
                 page: productsAll.data.page,
@@ -236,7 +238,7 @@ const CPanelProducts = () => {
                 </div>
 
                 <div className='cPanelProductsContainer__quantityProducts'>
-                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {objetosFiltrados.length}</div>        
+                    <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {totalProducts}</div>        
                 </div>
 
                 {
