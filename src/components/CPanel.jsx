@@ -686,6 +686,39 @@ const CPanel = () => {
         fetchCoupons();
     }, []);
 
+    const [form, setForm] = useState({
+        storeName: '',
+        contactEmail: '',
+        logoUrl: '',
+        primaryColor: '',
+        secondaryColor: ''
+    });
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmitConfigSite = async () => {
+        const response = await fetch('/api/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form)
+        });
+        if(response.ok) {
+            toast('Configuración guardada!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
     return (
 
         <>
@@ -711,6 +744,20 @@ const CPanel = () => {
 
                 </div>
 
+                <div className='cPanelContainer__siteConfiguration'>
+
+                    <div className='cPanelContainer__siteConfiguration__title'>
+                        <div className='cPanelContainer__siteConfiguration__title__prop'>Configuración del sitio</div>
+                    </div>
+
+                    <div className="cPanelContainer__siteConfiguration__form">
+
+                        <input type="text" placeholder='Nombre de la tienda' />
+
+                    </div>
+
+                </div>
+
                 {
                     loadingCategories ?
                         <>
@@ -732,9 +779,6 @@ const CPanel = () => {
                                         {categories.map((category) => (
                                             <li className='cPanelContainer__existingCategories__itemCategory__category' key={category._id}>
                                                 <span className='cPanelContainer__existingCategories__itemCategory__category__name'>{capitalizeFirstLetter(category.name)}</span>
-                                                {/* <button className='cPanelContainer__existingCategories__itemCategory__category__btn' onClick={() => handleDeleteCategory(category._id)}>
-                                                    Eliminar
-                                                </button> */}
                                                 <button
                                                     className='cPanelContainer__existingCategories__itemCategory__category__btn'
                                                     onClick={() => handleDeleteCategory(category._id)}
@@ -760,7 +804,6 @@ const CPanel = () => {
                                     onChange={(e) => setCategoryName(e.target.value)}
                                     required
                                     />
-                                    {/* <button className='cPanelContainer__newCategoryForm__form__btn' type="submit">Crear categoría</button> */}
                                     <button
                                         className='cPanelContainer__newCategoryForm__form__btn'
                                         type="submit"
@@ -795,9 +838,6 @@ const CPanel = () => {
                                         {sellerAddresses.map((item) => (
                                             <li className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress' key={item._id}>
                                                 <span className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__address'>{capitalizeFirstLetter(item.street)} {capitalizeFirstLetter(item.street_number)}, {capitalizeFirstLetter(item.locality)}, {item.province}</span>
-                                                {/* <button className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn' onClick={() => handleDeleteSellerAddress(item._id)}>
-                                                    Eliminar
-                                                </button> */}
                                                 <button
                                                     className='cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn'
                                                     onClick={() => handleDeleteSellerAddress(item._id)}
@@ -824,7 +864,6 @@ const CPanel = () => {
                                 <div className='cPanelContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
                                 <div className='cPanelContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
                                 <div className='cPanelContainer__createNewSellerAddress__label'>Provincia: {addressData.province}</div>
-                                {/* <button className='cPanelContainer__createNewSellerAddress__btn' onClick={handleSubmitAddress}>Guardar</button> */}
                                 <button
                                     className='cPanelContainer__createNewSellerAddress__btn'
                                     disabled={creatingAddress}
@@ -876,9 +915,6 @@ const CPanel = () => {
                                                         day: "2-digit"
                                                     })}
                                                 </span>
-                                                {/* <button className='cPanelContainer__existingCoupons__itemCoupons__coupons__btn' onClick={() => handleDeleteCoupons(item._id)}>
-                                                    Eliminar
-                                                </button> */}
                                                 <button
                                                     className='cPanelContainer__existingCoupons__itemCoupons__coupons__btn'
                                                     onClick={() => handleDeleteCoupons(item._id)}
@@ -924,7 +960,6 @@ const CPanel = () => {
                                 onChange={(e) => setExpirationDate(e.target.value)}
                                 required
                                 />
-                            {/* <button className='cPanelContainer__createNewCoupons__btn' onClick={handleSubmitCoupon}>Guardar</button> */}
                             <button
                                 className='cPanelContainer__createNewCoupons__btn'
                                 disabled={creatingCoupon}

@@ -111,6 +111,16 @@ h2 {
 .cPanelContainer__title__prop {
   font-size: 35px;
 }
+.cPanelContainer__siteConfiguration {
+  background-color: rgb(157, 122, 122);
+  padding: 1vh;
+}
+.cPanelContainer__siteConfiguration__title {
+  padding: 1vh 0vh;
+}
+.cPanelContainer__siteConfiguration__title__prop {
+  font-size: 25px;
+}
 .cPanelContainer__existingCategories {
   background-color: white;
   width: 100%;
@@ -1891,7 +1901,7 @@ h2 {
   font-size: 18px;
 }
 .catalogContainer__grid {
-  background-color: rgb(214, 213, 213);
+  background-color: #d6d5d5;
   width: 100%;
   display: flex;
   justify-content: center;

@@ -190,7 +190,7 @@ const Contact = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-                setFormData({ nombre: '', apellido: '', email: '', mensaje: '' }); // Limpiar campos
+                setFormData({ first_name: '', last_name: '', email: '', message: '' }); // Limpiar campos
             } else {
                 toast('Error al enviar la consulta', {
                     position: "top-right",
