@@ -90,7 +90,7 @@ h2 {
   }
 }
 .navbarContainer {
-  background-color: rgba(27, 80, 156, 0.9);
+  background-color: rgb(10, 54, 116);
   width: 100%;
 }
 
@@ -113,13 +113,166 @@ h2 {
 }
 .cPanelContainer__siteConfiguration {
   background-color: rgb(157, 122, 122);
+  background-color: white;
   padding: 1vh;
+  border-bottom: 0.3vh solid grey;
 }
 .cPanelContainer__siteConfiguration__title {
   padding: 1vh 0vh;
 }
 .cPanelContainer__siteConfiguration__title__prop {
   font-size: 25px;
+}
+.cPanelContainer__siteConfiguration__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__grid {
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__grid__label {
+  width: 300px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__grid__input {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__grid__inputColor {
+  background: none;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  border: none;
+}
+.cPanelContainer__siteConfiguration__form__grid__btnDeletePhone {
+  margin-left: 1vh;
+  width: 30%;
+  height: 40px;
+  background-color: #1b509c;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+.cPanelContainer__siteConfiguration__form__grid__btnDeletePhone:hover {
+  background-color: #124285;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone__label {
+  width: 300px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone__inputBtn {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__input {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone {
+  margin-left: 1vh;
+  height: 30px;
+  background-color: #1b509c;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone:hover {
+  background-color: #124285;
+}
+.cPanelContainer__siteConfiguration__form__gridColor {
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__palettes {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__label {
+  width: 300px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__select {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+  border: 0.3vh solid black;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__input {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__inputBtn {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__inputBtn__input {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__inputBtn__btnDeletePhone {
+  margin-left: 1vh;
+  height: 30px;
+  background-color: #1b509c;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__inputBtn__btnDeletePhone:hover {
+  background-color: #124285;
+}
+.cPanelContainer__siteConfiguration__form__btnContainer {
+  display: flex;
+  padding: 1vh 0vh;
+}
+.cPanelContainer__siteConfiguration__form__btnContainer__btn {
+  width: 15%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1b509c;
+  padding: 0.5vh;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cPanelContainer__siteConfiguration__form__btnContainer__btn:hover {
+  background-color: #124285;
 }
 .cPanelContainer__existingCategories {
   background-color: white;
@@ -511,14 +664,14 @@ h2 {
 .categoryContainer__grid {
   background-color: rgb(214, 213, 213);
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  justify-items: center;
   padding: 5vh 0vh;
 }
 .categoryContainer__grid__catalog {
   background-color: white;
-  width: 85%;
+  width: 70%;
   padding: 4vh 4vh;
   border-radius: 1vh;
 }
@@ -1991,9 +2144,9 @@ h2 {
 .itemProduct {
   background-color: ghostwhite;
   width: 300px;
-  height: 500px;
+  height: 450px;
   display: grid;
-  padding-bottom: 2vh;
+  padding-bottom: 1vh;
   border-radius: 2vh;
   box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
   transition: transform 0.3s ease-in-out;
@@ -2019,6 +2172,7 @@ h2 {
 }
 .itemProduct__titleContainer__prop {
   font-size: 20px;
+  text-align: center;
 }
 .itemProduct__descriptionContainer {
   width: 100%;
@@ -3539,7 +3693,6 @@ h2 {
 }
 
 .header {
-  background-color: rgba(0, 0, 0, 0.3);
   width: 100%;
   height: 10vh;
   display: grid;

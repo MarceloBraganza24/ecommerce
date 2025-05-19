@@ -685,24 +685,71 @@ const CPanel = () => {
         fetchSellerAddresses();
         fetchCoupons();
     }, []);
-
-    const [form, setForm] = useState({
+    
+    const [configurationSiteformData, setConfigurationSiteformData] = useState({
         storeName: '',
         contactEmail: '',
         logoUrl: '',
-        primaryColor: '',
-        secondaryColor: ''
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+        phoneNumbers: [''],
     });
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const colorOptions = ['#000000', '#ffffff', '#FF5733', '#3498db', '#2ecc71'];
+
+    const [colorSelectFormData, setColorSelectFormData] = useState({
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+        accentColor: '#FF5733',
+        colorInputMode: 'palette' // 'palette' o 'hex'
+    });
+
+    /* const handleColorSelect = (color) => {
+        setColorSelectFormData((prev) => ({
+        ...prev,
+        primaryColor: color
+        }));
+    }; */
+    const handleColorSelect = (field, color) => {
+        setColorSelectFormData((prev) => ({
+            ...prev,
+            [field]: color
+        }));
+    };
+    
+    const handleColorSelectChange = (e) => {
+        const { name, value } = e.target;
+        setColorSelectFormData((prev) => ({
+        ...prev,
+        [name]: value
+        }));
+    };
+
+    const handleChange = (e, index = null) => {
+        const { name, value } = e.target;
+        if (name === 'phoneNumbers') {
+            const updatedPhones = [...configurationSiteformData.phoneNumbers];
+            updatedPhones[index] = value;
+            setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: updatedPhones }));
+        } else {
+            setConfigurationSiteformData(prev => ({ ...prev, [name]: value }));
+        }
+    };
+
+    const addPhoneNumber = () => {
+        setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: [...prev.phoneNumbers, ''] }));
+    };
+
+    const removePhoneNumber = (index) => {
+        const updatedPhones = configurationSiteformData.phoneNumbers.filter((_, i) => i !== index);
+        setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: updatedPhones }));
     };
 
     const handleSubmitConfigSite = async () => {
         const response = await fetch('/api/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
+            body: JSON.stringify(configurationSiteformData)
         });
         if(response.ok) {
             toast('Configuración guardada!', {
@@ -718,6 +765,84 @@ const CPanel = () => {
             });
         }
     };
+
+    const [hexInputs, setHexInputs] = useState({
+        primaryColor: colorSelectFormData.primaryColor.replace('#', ''),
+        secondaryColor: colorSelectFormData.secondaryColor.replace('#', ''),
+        accentColor: colorSelectFormData.accentColor.replace('#', '')
+    });
+
+    useEffect(() => {
+        setHexInputs({
+            primaryColor: colorSelectFormData.primaryColor.replace('#', ''),
+            secondaryColor: colorSelectFormData.secondaryColor.replace('#', ''),
+            accentColor: colorSelectFormData.accentColor.replace('#', '')
+        });
+    }, [colorSelectFormData]);
+
+    const ColorPicker = ({ label, name, value }) => (
+        <div className="cPanelContainer__siteConfiguration__form__gridColor">
+            <label className="cPanelContainer__siteConfiguration__form__gridColor__label">{label}</label>
+
+            {colorSelectFormData.colorInputMode === 'palette' && (
+                <div className="cPanelContainer__siteConfiguration__form__gridColor__palettes">
+                    <input
+                    type="color"
+                    value={value}
+                    onChange={(e) => handleColorSelect(name, e.target.value)}
+                    />
+                    <div>
+                    {colorOptions.map((color) => (
+                        <button
+                        key={color}
+                        type="button"
+                        style={{
+                            backgroundColor: color,
+                            width: 30,
+                            height: 30,
+                            margin: 4,
+                            border: value === color ? '2px solid black' : '1px solid #ccc',
+                            borderRadius: '50%',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => handleColorSelect(name, color)}
+                        title={color}
+                        />
+                    ))}
+                    </div>
+                </div>
+            )}
+
+            {colorSelectFormData.colorInputMode === 'hex' && (
+                <div className="cPanelContainer__siteConfiguration__form__gridColor__hexInput">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontWeight: 'bold' }}>#</span>
+                    <input
+                        className="cPanelContainer__siteConfiguration__form__gridColor__input"
+                        type="text"
+                        name={name}
+                        value={hexInputs[name] || ''}
+                        onChange={(e) => {
+                            const hexValue = e.target.value;
+                            if (/^[0-9A-Fa-f]{0,6}$/.test(hexValue)) {
+                                setHexInputs((prev) => ({
+                                ...prev,
+                                [name]: hexValue
+                                }));
+                                if (hexValue.length === 6) {
+                                handleColorSelect(name, `#${hexValue}`);
+                                }
+                            }
+                        }}
+                        placeholder="000000"
+                        maxLength={6}
+                    />
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
 
     return (
 
@@ -752,7 +877,81 @@ const CPanel = () => {
 
                     <div className="cPanelContainer__siteConfiguration__form">
 
-                        <input type="text" placeholder='Nombre de la tienda' />
+                        <div className='cPanelContainer__siteConfiguration__form__grid'>
+
+                            <div className="cPanelContainer__siteConfiguration__form__grid__label">Nombre de la tienda:</div>
+
+                            <input
+                                className='cPanelContainer__siteConfiguration__form__grid__input'
+                                type="text"
+                                name="storeName"
+                                value={configurationSiteformData.storeName}
+                                onChange={handleChange}
+                            />
+                            
+                        </div>
+
+                        <div className='cPanelContainer__siteConfiguration__form__grid'>
+
+                            <div className="cPanelContainer__siteConfiguration__form__grid__label">Email de la tienda:</div>
+
+                            <input
+                            className='cPanelContainer__siteConfiguration__form__grid__input'
+                            type="email"
+                            name="contactEmail"
+                            value={configurationSiteformData.contactEmail}
+                            onChange={handleChange}
+                            />
+
+                        </div>
+
+                        <div className='cPanelContainer__siteConfiguration__form__gridPhone'>
+
+                            <div className="cPanelContainer__siteConfiguration__form__gridPhone__label">Teléfonos:</div>
+
+                            {configurationSiteformData.phoneNumbers.map((phone, index) => (
+                                <div key={index} className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
+                                    <input
+                                    className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__input'
+                                    type="tel"
+                                    name="phoneNumbers"
+                                    value={phone}
+                                    onChange={(e) => handleChange(e, index)}
+                                    placeholder="Ej: +5491123456789"
+                                    />
+                                    {configurationSiteformData.phoneNumbers.length > 1 && (
+                                    <button className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone' type="button" onClick={() => removePhoneNumber(index)}>
+                                        Eliminar
+                                    </button>
+                                    )}
+                                </div>
+                            ))}
+                            <button className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone' type="button" onClick={addPhoneNumber}>
+                                Agregar otro teléfono
+                            </button>
+
+                        </div>
+
+                        <div className='cPanelContainer__siteConfiguration__form__gridColor'>
+                            <label className='cPanelContainer__siteConfiguration__form__gridColor__label'>Modo de selección de color:</label>
+                            <select
+                            className='cPanelContainer__siteConfiguration__form__gridColor__select'
+                            name="colorInputMode"
+                            value={colorSelectFormData.colorInputMode}
+                            onChange={handleColorSelectChange}
+                            >
+                                <option value="palette">Usar paleta de colores</option>
+                                <option value="hex">Ingresar código hexadecimal</option>
+                            </select>
+                        </div>
+
+                        <ColorPicker label="Color primario" name="primaryColor" value={colorSelectFormData.primaryColor} />
+                        <ColorPicker label="Color secundario" name="secondaryColor" value={colorSelectFormData.secondaryColor} />
+                        <ColorPicker label="Color acento" name="accentColor" value={colorSelectFormData.accentColor} />
+
+                        <div className='cPanelContainer__siteConfiguration__form__btnContainer'>
+                            <button onClick={handleSubmitConfigSite} className='cPanelContainer__siteConfiguration__form__btnContainer__btn'>Guardar configuración</button>
+                        </div>
 
                     </div>
 

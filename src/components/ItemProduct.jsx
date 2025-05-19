@@ -117,6 +117,10 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
         setLoading(null);
     };
 
+    const handleLinkToItemDetail = () => {
+        window.location.href = `/item/${id}`
+    };
+
     return (
 
         <>
@@ -146,23 +150,23 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
 
                 </div>
 
-                <div className="itemProduct__titleContainer">
+                <div className="itemProduct__titleContainer" onClick={handleLinkToItemDetail}>
                     <div className="itemProduct__titleContainer__prop">{capitalizeFirstLetter(title)}</div>
                 </div>
 
-                <div className="itemProduct__descriptionContainer">
+                <div className="itemProduct__descriptionContainer" onClick={handleLinkToItemDetail}>
                     <div className="itemProduct__descriptionContainer__prop">{capitalizeFirstLetter(description)}</div>
                 </div>
 
-                <div className="itemProduct__priceContainer">
+                <div className="itemProduct__priceContainer" onClick={handleLinkToItemDetail}>
                     <div className="itemProduct__priceContainer__prop">$ {price}</div>
                 </div>
 
                 <div className='itemProduct__btnContainer'>
 
-                    <Link className='itemProduct__btnContainer__btn' to={`/item/${id}`}>
+                    {/* <Link className='itemProduct__btnContainer__btn' to={`/item/${id}`}>
                         Ver Detalle
-                    </Link>
+                    </Link> */}
 
                     <button 
                         onClick={handleAddToCart} 

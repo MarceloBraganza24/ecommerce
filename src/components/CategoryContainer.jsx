@@ -313,6 +313,8 @@ const CategoryContainer = () => {
                 />
             }
             <div className="categoryContainer__grid">
+
+                <div>0</div>
                                 
                 <div className="categoryContainer__grid__catalog">
 

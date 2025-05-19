@@ -339,8 +339,20 @@ const Home = () => {
             />
 
             <div className="homeContainer">
+                
+                <div className='navbarContainer'>
+                    <NavBar
+                    isLoading={isLoading}
+                    isLoggedIn={user.isLoggedIn}
+                    role={user.role}
+                    first_name={user.first_name}
+                    categories={categories}
+                    userCart={userCart}
+                    showLogOutContainer={showLogOutContainer}
+                    />
+                </div>
 
-                <NavBar
+                {/* <NavBar
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
@@ -348,7 +360,7 @@ const Home = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                />
+                /> */}
 
                 {
                     showLogOutContainer&&
