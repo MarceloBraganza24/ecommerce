@@ -119,7 +119,6 @@ const Contact = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {

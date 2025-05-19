@@ -15,8 +15,6 @@ const CPanel = () => {
     const [creatingCoupon, setCreatingCoupon] = useState(false);
     const [deletingIdCoupon, setDeletingIdCoupon] = useState(null);
 
-
-
     const [user, setUser] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
@@ -665,7 +663,7 @@ const CPanel = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                setIsLoadingProducts(false)
+                navigate('/')
             } else {
                 const user = data.data
                 if(user) {
@@ -685,6 +683,21 @@ const CPanel = () => {
         fetchSellerAddresses();
         fetchCoupons();
     }, []);
+
+    const [siteImages, setSiteImages] = useState({
+        favicon: null,
+        logo: null,
+        homeImage: null,
+        aboutImage: null,
+        contactImage: null
+    });
+
+    const handleImageChange = (e, name) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSiteImages((prev) => ({ ...prev, [name]: file }));
+        }
+    };
     
     const [configurationSiteformData, setConfigurationSiteformData] = useState({
         storeName: '',
@@ -692,8 +705,47 @@ const CPanel = () => {
         logoUrl: '',
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
+        accentColor: '#FF5733',
         phoneNumbers: [''],
+        aboutText: '',
+        footerLogoText: '',
+        sliderLogos: [],
     });
+
+    const handleLogoUpload = (e) => {
+        const files = Array.from(e.target.files);
+        const currentCount = configurationSiteformData.sliderLogos.length;
+
+        const allowedFiles = files.slice(0, 10 - currentCount);
+
+        if (currentCount + files.length > 10) {
+            toast('Solo se permiten hasta 10 imágenes!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            sliderLogos: [...prev.sliderLogos, ...allowedFiles]
+        }));
+    };  
+
+
+    const removeLogo = (indexToRemove) => {
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            sliderLogos: prev.sliderLogos.filter((_, index) => index !== indexToRemove)
+        }));
+    };
+
 
     const colorOptions = ['#000000', '#ffffff', '#FF5733', '#3498db', '#2ecc71'];
 
@@ -701,15 +753,15 @@ const CPanel = () => {
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         accentColor: '#FF5733',
-        colorInputMode: 'palette' // 'palette' o 'hex'
+        colorInputMode: 'pallete'
     });
 
-    /* const handleColorSelect = (color) => {
-        setColorSelectFormData((prev) => ({
-        ...prev,
-        primaryColor: color
-        }));
-    }; */
+    const [hexInputs, setHexInputs] = useState({
+        primaryColor: '000000',
+        secondaryColor: 'ffffff',
+        accentColor: 'FF5733'
+    });
+
     const handleColorSelect = (field, color) => {
         setColorSelectFormData((prev) => ({
             ...prev,
@@ -746,7 +798,39 @@ const CPanel = () => {
     };
 
     const handleSubmitConfigSite = async () => {
-        const response = await fetch('/api/settings', {
+        const formData = new FormData();
+
+        // Agregar campos de texto y arrays
+        formData.append('storeName', configurationSiteformData.storeName);
+        formData.append('contactEmail', configurationSiteformData.contactEmail);
+        formData.append('logoUrl', configurationSiteformData.logoUrl);
+        formData.append('primaryColor', configurationSiteformData.primaryColor);
+        formData.append('secondaryColor', configurationSiteformData.secondaryColor);
+        formData.append('accentColor', configurationSiteformData.accentColor);
+        formData.append('aboutText', configurationSiteformData.aboutText);
+        formData.append('footerLogoText', configurationSiteformData.footerLogoText);
+
+        // Teléfonos (pueden enviarse como array o separados)
+        configurationSiteformData.phoneNumbers.forEach((phone, index) => {
+            formData.append(`phoneNumbers[${index}]`, phone);
+        });
+
+        // Logos del slider
+        configurationSiteformData.sliderLogos.forEach((file, index) => {
+            formData.append(`sliderLogos`, file);
+        });
+
+        // Imágenes generales del sitio
+        for (const [key, file] of Object.entries(siteImages)) {
+            if (file) {
+                formData.append(key, file); // ejemplo: favicon, logo, etc.
+            }
+        }
+
+        console.log(configurationSiteformData)
+
+
+        /* const response = await fetch('/api/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(configurationSiteformData)
@@ -763,86 +847,83 @@ const CPanel = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-        }
+        } */
     };
 
-    const [hexInputs, setHexInputs] = useState({
-        primaryColor: colorSelectFormData.primaryColor.replace('#', ''),
-        secondaryColor: colorSelectFormData.secondaryColor.replace('#', ''),
-        accentColor: colorSelectFormData.accentColor.replace('#', '')
-    });
+    const ColorInput = ({
+        label,
+        name,
+        value,
+        inputMode,
+        onChange,
+        colorOptions = []
+        }) => {
+        const [localHex, setLocalHex] = useState(value.replace("#", ""));
 
-    useEffect(() => {
-        setHexInputs({
-            primaryColor: colorSelectFormData.primaryColor.replace('#', ''),
-            secondaryColor: colorSelectFormData.secondaryColor.replace('#', ''),
-            accentColor: colorSelectFormData.accentColor.replace('#', '')
-        });
-    }, [colorSelectFormData]);
+        useEffect(() => {
+            setLocalHex(value.replace("#", ""));
+        }, [value]);
 
-    const ColorPicker = ({ label, name, value }) => (
-        <div className="cPanelContainer__siteConfiguration__form__gridColor">
-            <label className="cPanelContainer__siteConfiguration__form__gridColor__label">{label}</label>
+        const handleHexChange = (e) => {
+            const val = e.target.value;
+            if (/^[0-9A-Fa-f]{0,6}$/.test(val)) {
+            setLocalHex(val);
+            }
+        };
 
-            {colorSelectFormData.colorInputMode === 'palette' && (
-                <div className="cPanelContainer__siteConfiguration__form__gridColor__palettes">
+        const handleHexBlur = () => {
+            if (localHex.length === 6) {
+            onChange(name, `#${localHex}`);
+            }
+        };
+
+        return (
+            <div className="cPanelContainer__siteConfiguration__form__gridColor">
+                <label className='cPanelContainer__siteConfiguration__form__gridColor__label'>{label}</label>
+
+                {inputMode === "hex" ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <span className='cPanelContainer__siteConfiguration__form__gridColor__labelInput'>#</span>
                     <input
-                    type="color"
-                    value={value}
-                    onChange={(e) => handleColorSelect(name, e.target.value)}
-                    />
-                    <div>
-                    {colorOptions.map((color) => (
-                        <button
-                        key={color}
-                        type="button"
-                        style={{
-                            backgroundColor: color,
-                            width: 30,
-                            height: 30,
-                            margin: 4,
-                            border: value === color ? '2px solid black' : '1px solid #ccc',
-                            borderRadius: '50%',
-                            cursor: 'pointer'
-                        }}
-                        onClick={() => handleColorSelect(name, color)}
-                        title={color}
-                        />
-                    ))}
-                    </div>
-                </div>
-            )}
-
-            {colorSelectFormData.colorInputMode === 'hex' && (
-                <div className="cPanelContainer__siteConfiguration__form__gridColor__hexInput">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontWeight: 'bold' }}>#</span>
-                    <input
-                        className="cPanelContainer__siteConfiguration__form__gridColor__input"
+                    className='cPanelContainer__siteConfiguration__form__gridColor__inputHex'
                         type="text"
-                        name={name}
-                        value={hexInputs[name] || ''}
-                        onChange={(e) => {
-                            const hexValue = e.target.value;
-                            if (/^[0-9A-Fa-f]{0,6}$/.test(hexValue)) {
-                                setHexInputs((prev) => ({
-                                ...prev,
-                                [name]: hexValue
-                                }));
-                                if (hexValue.length === 6) {
-                                handleColorSelect(name, `#${hexValue}`);
-                                }
-                            }
-                        }}
-                        placeholder="000000"
+                        value={localHex}
+                        onChange={handleHexChange}
+                        onBlur={handleHexBlur}
                         maxLength={6}
+                        placeholder="000000"
                     />
                     </div>
-                </div>
-            )}
-        </div>
-    );
-
+                ) : (
+                    <div className="cPanelContainer__siteConfiguration__form__gridColor">
+                        <input
+                            type="color"
+                            value={value}
+                            onChange={(e) => onChange(name, e.target.value)}
+                        />
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                            {colorOptions.map((color) => (
+                            <button
+                                key={color}
+                                type="button"
+                                style={{
+                                backgroundColor: color,
+                                width: 30,
+                                height: 30,
+                                border: value === color ? "2px solid black" : "1px solid #ccc",
+                                borderRadius: "50%",
+                                cursor: "pointer"
+                                }}
+                                onClick={() => onChange(name, color)}
+                                title={color}
+                            />
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
 
     return (
 
@@ -887,6 +968,7 @@ const CPanel = () => {
                                 name="storeName"
                                 value={configurationSiteformData.storeName}
                                 onChange={handleChange}
+                                placeholder='Nombre'
                             />
                             
                         </div>
@@ -901,6 +983,7 @@ const CPanel = () => {
                             name="contactEmail"
                             value={configurationSiteformData.contactEmail}
                             onChange={handleChange}
+                            placeholder='Email'
                             />
 
                         </div>
@@ -932,8 +1015,8 @@ const CPanel = () => {
 
                         </div>
 
-                        <div className='cPanelContainer__siteConfiguration__form__gridColor'>
-                            <label className='cPanelContainer__siteConfiguration__form__gridColor__label'>Modo de selección de color:</label>
+                        <div className='cPanelContainer__siteConfiguration__form__gridColor' style={{marginTop: '2vh'}}>
+                            <label className='cPanelContainer__siteConfiguration__form__gridColor__labelTitle'>Modo de selección de color:</label>
                             <select
                             className='cPanelContainer__siteConfiguration__form__gridColor__select'
                             name="colorInputMode"
@@ -945,9 +1028,109 @@ const CPanel = () => {
                             </select>
                         </div>
 
-                        <ColorPicker label="Color primario" name="primaryColor" value={colorSelectFormData.primaryColor} />
-                        <ColorPicker label="Color secundario" name="secondaryColor" value={colorSelectFormData.secondaryColor} />
-                        <ColorPicker label="Color acento" name="accentColor" value={colorSelectFormData.accentColor} />
+                        <ColorInput
+                        label="Color primario"
+                        name="primaryColor"
+                        value={colorSelectFormData.primaryColor}
+                        inputMode={colorSelectFormData.colorInputMode}
+                        onChange={handleColorSelect}
+                        colorOptions={colorOptions}
+                        />
+
+                        <ColorInput
+                        label="Color secundario"
+                        name="secondaryColor"
+                        value={colorSelectFormData.secondaryColor}
+                        inputMode={colorSelectFormData.colorInputMode}
+                        onChange={handleColorSelect}
+                        colorOptions={colorOptions}
+                        />
+
+                        <ColorInput
+                        label="Color terciario"
+                        name="accentColor"
+                        value={colorSelectFormData.accentColor}
+                        inputMode={colorSelectFormData.colorInputMode}
+                        onChange={handleColorSelect}
+                        colorOptions={colorOptions}
+                        />
+
+                        <div className="cPanelContainer__siteConfiguration__form__images" style={{marginTop: '2vh'}}>
+                            <div className="cPanelContainer__siteConfiguration__form__images__title">Imágenes del sitio</div>
+                            {[
+                                { name: 'favicon', label: 'Favicon' },
+                                { name: 'logo', label: 'Logo de la tienda' },
+                                { name: 'homeImage', label: 'Fondo "Home"' },
+                                { name: 'aboutImage', label: 'Fondo "Sobre nosotros"' },
+                                { name: 'contactImage', label: 'Fondo "Contacto"' },
+                            ].map(({ name, label }) => (
+                                <div key={name} className="cPanelContainer__siteConfiguration__form__images__grid">
+                                    <label className="cPanelContainer__siteConfiguration__form__images__grid__label">{label}:</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleImageChange(e, name)}
+                                        className="cPanelContainer__siteConfiguration__form__images__grid__input"
+                                    />
+                                    {siteImages[name] && (
+                                        <img
+                                        className='cPanelContainer__siteConfiguration__form__images__grid__img'
+                                        src={typeof siteImages[name] === 'string' ? siteImages[name] : URL.createObjectURL(siteImages[name])}
+                                        alt={label}
+                                        style={{ maxWidth: 150, marginTop: 8 }}
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className='cPanelContainer__siteConfiguration__form__gridImages' style={{marginTop: '2vh'}}>
+                            <label className='cPanelContainer__siteConfiguration__form__gridImages__label'>
+                                Imágenes del slider de logos:
+                            </label>
+                            
+                            <input
+                                type="file"
+                                name="sliderLogos"
+                                accept="image/*"
+                                multiple
+                                className="cPanelContainer__siteConfiguration__form__gridImages__input"
+                                onChange={handleLogoUpload}
+                            />
+
+                            <div className="cPanelContainer__siteConfiguration__form__gridImages__preview">
+                                {configurationSiteformData.sliderLogos.map((logo, index) => (
+                                <div key={index} className="cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn">
+                                    <img className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img' src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)} alt={`logo-${index}`} />
+                                    <button className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn' type="button" onClick={() => removeLogo(index)}>Eliminar</button>
+                                </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="cPanelContainer__siteConfiguration__form__aboutText" style={{marginTop: '2vh'}}>
+                            <label className="cPanelContainer__siteConfiguration__form__aboutText__label">Texto sección Sobre Nosotros:</label>
+                            <textarea
+                                className="cPanelContainer__siteConfiguration__form__aboutText__textArea"
+                                name="aboutText"
+                                value={configurationSiteformData.aboutText}
+                                onChange={handleChange}
+                                placeholder="Escribí aquí el texto que aparecerá en la sección Sobre Nosotros..."
+                                rows={5}
+                            />
+                        </div>
+
+                        <div className="cPanelContainer__siteConfiguration__form__aboutText" style={{marginTop: '2vh'}}>
+                            <label className="cPanelContainer__siteConfiguration__form__aboutText__label">Texto logo footer:</label>
+                            <textarea
+                                className="cPanelContainer__siteConfiguration__form__aboutText__textArea"
+                                name="aboutText"
+                                value={configurationSiteformData.footerLogoText}
+                                onChange={handleChange}
+                                placeholder="Escribí aquí el texto que aparecerá abajo del logo en el footer"
+                                rows={5}
+                            />
+                        </div>
 
                         <div className='cPanelContainer__siteConfiguration__form__btnContainer'>
                             <button onClick={handleSubmitConfigSite} className='cPanelContainer__siteConfiguration__form__btnContainer__btn'>Guardar configuración</button>

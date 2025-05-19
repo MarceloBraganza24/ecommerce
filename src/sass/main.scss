@@ -111,21 +111,43 @@ h2 {
         padding: 1vh;
         border-bottom: 0.3vh solid grey;
         &__title {
-            padding: 1vh 0vh;
+            padding: 1vh 0vh 2vh 0vh;
             &__prop {
-                font-size: 25px;
+                font-size: 35px;
             }
         }
         &__form {
             display: flex;
             flex-direction: column;
             gap: 1vh;
+            &__images {
+                display: flex;
+                flex-direction: column;
+                &__title {
+                    font-size: 25px;
+                    padding-bottom: 2vh;
+                }
+                &__grid {
+                    display: flex;
+                    align-items: center;
+                    gap: 2vh;
+                    padding-bottom: 1vh;
+                    &__label {
+                        width: 400px;
+                        font-size: 18px;
+                    }
+                    &__img {
+                        width: 3%;
+                        margin-bottom: 8px;
+                    }
+                }
+            }
             &__grid {
                 display: flex;
                 align-items: center;
                 gap: 2vh;
                 &__label {
-                    width: 300px;
+                    width: 400px;
                     font-size: 18px;
                 }
                 &__input {
@@ -134,6 +156,7 @@ h2 {
                     font-size: 16px;
                     border-radius: 0.5vh;
                     text-align: center;
+                    border: 0.3vh solid black;
                 }
                 &__inputColor {
                     background: none;
@@ -163,8 +186,114 @@ h2 {
                 flex-wrap: wrap;
                 gap: 2vh;
                 &__label {
-                    width: 300px;
+                    width: 400px;
                     font-size: 18px;
+                }
+                &__inputBtn {
+                    display: flex;
+                    align-items: center;
+                    gap: 1vh;
+                    &__input {
+                        width: 250px;
+                        height: 25px;
+                        font-size: 16px;
+                        border-radius: 0.5vh;
+                        text-align: center;
+                        border: 0.3vh solid black;
+                    }
+                    &__btnDeletePhone {
+                        margin-left: 1vh;
+                        height: 30px;
+                        background-color: #1b509c;
+                        padding: 0.5vh 1vh;
+                        border-radius: 0.5vh;
+                        color: white;
+                        font-size: 14px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
+                }
+            }
+            /* &__gridPhone {
+                display: grid;
+                grid-template-columns: 1fr 1fr 2fr;
+                align-items: center;
+                gap: 2vh;
+                &__label {
+                    width: 400px;
+                    font-size: 18px;
+                }
+                &__inputBtn {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1vh;
+                    &__input {
+                        width: 250px;
+                        height: 25px;
+                        font-size: 16px;
+                        border-radius: 0.5vh;
+                        text-align: center;
+                        border: 0.3vh solid black;
+                    }
+                    &__btnDeletePhone {
+                        margin-left: 1vh;
+                        height: 30px;
+                        background-color: #1b509c;
+                        padding: 0.5vh 1vh;
+                        border-radius: 0.5vh;
+                        color: white;
+                        font-size: 14px;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: #124285;
+                        }
+                    }
+                }
+            } */
+            &__gridColor {
+                display: flex;
+                align-items: center;
+                gap: 2vh;
+                &__palettes {
+                    display: flex;
+                    align-items: center;
+                    gap: 1vh;
+                }
+                &__labelTitle {
+                    width: 400px;
+                    font-size: 25px;
+                }
+                &__label {
+                    width: 400px;
+                    font-size: 18px;
+                }
+                &__labelInput {
+                    width: 15px;
+                    font-size: 18px;
+                }
+                &__select {
+                    width: 260px;
+                    height: 30px;
+                    font-size: 16px;
+                    border-radius: 0.5vh;
+                    text-align: center;
+                    border: 0.3vh solid black;
+                }
+                &__input {
+                    width: 250px;
+                    height: 25px;
+                    font-size: 16px;
+                    border-radius: 0.5vh;
+                    text-align: center;
+                }
+                &__inputHex {
+                    width: 230px;
+                    height: 25px;
+                    font-size: 16px;
+                    border-radius: 0.5vh;
+                    text-align: center;
                 }
                 &__inputBtn {
                     display: flex;
@@ -192,26 +321,14 @@ h2 {
                     }
                 }
             }
-            &__gridColor {
-                display: flex;
+            &__gridImages {
+                display: grid;
+                grid-template-columns: 1fr 1fr 2fr;
                 align-items: center;
                 gap: 2vh;
-                &__palettes {
-                    display: flex;
-                    align-items: center;
-                    gap: 1vh;
-                }
                 &__label {
-                    width: 300px;
-                    font-size: 18px;
-                }
-                &__select {
-                    width: 250px;
-                    height: 25px;
-                    font-size: 16px;
-                    border-radius: 0.5vh;
-                    text-align: center;
-                    border: 0.3vh solid black;
+                    width: 400px;
+                    font-size: 25px;
                 }
                 &__input {
                     width: 250px;
@@ -220,30 +337,46 @@ h2 {
                     border-radius: 0.5vh;
                     text-align: center;
                 }
-                &__inputBtn {
+                &__preview {
                     display: flex;
-                    align-items: center;
+                    flex-wrap: wrap;
                     gap: 1vh;
-                    &__input {
-                        width: 250px;
-                        height: 25px;
-                        font-size: 16px;
+                    &__imgBtn {
+                        background-color: #9fbbe2;
+                        width: 20%;
+                        @include disFC();
+                        gap: 1vh;
+                        padding: 1vh;
                         border-radius: 0.5vh;
-                        text-align: center;
-                    }
-                    &__btnDeletePhone {
-                        margin-left: 1vh;
-                        height: 30px;
-                        background-color: #1b509c;
-                        padding: 0.5vh 1vh;
-                        border-radius: 0.5vh;
-                        color: white;
-                        font-size: 14px;
-                        cursor: pointer;
-                        &:hover {
-                            background-color: #124285;
+                        &__img {
+                            width: 70px;
+                            height: 50px;
+                        }
+                        &__btn {
+                            background-color: #1b509c;
+                            padding: 1vh;
+                            @include disFC();
+                            border-radius: 0.5vh;
+                            color: white;
+                            font-size: 12px;
+                            cursor: pointer;
+                            &:hover {
+                                background-color: #124285;
+                            }
                         }
                     }
+                }
+            }
+            &__aboutText {
+                display: flex;
+                align-items: center;
+                gap: 2vh;
+                &__label {
+                    width: 400px;
+                    font-size: 18px;
+                }
+                &__textArea {
+                    width: 500px;
                 }
             }
             &__btnContainer {

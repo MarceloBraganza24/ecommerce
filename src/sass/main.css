@@ -118,15 +118,73 @@ h2 {
   border-bottom: 0.3vh solid grey;
 }
 .cPanelContainer__siteConfiguration__title {
-  padding: 1vh 0vh;
+  padding: 1vh 0vh 2vh 0vh;
 }
 .cPanelContainer__siteConfiguration__title__prop {
-  font-size: 25px;
+  font-size: 35px;
 }
 .cPanelContainer__siteConfiguration__form {
   display: flex;
   flex-direction: column;
   gap: 1vh;
+  /* &__gridPhone {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      align-items: center;
+      gap: 2vh;
+      &__label {
+          width: 400px;
+          font-size: 18px;
+      }
+      &__inputBtn {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1vh;
+          &__input {
+              width: 250px;
+              height: 25px;
+              font-size: 16px;
+              border-radius: 0.5vh;
+              text-align: center;
+              border: 0.3vh solid black;
+          }
+          &__btnDeletePhone {
+              margin-left: 1vh;
+              height: 30px;
+              background-color: #1b509c;
+              padding: 0.5vh 1vh;
+              border-radius: 0.5vh;
+              color: white;
+              font-size: 14px;
+              cursor: pointer;
+              &:hover {
+                  background-color: #124285;
+              }
+          }
+      }
+  } */
+}
+.cPanelContainer__siteConfiguration__form__images {
+  display: flex;
+  flex-direction: column;
+}
+.cPanelContainer__siteConfiguration__form__images__title {
+  font-size: 25px;
+  padding-bottom: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__images__grid {
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+  padding-bottom: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__images__grid__label {
+  width: 400px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__images__grid__img {
+  width: 3%;
+  margin-bottom: 8px;
 }
 .cPanelContainer__siteConfiguration__form__grid {
   display: flex;
@@ -134,7 +192,7 @@ h2 {
   gap: 2vh;
 }
 .cPanelContainer__siteConfiguration__form__grid__label {
-  width: 300px;
+  width: 400px;
   font-size: 18px;
 }
 .cPanelContainer__siteConfiguration__form__grid__input {
@@ -143,6 +201,7 @@ h2 {
   font-size: 16px;
   border-radius: 0.5vh;
   text-align: center;
+  border: 0.3vh solid black;
 }
 .cPanelContainer__siteConfiguration__form__grid__inputColor {
   background: none;
@@ -172,7 +231,7 @@ h2 {
   gap: 2vh;
 }
 .cPanelContainer__siteConfiguration__form__gridPhone__label {
-  width: 300px;
+  width: 400px;
   font-size: 18px;
 }
 .cPanelContainer__siteConfiguration__form__gridPhone__inputBtn {
@@ -186,6 +245,7 @@ h2 {
   font-size: 16px;
   border-radius: 0.5vh;
   text-align: center;
+  border: 0.3vh solid black;
 }
 .cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone {
   margin-left: 1vh;
@@ -210,13 +270,21 @@ h2 {
   align-items: center;
   gap: 1vh;
 }
+.cPanelContainer__siteConfiguration__form__gridColor__labelTitle {
+  width: 400px;
+  font-size: 25px;
+}
 .cPanelContainer__siteConfiguration__form__gridColor__label {
-  width: 300px;
+  width: 400px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__labelInput {
+  width: 15px;
   font-size: 18px;
 }
 .cPanelContainer__siteConfiguration__form__gridColor__select {
-  width: 250px;
-  height: 25px;
+  width: 260px;
+  height: 30px;
   font-size: 16px;
   border-radius: 0.5vh;
   text-align: center;
@@ -224,6 +292,13 @@ h2 {
 }
 .cPanelContainer__siteConfiguration__form__gridColor__input {
   width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__gridColor__inputHex {
+  width: 230px;
   height: 25px;
   font-size: 16px;
   border-radius: 0.5vh;
@@ -253,6 +328,68 @@ h2 {
 }
 .cPanelContainer__siteConfiguration__form__gridColor__inputBtn__btnDeletePhone:hover {
   background-color: #124285;
+}
+.cPanelContainer__siteConfiguration__form__gridImages {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  align-items: center;
+  gap: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__label {
+  width: 400px;
+  font-size: 25px;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__input {
+  width: 250px;
+  height: 25px;
+  font-size: 16px;
+  border-radius: 0.5vh;
+  text-align: center;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1vh;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn {
+  background-color: #9fbbe2;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1vh;
+  padding: 1vh;
+  border-radius: 0.5vh;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img {
+  width: 70px;
+  height: 50px;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn {
+  background-color: #1b509c;
+  padding: 1vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5vh;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn:hover {
+  background-color: #124285;
+}
+.cPanelContainer__siteConfiguration__form__aboutText {
+  display: flex;
+  align-items: center;
+  gap: 2vh;
+}
+.cPanelContainer__siteConfiguration__form__aboutText__label {
+  width: 400px;
+  font-size: 18px;
+}
+.cPanelContainer__siteConfiguration__form__aboutText__textArea {
+  width: 500px;
 }
 .cPanelContainer__siteConfiguration__form__btnContainer {
   display: flex;

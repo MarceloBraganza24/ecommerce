@@ -14,15 +14,16 @@ import { Navigation, Pagination,Autoplay  } from "swiper/modules";
 import BtnGoUp from "./BtnGoUp";
 import Spinner from "./Spinner";
 
-const logos = [
+/* const logosSlider = [
     { id: 1, src: "/src/assets/logo_gucci.png", alt: "Gucci" },
     { id: 2, src: "/src/assets/logo_Chanel.png", alt: "Chanel" },
     { id: 3, src: "/src/assets/logo_burberry.png", alt: "Burberry" },
     { id: 4, src: "/src/assets/logo_cartier.png", alt: "Cartier" },
     { id: 5, src: "/src/assets/logo_Prada.png", alt: "Prada" },
-];
+]; */
 
 const Home = () => {
+    const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
@@ -338,21 +339,8 @@ const Home = () => {
             scrollToTop={scrollToTop}
             />
 
-            <div className="homeContainer">
-                
-                <div className='navbarContainer'>
-                    <NavBar
-                    isLoading={isLoading}
-                    isLoggedIn={user.isLoggedIn}
-                    role={user.role}
-                    first_name={user.first_name}
-                    categories={categories}
-                    userCart={userCart}
-                    showLogOutContainer={showLogOutContainer}
-                    />
-                </div>
-
-                {/* <NavBar
+            <div className='navbarContainer'>
+                <NavBar
                 isLoading={isLoading}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
@@ -360,8 +348,11 @@ const Home = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                /> */}
-
+                />
+            </div>
+            
+            <div className="homeContainer">
+                
                 {
                     showLogOutContainer&&
                     <LogOut/>
@@ -387,19 +378,23 @@ const Home = () => {
 
             </div>
 
-            <div className="slider-logos">
+            {
+                logosSlider.length != 0 &&
 
-                <div className="slider-logos__logo-slider">
-                    <div className="slider-logos__logo-slider__slider-track">
-                        {logos.concat(logos).map((logo, index) => (
-                        <div key={index} className="slider-logos__logo-slider__slider-track__slide">
-                            <img className="slider-logos__logo-slider__slider-track__slide__img" src={logo.src} alt={logo.alt} />
+                <div className="slider-logos">
+
+                    <div className="slider-logos__logo-slider">
+                        <div className="slider-logos__logo-slider__slider-track">
+                            {logosSlider.concat(logosSlider).map((logo, index) => (
+                                <div key={index} className="slider-logos__logo-slider__slider-track__slide">
+                                <img className="slider-logos__logo-slider__slider-track__slide__img" src={logo.src} alt={logo.alt} />
+                            </div>
+                            ))}
                         </div>
-                        ))}
                     </div>
-                </div>
 
-            </div>
+                </div>
+            }
 
             <div className='catalogContainer' id='catalog'>
 
