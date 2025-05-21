@@ -128,6 +128,7 @@ h2 {
                     padding-bottom: 2vh;
                 }
                 &__grid {
+                    //background-color: #9fbbe2;
                     display: flex;
                     align-items: center;
                     gap: 2vh;
@@ -137,8 +138,16 @@ h2 {
                         font-size: 18px;
                     }
                     &__img {
-                        width: 3%;
-                        margin-bottom: 8px;
+                        width: 50px;
+                        background-color: #9fbbe2;
+                        @include disFC();
+                        padding: 0.3vh 1vh;
+                        border-radius: 0.5vh;
+                        &__prop {
+                            width: 50px;
+                            height: 30px;
+                            margin-bottom: 8px;
+                        }
                     }
                 }
             }

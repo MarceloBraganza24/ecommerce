@@ -253,7 +253,7 @@ const Home = () => {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            console.log(data)
+            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -565,7 +565,7 @@ const Home = () => {
 
             <Footer
             logo_store={storeSettings?.siteImages?.logoStore || ""}
-            aboutText={storeSettings?.aboutText || ""}
+            aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}

@@ -147,7 +147,17 @@ h2 {
   font-size: 18px;
 }
 .cPanelContainer__siteConfiguration__form__images__grid__img {
-  width: 3%;
+  width: 50px;
+  background-color: #9fbbe2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.3vh 1vh;
+  border-radius: 0.5vh;
+}
+.cPanelContainer__siteConfiguration__form__images__grid__img__prop {
+  width: 50px;
+  height: 30px;
   margin-bottom: 8px;
 }
 .cPanelContainer__siteConfiguration__form__grid {

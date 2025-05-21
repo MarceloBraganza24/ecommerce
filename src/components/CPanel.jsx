@@ -662,9 +662,15 @@ const CPanel = () => {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            console.log(data)
+            //console.log(data)
             if (response.ok) {
                 setConfigurationSiteformData(data); 
+                setColorSelectFormData((prev) => ({
+                    ...prev,
+                    primaryColor: data.primaryColor || prev.primaryColor,
+                    secondaryColor: data.secondaryColor || prev.secondaryColor,
+                    accentColor: data.accentColor || prev.accentColor,
+                }));
                 setSiteImages({
                     favicon: data.siteImages.favicon ? SERVER_URL + data.siteImages.favicon : null,
                     logoStore: data.siteImages.logoStore ? SERVER_URL + data.siteImages.logoStore : null,
@@ -748,9 +754,9 @@ const CPanel = () => {
             selected: true
             }
         ],
-        primaryColor: '#000000',
-        secondaryColor: '#ffffff',
-        accentColor: '#FF5733',
+        primaryColor: '',
+        secondaryColor: '',
+        accentColor: '',
         phoneNumbers: [''],
         aboutText: '',
         footerLogoText: '',
@@ -791,14 +797,15 @@ const CPanel = () => {
         }));
     };
 
-    const colorOptions = ['#000000', '#ffffff', '#FF5733', '#3498db', '#2ecc71'];
+    const colorOptions = ['#000000', '#ffffff', '#FF5733', '#3498db', '#2ecc71', '#ffe100'];
 
     const [colorSelectFormData, setColorSelectFormData] = useState({
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
-        accentColor: '#FF5733',
+        accentColor: '#fccf03',
         colorInputMode: 'pallete'
     });
+    //console.log(colorSelectFormData)
 
     const handleColorSelect = (field, color) => {
         setColorSelectFormData((prev) => ({
@@ -844,58 +851,22 @@ const CPanel = () => {
         setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: updatedPhones }));
     };
 
-    /* const handleSubmitConfigSite = async () => {
-        const formData = new FormData();
-
-        // Añadir las imágenes individuales
-        Object.entries(siteImages).forEach(([key, file]) => {
-            if (file) {
-                formData.append(key, file);
-            }
-        });
-
-        // Añadir sliderLogos (múltiples archivos)
-        configurationSiteformData.sliderLogos.forEach((file, index) => {
-            formData.append('sliderLogos', file); // se puede usar el mismo nombre
-        });
-
-        // Armar el objeto completo con los demás campos
-        const configData = {
-            ...configurationSiteformData,
-            primaryColor: colorSelectFormData.primaryColor,
-            secondaryColor: colorSelectFormData.secondaryColor,
-            accentColor: colorSelectFormData.accentColor
-        };
-
-        // Convertir a JSON y añadirlo
-        formData.append('data', JSON.stringify(configData));
-
-        try {
-            const response = await fetch('http://localhost:8081/api/settings', {
-                method: 'PUT',
-                body: formData
-            });
-
-            const result = await response.json();
-            console.log('Resultado:', result);
-        } catch (error) {
-            console.error('Error al enviar la configuración:', error);
-        }
-    }; */
     const handleSubmitConfigSite = async () => {
         const formData = new FormData();
 
-        // Añadir las imágenes individuales (solo archivos nuevos)
-        Object.entries(siteImages).forEach(([key, file]) => {
-            if (file instanceof File) {
-                formData.append(key, file);
+        Object.entries(siteImages).forEach(([key, value]) => {
+            if (value instanceof File) {
+                formData.append(key, value); // "favicon", "logoStore", etc.
+            } else if (typeof value === 'string') {
+                formData.append(`siteImagesUrls[${key}]`, value); // las urls anteriores (esto está bien)
             }
         });
 
-        // Añadir sliderLogos (múltiples archivos)
-        configurationSiteformData.sliderLogos.forEach((file) => {
-            if (file instanceof File) {
-                formData.append('sliderLogos', file);
+        configurationSiteformData.sliderLogos.forEach((logo) => {
+            if (logo instanceof File) {
+                formData.append('sliderLogos', logo);
+            } else if (typeof logo === 'string' && logo.trim().startsWith('uploads/')) {
+                formData.append('sliderLogosUrls[]', logo);
             }
         });
 
@@ -917,7 +888,21 @@ const CPanel = () => {
             });
 
             const result = await response.json();
-            console.log('Resultado:', result);
+            if(response.ok) {
+                toast('Has guardado los cambios', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchStoreSettings()
+                console.log('Resultado:', result);
+            }
         } catch (error) {
             console.error('Error al enviar la configuración:', error);
         }
@@ -1021,18 +1006,6 @@ const CPanel = () => {
             contactEmail: updatedEmails
         }));
     };
-
-    const setDefaultContactEmail = (index) => {
-        setConfigurationSiteformData(prev => ({
-            ...prev,
-            contactEmail: prev.contactEmail.map((item, i) => ({
-                ...item,
-                isDefault: i === index
-            }))
-        }));
-    };
-
-
 
     return (
 
@@ -1245,14 +1218,16 @@ const CPanel = () => {
                                         onChange={(e) => handleImageChange(e, name)}
                                         className="cPanelContainer__siteConfiguration__form__images__grid__input"
                                     />
-                                    {siteImages[name] && (
-                                        <img
-                                        className='cPanelContainer__siteConfiguration__form__images__grid__img'
-                                        src={typeof siteImages[name] === 'string' ? siteImages[name] : URL.createObjectURL(siteImages[name])}
-                                        alt={label}
-                                        style={{ maxWidth: 150, marginTop: 8 }}
-                                        />
-                                    )}
+                                    <div className='cPanelContainer__siteConfiguration__form__images__grid__img'>
+                                        {siteImages[name] && (
+                                            <img
+                                            className='cPanelContainer__siteConfiguration__form__images__grid__img__prop'
+                                            src={typeof siteImages[name] === 'string' ? siteImages[name] : URL.createObjectURL(siteImages[name])}
+                                            alt={label}
+                                            style={{ maxWidth: 150, marginTop: 8 }}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
