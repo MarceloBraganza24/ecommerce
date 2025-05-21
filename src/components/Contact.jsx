@@ -17,6 +17,27 @@ const Contact = () => {
         email: '',
         message: ''
     });
+    
+    const [selectedAddress, setSelectedAddress] = useState(null);
+
+    useEffect(() => {
+        if (sellerAddresses.length > 0 && !selectedAddress) {
+            setSelectedAddress(sellerAddresses[0]);
+        }
+    }, [sellerAddresses]);
+    
+    const buildFullAddress = (address) => {
+        if (!address) return '';
+        const { street, street_number, locality, province } = address;
+        return `${street} ${street_number}, ${locality}, ${province}`;
+    };
+
+    const generateMapUrl = (address) => {
+        if (!address) return '';
+        const fullAddress = buildFullAddress(address);
+        const encodedAddress = encodeURIComponent(fullAddress);
+        return `https://www.google.com/maps/embed/v1/place?key=AIzaSyCypLLA0vWKs_lvw5zxCuGJC28iEm9Rqk8&q=${encodedAddress}`;
+    };
 
 
     useEffect(() => {
@@ -137,6 +158,7 @@ const Contact = () => {
             setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
+            //console.log(data)
             if (response.ok) {
                 setSellerAddresses(data.data); 
             } else {
@@ -288,9 +310,32 @@ const Contact = () => {
 
                         <div className='contactContainer__formMap__mapContainer__map'>
 
-                            <iframe className='contactContainer__formMap__mapContainer__map__prop' src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d665.8232192035489!2d-61.94095405891255!3d-37.45583802619878!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1740503041554!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            {selectedAddress ? (
+                                <iframe
+                                    className='contactContainer__formMap__mapContainer__map__prop'
+                                    src={generateMapUrl(selectedAddress)}
+                                    allowFullScreen=""
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                />
+                            ) : (
+                                <p>No hay direcciones disponibles.</p>
+                            )}
 
-                            <div className='contactContainer__formMap__mapContainer__map__address'>Mitre 1303, Coronel Suárez, Pcia de Buenos Aires</div>
+                            <select
+                                className='contactContainer__formMap__mapContainer__map__select'
+                                value={selectedAddress ? selectedAddress._id : ''}
+                                onChange={(e) => {
+                                    const selected = sellerAddresses.find(addr => addr._id === e.target.value);
+                                    setSelectedAddress(selected);
+                                }}
+                                >
+                                {sellerAddresses.map(addr => (
+                                    <option key={addr._id} value={addr._id}>
+                                    {buildFullAddress(addr)}
+                                    </option>
+                                ))}
+                            </select>
 
                         </div>
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
+const NavBar = ({userCart,logo_store,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
     const [quantity, setQuantity] = useState(null);
     const [isLoadingUser, setIsLoadingUser] = useState(true);
 
@@ -90,7 +90,13 @@ const NavBar = ({userCart,isLoggedIn,categories,isLoading,role,first_name,cookie
                     </div>
 
                     <Link to={"/"} className='header__logo-menu__logoContainer'>
-                        <img className='header__logo-menu__logoContainer__logo' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
+                        {logo_store ? (
+                            <img
+                            className='header__logo-menu__logoContainer__logo'
+                            src={`http://localhost:8081/${logo_store}`}
+                            alt="logo_tienda"
+                            />
+                        ) : null}
                     </Link>
 
                     <div className='header__logo-menu__menuContainer'>

@@ -129,11 +129,11 @@ const Login = () => {
                 <div className='loginContainer__logoContainer'>
 
                     <div className='loginContainer__logoContainer__title'>
-                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a Ecommerce</div>
+                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a nombre_tienda</div>
                     </div>
 
                     <div className='loginContainer__logoContainer__logo'>
-                        <img className='loginContainer__logoContainer__logo__prop' src="/src/assets/logo_ecommerce_h_500x500.png" alt="logo" />
+                        <img className='loginContainer__logoContainer__logo__prop' src="/src/assets/logo_ecommerce_h_500x500.png" alt="logo_tienda" />
                     </div>  
 
                     <div className='loginContainer__logoContainer__phrase'>

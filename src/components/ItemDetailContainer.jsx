@@ -352,7 +352,7 @@ const ItemDetailContainer = () => {
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
                                             <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
-                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+250 ventas</div>
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>numero_de_ventas_de_producto</div>
                                         </div>
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>

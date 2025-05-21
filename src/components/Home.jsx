@@ -28,7 +28,10 @@ const Home = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
     const [sellerAddresses, setSellerAddresses] = useState([]);
+    const [storeSettings, setStoreSettings] = useState({});
+    //console.log(storeSettings)
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [products, setProducts] = useState([]);
     const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
@@ -45,7 +48,6 @@ const Home = () => {
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
     
-    //const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -63,14 +65,12 @@ const Home = () => {
         return objetosFiltrados;
     }
     const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
-    //console.log(paginatedProducts)
     
     const groupedProducts = products.reduce((acc, product) => {
         acc[product.category] = acc[product.category] || [];
         acc[product.category].push(product);
         return acc;
     }, {});
-    //console.log(groupedProducts)
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -248,10 +248,40 @@ const Home = () => {
         }
     };
 
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
         fetchCurrentUser();
         fetchProducts();
+        fetchStoreSettings();
         fetchSellerAddresses();
         fetchPaginatedProducts();
         const toggleVisibility = () => {
@@ -342,6 +372,7 @@ const Home = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 first_name={user.first_name}
@@ -358,7 +389,7 @@ const Home = () => {
                     <LogOut/>
                 }
 
-                <div className="homeContainer__gridOffer">
+                {/* <div className="homeContainer__gridOffer">
 
                     <div className="homeContainer__gridOffer__offerContainer">
 
@@ -374,7 +405,7 @@ const Home = () => {
 
                     </div>
 
-                </div>
+                </div>s */}
 
             </div>
 
@@ -533,8 +564,13 @@ const Home = () => {
             </div>
 
             <Footer
+            logo_store={storeSettings?.siteImages?.logoStore || ""}
+            aboutText={storeSettings?.aboutText || ""}
+            phoneNumbers={storeSettings.phoneNumbers}
+            contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
+            isLoadingStoreSettings={isLoadingStoreSettings}
             />
             
         </>

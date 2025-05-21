@@ -230,7 +230,7 @@ const CategoryContainer = () => {
     
             if (category) params.append("category", category);
             params.append("page", page);  // 👈 Envía el número de página
-            params.append("limit", 9); // 👈 Define el límite de productos por página
+            params.append("limit", 8); // 👈 Define el límite de productos por página
     
             url.search = params.toString();  // Genera la URL con los parámetros
             

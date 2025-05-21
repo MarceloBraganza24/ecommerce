@@ -15,6 +15,7 @@ const CPanel = () => {
     const [creatingCoupon, setCreatingCoupon] = useState(false);
     const [deletingIdCoupon, setDeletingIdCoupon] = useState(null);
 
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
@@ -31,6 +32,8 @@ const CPanel = () => {
     const [loadingAddresses, setLoadingAddresses] = useState(false);
     const [loadingCoupons, setLoadingCoupons] = useState(false);
     const navigate = useNavigate();
+
+    const SERVER_URL = "http://localhost:8081/";
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -654,6 +657,42 @@ const CPanel = () => {
         libraries:["places"]
     })
 
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            console.log(data)
+            if (response.ok) {
+                setConfigurationSiteformData(data); 
+                setSiteImages({
+                    favicon: data.siteImages.favicon ? SERVER_URL + data.siteImages.favicon : null,
+                    logoStore: data.siteImages.logoStore ? SERVER_URL + data.siteImages.logoStore : null,
+                    homeImage: data.siteImages.homeImage ? SERVER_URL + data.siteImages.homeImage : null,
+                    aboutImage: data.siteImages.aboutImage ? SERVER_URL + data.siteImages.aboutImage : null,
+                    contactImage: data.siteImages.contactImage ? SERVER_URL + data.siteImages.contactImage : null,
+                });
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
+
     const fetchCurrentUser = async () => {
         try {
             const response = await fetch('http://localhost:8081/api/sessions/current', {
@@ -680,13 +719,14 @@ const CPanel = () => {
     useEffect(() => {
         fetchCurrentUser();
         fetchCategories();
+        fetchStoreSettings();
         fetchSellerAddresses();
         fetchCoupons();
     }, []);
 
     const [siteImages, setSiteImages] = useState({
         favicon: null,
-        logo: null,
+        logoStore: null,
         homeImage: null,
         aboutImage: null,
         contactImage: null
@@ -701,8 +741,13 @@ const CPanel = () => {
     
     const [configurationSiteformData, setConfigurationSiteformData] = useState({
         storeName: '',
-        contactEmail: '',
-        logoUrl: '',
+        contactEmail: [
+            {
+            email: '',
+            label: 'General',
+            selected: true
+            }
+        ],
         primaryColor: '#000000',
         secondaryColor: '#ffffff',
         accentColor: '#FF5733',
@@ -712,7 +757,7 @@ const CPanel = () => {
         sliderLogos: [],
     });
 
-    const handleLogoUpload = (e) => {
+    const handleSliderImagesUpload = (e) => {
         const files = Array.from(e.target.files);
         const currentCount = configurationSiteformData.sliderLogos.length;
 
@@ -746,7 +791,6 @@ const CPanel = () => {
         }));
     };
 
-
     const colorOptions = ['#000000', '#ffffff', '#FF5733', '#3498db', '#2ecc71'];
 
     const [colorSelectFormData, setColorSelectFormData] = useState({
@@ -754,12 +798,6 @@ const CPanel = () => {
         secondaryColor: '#ffffff',
         accentColor: '#FF5733',
         colorInputMode: 'pallete'
-    });
-
-    const [hexInputs, setHexInputs] = useState({
-        primaryColor: '000000',
-        secondaryColor: 'ffffff',
-        accentColor: 'FF5733'
     });
 
     const handleColorSelect = (field, color) => {
@@ -788,6 +826,15 @@ const CPanel = () => {
         }
     };
 
+    const handlePhoneNumberChange = (e, index) => {
+        const updatedPhones = [...configurationSiteformData.phoneNumbers];
+        updatedPhones[index] = e.target.value;
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            phoneNumbers: updatedPhones
+        }));
+    };
+
     const addPhoneNumber = () => {
         setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: [...prev.phoneNumbers, ''] }));
     };
@@ -797,57 +844,83 @@ const CPanel = () => {
         setConfigurationSiteformData(prev => ({ ...prev, phoneNumbers: updatedPhones }));
     };
 
+    /* const handleSubmitConfigSite = async () => {
+        const formData = new FormData();
+
+        // Añadir las imágenes individuales
+        Object.entries(siteImages).forEach(([key, file]) => {
+            if (file) {
+                formData.append(key, file);
+            }
+        });
+
+        // Añadir sliderLogos (múltiples archivos)
+        configurationSiteformData.sliderLogos.forEach((file, index) => {
+            formData.append('sliderLogos', file); // se puede usar el mismo nombre
+        });
+
+        // Armar el objeto completo con los demás campos
+        const configData = {
+            ...configurationSiteformData,
+            primaryColor: colorSelectFormData.primaryColor,
+            secondaryColor: colorSelectFormData.secondaryColor,
+            accentColor: colorSelectFormData.accentColor
+        };
+
+        // Convertir a JSON y añadirlo
+        formData.append('data', JSON.stringify(configData));
+
+        try {
+            const response = await fetch('http://localhost:8081/api/settings', {
+                method: 'PUT',
+                body: formData
+            });
+
+            const result = await response.json();
+            console.log('Resultado:', result);
+        } catch (error) {
+            console.error('Error al enviar la configuración:', error);
+        }
+    }; */
     const handleSubmitConfigSite = async () => {
         const formData = new FormData();
 
-        // Agregar campos de texto y arrays
-        formData.append('storeName', configurationSiteformData.storeName);
-        formData.append('contactEmail', configurationSiteformData.contactEmail);
-        formData.append('logoUrl', configurationSiteformData.logoUrl);
-        formData.append('primaryColor', configurationSiteformData.primaryColor);
-        formData.append('secondaryColor', configurationSiteformData.secondaryColor);
-        formData.append('accentColor', configurationSiteformData.accentColor);
-        formData.append('aboutText', configurationSiteformData.aboutText);
-        formData.append('footerLogoText', configurationSiteformData.footerLogoText);
-
-        // Teléfonos (pueden enviarse como array o separados)
-        configurationSiteformData.phoneNumbers.forEach((phone, index) => {
-            formData.append(`phoneNumbers[${index}]`, phone);
-        });
-
-        // Logos del slider
-        configurationSiteformData.sliderLogos.forEach((file, index) => {
-            formData.append(`sliderLogos`, file);
-        });
-
-        // Imágenes generales del sitio
-        for (const [key, file] of Object.entries(siteImages)) {
-            if (file) {
-                formData.append(key, file); // ejemplo: favicon, logo, etc.
+        // Añadir las imágenes individuales (solo archivos nuevos)
+        Object.entries(siteImages).forEach(([key, file]) => {
+            if (file instanceof File) {
+                formData.append(key, file);
             }
-        }
-
-        console.log(configurationSiteformData)
-
-
-        /* const response = await fetch('/api/settings', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(configurationSiteformData)
         });
-        if(response.ok) {
-            toast('Configuración guardada!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
+
+        // Añadir sliderLogos (múltiples archivos)
+        configurationSiteformData.sliderLogos.forEach((file) => {
+            if (file instanceof File) {
+                formData.append('sliderLogos', file);
+            }
+        });
+
+        // Armar el objeto completo con los demás campos
+        const configData = {
+            ...configurationSiteformData,
+            primaryColor: colorSelectFormData.primaryColor,
+            secondaryColor: colorSelectFormData.secondaryColor,
+            accentColor: colorSelectFormData.accentColor
+        };
+
+        // Convertir a JSON y añadirlo
+        formData.append('data', JSON.stringify(configData));
+
+        try {
+            const response = await fetch('http://localhost:8081/api/settings', {
+                method: 'PUT',
+                body: formData
             });
-        } */
+
+            const result = await response.json();
+            console.log('Resultado:', result);
+        } catch (error) {
+            console.error('Error al enviar la configuración:', error);
+        }
     };
 
     const ColorInput = ({
@@ -925,6 +998,42 @@ const CPanel = () => {
         );
     }
 
+    const handleContactEmailChange = (index, field, value) => {
+        const updatedEmails = [...configurationSiteformData.contactEmail];
+        updatedEmails[index][field] = value;
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            contactEmail: updatedEmails
+        }));
+    };
+
+    const addContactEmail = () => {
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            contactEmail: [...prev.contactEmail, { email: '', label: '', isDefault: false }]
+        }));
+    };
+
+    const removeContactEmail = (index) => {
+        const updatedEmails = configurationSiteformData.contactEmail.filter((_, i) => i !== index);
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            contactEmail: updatedEmails
+        }));
+    };
+
+    const setDefaultContactEmail = (index) => {
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            contactEmail: prev.contactEmail.map((item, i) => ({
+                ...item,
+                isDefault: i === index
+            }))
+        }));
+    };
+
+
+
     return (
 
         <>
@@ -973,47 +1082,111 @@ const CPanel = () => {
                             
                         </div>
 
-                        <div className='cPanelContainer__siteConfiguration__form__grid'>
+                        <label className='cPanelContainer__siteConfiguration__form__gridColor__labelTitle' style={{marginTop: '2vh'}}>Emails:</label>
 
-                            <div className="cPanelContainer__siteConfiguration__form__grid__label">Email de la tienda:</div>
+                        {configurationSiteformData.contactEmail.map((item, index) => (
+                        <div key={index} className='cPanelContainer__siteConfiguration__form__gridPhone'>
+                            
+                            <div className="cPanelContainer__siteConfiguration__form__gridPhone__label">
+                            Email de contacto {index + 1}:
+                            </div>
 
+                            <div className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
                             <input
-                            className='cPanelContainer__siteConfiguration__form__grid__input'
-                            type="email"
-                            name="contactEmail"
-                            value={configurationSiteformData.contactEmail}
-                            onChange={handleChange}
-                            placeholder='Email'
+                                type="email"
+                                className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__input'
+                                value={item.email}
+                                onChange={(e) => handleContactEmailChange(index, 'email', e.target.value)}
+                                placeholder="Ej: contacto@tienda.com"
                             />
+                            </div>
 
+                            <div className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
+                            <input
+                                type="text"
+                                className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__input'
+                                value={item.label}
+                                onChange={(e) => handleContactEmailChange(index, 'label', e.target.value)}
+                                placeholder="Etiqueta (Ej: Soporte, Ventas)"
+                            />
+                            </div>
+
+                            <div className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
+                            <label className='cPanelContainer__siteConfiguration__form__gridPhone__checkboxLabel'>
+                                <input
+                                type="checkbox"
+                                checked={item.selected || false}
+                                onChange={(e) => handleContactEmailChange(index, 'selected', e.target.checked)}
+                                />
+                                Recibir mensajes de contacto
+                            </label>
+                            </div>
+
+                            {configurationSiteformData.contactEmail.length > 1 && (
+                            <div className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
+                                <button
+                                type="button"
+                                onClick={() => removeContactEmail(index)}
+                                className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone'
+                                >
+                                Eliminar
+                                </button>
+                            </div>
+                            )}
                         </div>
+                        ))}
 
                         <div className='cPanelContainer__siteConfiguration__form__gridPhone'>
+                        <button
+                            type="button"
+                            onClick={addContactEmail}
+                            className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone'
+                        >
+                            Agregar otro email
+                        </button>
+                        </div>
 
-                            <div className="cPanelContainer__siteConfiguration__form__gridPhone__label">Teléfonos:</div>
+                        <label className='cPanelContainer__siteConfiguration__form__gridColor__labelTitle' style={{marginTop: '2vh'}}>Teléfonos:</label>
+                        
+                        {configurationSiteformData.phoneNumbers.map((phone, index) => (
+                            <div key={index} className='cPanelContainer__siteConfiguration__form__gridPhone'>
+                                <div className="cPanelContainer__siteConfiguration__form__gridPhone__label">
+                                Teléfono {index + 1}:
+                                </div>
 
-                            {configurationSiteformData.phoneNumbers.map((phone, index) => (
-                                <div key={index} className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
-                                    <input
+                                <div className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn'>
+                                <input
                                     className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__input'
                                     type="tel"
                                     name="phoneNumbers"
                                     value={phone}
-                                    onChange={(e) => handleChange(e, index)}
+                                    onChange={(e) => handlePhoneNumberChange(e, index)}
                                     placeholder="Ej: +5491123456789"
-                                    />
-                                    {configurationSiteformData.phoneNumbers.length > 1 && (
-                                    <button className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone' type="button" onClick={() => removePhoneNumber(index)}>
-                                        Eliminar
+                                />
+
+                                {configurationSiteformData.phoneNumbers.length > 1 && (
+                                    <button
+                                    className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone'
+                                    type="button"
+                                    onClick={() => removePhoneNumber(index)}
+                                    >
+                                    Eliminar
                                     </button>
-                                    )}
+                                )}
                                 </div>
+                            </div>
                             ))}
-                            <button className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone' type="button" onClick={addPhoneNumber}>
+
+                            <div className='cPanelContainer__siteConfiguration__form__gridPhone'>
+                            <button
+                                className='cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone'
+                                type="button"
+                                onClick={addPhoneNumber}
+                            >
                                 Agregar otro teléfono
                             </button>
-
                         </div>
+
 
                         <div className='cPanelContainer__siteConfiguration__form__gridColor' style={{marginTop: '2vh'}}>
                             <label className='cPanelContainer__siteConfiguration__form__gridColor__labelTitle'>Modo de selección de color:</label>
@@ -1059,7 +1232,7 @@ const CPanel = () => {
                             <div className="cPanelContainer__siteConfiguration__form__images__title">Imágenes del sitio</div>
                             {[
                                 { name: 'favicon', label: 'Favicon' },
-                                { name: 'logo', label: 'Logo de la tienda' },
+                                { name: 'logoStore', label: 'Logo de la tienda' },
                                 { name: 'homeImage', label: 'Fondo "Home"' },
                                 { name: 'aboutImage', label: 'Fondo "Sobre nosotros"' },
                                 { name: 'contactImage', label: 'Fondo "Contacto"' },
@@ -1095,13 +1268,22 @@ const CPanel = () => {
                                 accept="image/*"
                                 multiple
                                 className="cPanelContainer__siteConfiguration__form__gridImages__input"
-                                onChange={handleLogoUpload}
+                                onChange={handleSliderImagesUpload}
                             />
 
                             <div className="cPanelContainer__siteConfiguration__form__gridImages__preview">
                                 {configurationSiteformData.sliderLogos.map((logo, index) => (
                                 <div key={index} className="cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn">
-                                    <img className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img' src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)} alt={`logo-${index}`} />
+                                    <img
+                                        className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img'
+                                        src={
+                                            typeof logo === 'string'
+                                            ? `${SERVER_URL}${logo}` // Agregás la URL base
+                                            : URL.createObjectURL(logo)
+                                        }
+                                        alt={`logo-${index}`}
+                                    />
+                                    {/* <img className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img' src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)} alt={`logo-${index}`} /> */}
                                     <button className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn' type="button" onClick={() => removeLogo(index)}>Eliminar</button>
                                 </div>
                                 ))}
@@ -1124,7 +1306,7 @@ const CPanel = () => {
                             <label className="cPanelContainer__siteConfiguration__form__aboutText__label">Texto logo footer:</label>
                             <textarea
                                 className="cPanelContainer__siteConfiguration__form__aboutText__textArea"
-                                name="aboutText"
+                                name="footerLogoText"
                                 value={configurationSiteformData.footerLogoText}
                                 onChange={handleChange}
                                 placeholder="Escribí aquí el texto que aparecerá abajo del logo en el footer"

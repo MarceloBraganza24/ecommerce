@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Footer = ({sellerAddresses,isLoadingSellerAddresses}) => {
+const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,phoneNumbers,contactEmail}) => {
 
     return (
 
@@ -13,12 +13,21 @@ const Footer = ({sellerAddresses,isLoadingSellerAddresses}) => {
 
                     <div className='footerContainer__logoPhraseContainer__logoPhrase'>
 
-                        <div className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
-                            <img className='footerContainer__logoPhraseContainer__logoPhrase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
-                        </div>
+                        {/* <div className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
+                            <img className='footerContainer__logoPhraseContainer__logoPhrase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo_tienda" />
+                        </div> */}
+                        <Link to={"/"} className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
+                            {logo_store ? (
+                                <img
+                                className='footerContainer__logoPhraseContainer__logoPhrase__logo__prop'
+                                src={`http://localhost:8081/${logo_store}`}
+                                alt="logo_tienda"
+                                />
+                            ) : null}
+                        </Link>
 
                         <div className='footerContainer__logoPhraseContainer__logoPhrase__phrase'>
-                            <div className="footerContainer__logoPhraseContainer__logoPhrase__phrase__prop">"En nuestra tienda de ropa, cada prenda cuenta una historia de estilo, calidad y autenticidad, diseñada para quienes buscan expresar su personalidad con confianza y elegancia"</div>
+                            <div className="footerContainer__logoPhraseContainer__logoPhrase__phrase__prop">{aboutText}</div>
                         </div>
 
                     </div>
@@ -66,8 +75,24 @@ const Footer = ({sellerAddresses,isLoadingSellerAddresses}) => {
                                 </div>
                             ))}
 
-                            <div className='footerContainer__contactContainer__contact__contactProps__prop'>Teléfono: +54 9 2926 450236</div>
-                            <div className='footerContainer__contactContainer__contact__contactProps__prop'>ecommerce@gmail.com</div>
+                            <div className='footerContainer__contactContainer__contact__contactProps__prop' style={{marginTop:'1vh'}}>Teléfonos</div>
+
+                            {phoneNumbers?.map((phone, index) => (
+                            <div
+                                key={index}
+                                className="footerContainer__contactContainer__contact__contactProps__prop"
+                            >
+                                - {phone}
+                            </div>
+                            ))}
+
+                            <div className='footerContainer__contactContainer__contact__contactProps__prop' style={{marginTop:'1vh'}}>Correos electrónicos de contacto</div>
+
+                            {contactEmail?.map(({ email, label, _id }) => (
+                                <div key={_id} className="footerContainer__contactContainer__contact__contactProps__prop">
+                                    - 📧 {label}: {email}
+                                </div>
+                            ))}
 
                         </div>
 
