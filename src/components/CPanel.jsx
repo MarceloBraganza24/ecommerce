@@ -856,11 +856,13 @@ const CPanel = () => {
 
         Object.entries(siteImages).forEach(([key, value]) => {
             if (value instanceof File) {
-                formData.append(key, value); // "favicon", "logoStore", etc.
+                formData.append(key, value); // se envía como archivo
             } else if (typeof value === 'string') {
-                formData.append(`siteImagesUrls[${key}]`, value); // las urls anteriores (esto está bien)
+                // Enviar la URL de imagen existente usando el mismo nombre del campo
+                formData.append(`siteImages.${key}`, value); // ✅ Este nombre coincide con lo que espera el backend
             }
         });
+
 
         configurationSiteformData.sliderLogos.forEach((logo) => {
             if (logo instanceof File) {
@@ -875,11 +877,16 @@ const CPanel = () => {
             ...configurationSiteformData,
             primaryColor: colorSelectFormData.primaryColor,
             secondaryColor: colorSelectFormData.secondaryColor,
-            accentColor: colorSelectFormData.accentColor
+            accentColor: colorSelectFormData.accentColor,
+            sliderLogos: configurationSiteformData.sliderLogos.filter(logo => typeof logo === 'string' && logo.trim() !== '')
         };
 
         // Convertir a JSON y añadirlo
         formData.append('data', JSON.stringify(configData));
+
+        formData.forEach((value, key) => {
+            console.log(`${key}:`, value);
+        });
 
         try {
             const response = await fetch('http://localhost:8081/api/settings', {
