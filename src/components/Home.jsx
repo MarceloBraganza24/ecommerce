@@ -14,14 +14,6 @@ import { Navigation, Pagination,Autoplay  } from "swiper/modules";
 import BtnGoUp from "./BtnGoUp";
 import Spinner from "./Spinner";
 
-/* const logosSlider = [
-    { id: 1, src: "/src/assets/logo_gucci.png", alt: "Gucci" },
-    { id: 2, src: "/src/assets/logo_Chanel.png", alt: "Chanel" },
-    { id: 3, src: "/src/assets/logo_burberry.png", alt: "Burberry" },
-    { id: 4, src: "/src/assets/logo_cartier.png", alt: "Cartier" },
-    { id: 5, src: "/src/assets/logo_Prada.png", alt: "Prada" },
-]; */
-
 const Home = () => {
     const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
@@ -360,7 +352,16 @@ const Home = () => {
         )
 
     }
-    
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
     return (
 
         <>
@@ -379,35 +380,33 @@ const Home = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
+                hexToRgba={hexToRgba}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
             
-            <div className="homeContainer">
+            <div className="homeContainer" style={{backgroundImage: `url(http://localhost:8081/${storeSettings?.siteImages?.homeImage || ''})`}}>
                 
                 {
                     showLogOutContainer&&
                     <LogOut/>
                 }
 
-                {/* <div className="homeContainer__gridOffer">
-
-                    <div className="homeContainer__gridOffer__offerContainer">
-
-                        <div className="homeContainer__gridOffer__offerContainer__offerUp">Renueva tu estilo con lo último en moda</div>
-
-                        <div className="homeContainer__gridOffer__offerContainer__offerDown">¡Compra hoy y marca tendencia!</div>
-
-                        <div className="homeContainer__gridOffer__offerContainer__btnContainer">
-                            <Link to={"/#catalog"} className='homeContainer__gridOffer__offerContainer__btnContainer__btn'>
-                                COMPRAR AHORA   
-                            </Link>
-                        </div>
-
-                    </div>
-
-                </div>s */}
-
             </div>
+
+            {/* {storeSettings?.siteImages?.homeImage && (
+            <div
+                className="homeContainer"
+                style={{
+                backgroundImage: `url(${storeSettings.siteImages.homeImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                width: '100%',
+                height: '100vh'
+                }}
+            >
+            </div>
+            )} */}
 
             {
                 logosSlider.length != 0 &&

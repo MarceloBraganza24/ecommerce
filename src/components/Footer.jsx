@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom'
 
 const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,phoneNumbers,contactEmail}) => {
 
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
     return (
 
         <>
@@ -13,10 +20,7 @@ const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,p
 
                     <div className='footerContainer__logoPhraseContainer__logoPhrase'>
 
-                        {/* <div className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
-                            <img className='footerContainer__logoPhraseContainer__logoPhrase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo_tienda" />
-                        </div> */}
-                        <Link to={"/"} className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
+                        <Link to={'/'} onClick={scrollToTop} className='footerContainer__logoPhraseContainer__logoPhrase__logo'>
                             {logo_store ? (
                                 <img
                                 className='footerContainer__logoPhraseContainer__logoPhrase__logo__prop'

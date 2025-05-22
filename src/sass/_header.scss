@@ -1,7 +1,8 @@
 .header {
     //background-color: rgb(0, 0, 0, 0.3);
     width: 100%;
-    height: 10vh;
+    //height: 10vh;
+    height: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     z-index: 1;
@@ -36,7 +37,7 @@
             height: auto;
             @include disFC;
             &__logo {
-                width: 120%;
+                width: 100%;
                 transition: transform 0.3s ease-in-out;
                 &:hover {
                     transform: scale(1.1);
@@ -144,7 +145,9 @@
                         font-weight: bold;
                         &:hover {
                             background-color: black;
-                            color: white;
+                            background-color: var(--secondary-color);
+                            color: --primary-color;
+                            cursor: pointer;
                             //border: 0.3vh solid white;
                         }
                     }
@@ -174,11 +177,12 @@
     justify-content: end;
     padding: 0.5vh 0vh;
     &__label {
-        background-color: white;
+        //background-color: white;
+        background-color: var(--accent-color);
         margin-right: 1vh;
         padding: 0.5vh 2vh;
         border-radius: 2vh;
-        color: black;
+        color: var(--primary-color);
         cursor: pointer;
         &:hover {
             background-color: rgb(233, 233, 233);
@@ -202,7 +206,6 @@
 }
 
 .hMenuOptionsContainer {
-    background-color: rgb(0, 0, 0, 0.4);
     width: 100%;
     height: auto;
     display: flex;
@@ -219,18 +222,17 @@
             font-size: 20px;
             padding-right: 4vh;
             cursor: pointer;
-            color: white;
+            color: var(--accent-color);
         }
     }
     &__option {
         text-decoration: none;
-        color: white;
+        color: var(--accent-color);
         padding-top: 0.5vh;
     }
 }
 
 .categoriesContainer {
-    background-color: rgb(0, 0, 0, 0.4);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -238,6 +240,7 @@
     padding: 2vh;
     position: fixed;
     z-index: 2;
+    gap: 0.5vh;
     &__btnCloseMenu {
         width: 100%;
         display: flex;
@@ -246,16 +249,16 @@
             font-size: 20px;
             padding-right: 4vh;
             cursor: pointer;
-            color: white;
+            color: var(--accent-color);
         }
     }
     &__category {
         text-decoration: none;
-        color: white;
+        color: var(--accent-color);
     }
     &__addCategoryLink {
         text-decoration: none;
-        color: white;
+        color: var(--accent-color);
         &:hover {
             color: #124285;
         }

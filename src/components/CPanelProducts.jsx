@@ -13,8 +13,9 @@ const CPanelProducts = () => {
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState("");
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
+    const [storeSettings, setStoreSettings] = useState({});
     const [userCart, setUserCart] = useState({});
-    const [cookieValue, setCookieValue] = useState('');
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -90,6 +91,35 @@ const CPanelProducts = () => {
             console.error('Error al obtener datos:', error);
         } finally {
             setIsLoadingProducts(false)
+        }
+    };
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
         }
     };
 
@@ -205,8 +235,18 @@ const CPanelProducts = () => {
     useEffect(() => {
         fetchCurrentUser();
         fetchProducts();
+        fetchStoreSettings();
         fetchCategories();
     }, []);
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
 
     return (
 
@@ -220,7 +260,9 @@ const CPanelProducts = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                primaryColor={storeSettings?.primaryColor || ""}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
                 />
             </div>
             <div className='cPanelProductsContainer'>

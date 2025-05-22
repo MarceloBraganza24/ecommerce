@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({userCart,logo_store,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
+const NavBar = ({hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
     const [quantity, setQuantity] = useState(null);
     const [isLoadingUser, setIsLoadingUser] = useState(true);
 
@@ -64,7 +64,6 @@ const NavBar = ({userCart,logo_store,isLoggedIn,categories,isLoading,role,first_
             window.removeEventListener("scroll", handleScrollShowHMenuOptions);
         } 
     }, []);
-
 
     return (
 
@@ -166,7 +165,7 @@ const NavBar = ({userCart,logo_store,isLoggedIn,categories,isLoading,role,first_
             
             {
                 showHMenuOptions &&
-                <div className='hMenuOptionsContainer'>
+                <div className='hMenuOptionsContainer' style={{backgroundColor: hexToRgba(primaryColor || '#e8cd02', 0.4)}}>
                     <div className='hMenuOptionsContainer__btnCloseMenu'>
                         <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
                     </div>
@@ -185,15 +184,15 @@ const NavBar = ({userCart,logo_store,isLoggedIn,categories,isLoading,role,first_
 
             {
                 showCategories && (
-                    <div className='categoriesContainer'>
-                    <div className='categoriesContainer__btnCloseMenu'>
-                        <div
-                        onClick={() => setShowCategories(false)}
-                        className='categoriesContainer__btnCloseMenu__btn'
-                        >
-                        X
+                    <div className='categoriesContainer' style={{backgroundColor: hexToRgba(primaryColor || '#e8cd02', 0.4)}}>
+                        <div className='categoriesContainer__btnCloseMenu'>
+                            <div
+                            onClick={() => setShowCategories(false)}
+                            className='categoriesContainer__btnCloseMenu__btn'
+                            >
+                            X
+                            </div>
                         </div>
-                    </div>
 
                         {categories && categories.length > 0 ? (
                             categories.map((category) => (

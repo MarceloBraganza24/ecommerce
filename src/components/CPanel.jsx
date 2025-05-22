@@ -15,7 +15,6 @@ const CPanel = () => {
     const [creatingCoupon, setCreatingCoupon] = useState(false);
     const [deletingIdCoupon, setDeletingIdCoupon] = useState(null);
 
-    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');
@@ -24,13 +23,14 @@ const CPanel = () => {
     const [expirationDate, setExpirationDate] = useState('');
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
-    const [cookieValue, setCookieValue] = useState('');
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [coupons, setCoupons] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
     const [loadingAddresses, setLoadingAddresses] = useState(false);
     const [loadingCoupons, setLoadingCoupons] = useState(false);
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
+    const [storeSettings, setStoreSettings] = useState({});
     const navigate = useNavigate();
 
     const SERVER_URL = "http://localhost:8081/";
@@ -1014,6 +1014,15 @@ const CPanel = () => {
         }));
     };
 
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
     return (
 
         <>
@@ -1027,7 +1036,9 @@ const CPanel = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                primaryColor={configurationSiteformData?.primaryColor || ""}
+                logo_store={configurationSiteformData?.siteImages?.logoStore || ""}
                 />
             </div>
 

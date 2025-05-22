@@ -20,13 +20,15 @@ h2 {
     right: 20px;
     z-index: 5;
     background-color: #0e3061;
-    color: white;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
     padding: 0.5vh 2vh 1.5vh 2vh;
     border-radius: 50%;
     font-size: 30px;
     transition: transform 0.3s ease;
     &:hover {
         transform: scale(1.2);
+        cursor: pointer;
     }
 }
 .spinner {
@@ -87,9 +89,10 @@ h2 {
     }
 }
 .navbarContainer {
-    //background-color: rgb(27, 80, 156, 0.9);
-    background-color: rgb(10, 54, 116);
+    //background-color: rgb(10, 54, 116);
+    background-color: var(--primary-color);
     width: 100%;
+    padding: 1vh 0vh;
 }
 .cPanelContainer {
     background-color: rgb(214, 213, 213);
@@ -685,7 +688,7 @@ h2 {
     }
 }
 .homeContainer {
-    background-image: url('../assets/fondo_home_3.jpg');
+    //background-image: url('../assets/fondo_home_3.jpg');
     background-size: cover; 
     width: 100%;
     height: 100vh;
@@ -1981,10 +1984,11 @@ h2 {
     align-items: center;
     flex-direction: column;
     &__titleContainer {
-        background-color: #1b509c;
+        //background-color: #1b509c;
+        background-color: var(--primary-color);
         width: 100%;
         &__title {
-            background-color: rgb(27, 80, 156, 0.9);
+            //background-color: rgb(27, 80, 156, 0.9);
             width: 100%;
             display: flex;
             justify-content: end;
@@ -1999,12 +2003,14 @@ h2 {
         }
     }
     &__inputSearchProduct {
+        background-color: var(--accent-color);
         width: 100%;
         @include disFC();
         padding: 2vh 0vh;
         flex-direction: column;
         gap: 1vh;
         &__searchProductsLabel {
+            color: var(--primary-color);
             font-size: 25px;
         }
         &__input {
@@ -2020,12 +2026,14 @@ h2 {
         }
     }
     &__grid {
-        background-color: #d6d5d5;
+        //background-color: #d6d5d5;
+        background-color: var(--primary-color);
         width: 100%;
         @include disFC();
         //padding: 5vh 0vh 0vh 0vh;
         &__catalog {
-            background-color: white;
+            //background-color: white;
+            background-color: var(--accent-color);
             width: 90%;
             border-radius: 1vh;
             &__isLoadingLabel {
@@ -2048,7 +2056,7 @@ h2 {
                 align-items: center;
                 gap: 2vh;
                 &__title {
-                    background-color: rgb(214, 213, 213);
+                    background-color: var(--primary-color);
                     width: 100%;
                     display: flex;
                     &__prop {
@@ -2056,7 +2064,7 @@ h2 {
                         font-size: 35px;
                         text-transform: uppercase;
                         text-decoration: none;
-                        color: black;
+                        color: var(--accent-color);
                         font-weight: bold;
                         font-family: "Montserrat", sans-serif;
                     }
@@ -2069,14 +2077,15 @@ h2 {
                     }
                 }
                 &__btnMoreProducts {
+                    background-color: var(--accent-color);
                     width: 100%;
                     @include disFC();
                     padding-bottom: 5vh;
                     &__prop {
                         font-size: 20px;
-                        color: black;
+                        color: var(--primary-color);
                         &:hover {
-                            color: #1b509c;
+                            color: var(--secondary-color);
                         }
                     }
                 }
@@ -2153,10 +2162,12 @@ h2 {
         flex-direction: column;
         gap: 1vh;
         &__btn {
-            background-color: #1b509c;
+            //background-color: #1b509c;
+            background-color: var(--primary-color);
             width: 60%;
             @include disFC();
-            color: white;
+            color: var(--accent-color);
+            //background-color: var(--primary-color);
             font-size: 16px;
             padding: 0.5vh 0vh;
             border-radius: 0.5vh;
@@ -2164,8 +2175,10 @@ h2 {
             text-align: center;
             border: 0.3vh solid black;
             &:hover {
-                background-color: #306dc4;
-                color: white;
+                //background-color: #306dc4;
+                background-color: var(--primary-color);
+                //color: white;
+                color: var(--secondary-color);
                 border: 0.3vh solid black;
                 cursor: pointer;
             }
@@ -3420,7 +3433,8 @@ h2 {
     }
 }
 .footerContainer {
-    background-color: #1b509c;
+    //background-color: #1b509c;
+    background-color: var(--primary-color);
     width: 100%;
     height: auto;
     display: grid;
@@ -3444,7 +3458,8 @@ h2 {
                 width: 100%;
                 &__prop {
                     text-align: justify;
-                    color: white;
+                    //color: white;
+                    color: var(--accent-color);
                 }
             }
         }
@@ -3456,12 +3471,14 @@ h2 {
             display: flex;
             flex-direction: column;
             &__title {
-                color: white;
+                //color: white;
+                color: var(--accent-color);
                 font-size: 20px;
                 padding-bottom: 2vh;
             }
             &__links {
-                color: white;
+                //color: white;
+                color: var(--accent-color);
                 text-decoration: none;
                 padding-top: 0.5vh;
             }
@@ -3476,7 +3493,8 @@ h2 {
             flex-direction: column;
             &__title {
                 width: 100%;
-                color: white;
+                //color: white;
+                color: var(--accent-color);
                 padding-bottom: 2vh;
                 &__prop {
                     font-size: 20px;
@@ -3489,7 +3507,8 @@ h2 {
                 align-self: center;
                 gap: 1vh;
                 &__prop {
-                    color: white;
+                    //color: white;
+                    color: var(--accent-color);
                 }
             }
         }

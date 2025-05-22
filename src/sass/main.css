@@ -20,7 +20,8 @@ h2 {
   right: 20px;
   z-index: 5;
   background-color: #0e3061;
-  color: white;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
   padding: 0.5vh 2vh 1.5vh 2vh;
   border-radius: 50%;
   font-size: 30px;
@@ -28,6 +29,7 @@ h2 {
 }
 .btnGoUp:hover {
   transform: scale(1.2);
+  cursor: pointer;
 }
 
 .spinner {
@@ -90,8 +92,9 @@ h2 {
   }
 }
 .navbarContainer {
-  background-color: rgb(10, 54, 116);
+  background-color: var(--primary-color);
   width: 100%;
+  padding: 1vh 0vh;
 }
 
 .cPanelContainer {
@@ -723,7 +726,6 @@ h2 {
 }
 
 .homeContainer {
-  background-image: url("../assets/fondo_home_3.jpg");
   background-size: cover;
   width: 100%;
   height: 100vh;
@@ -2122,11 +2124,10 @@ h2 {
   flex-direction: column;
 }
 .catalogContainer__titleContainer {
-  background-color: #1b509c;
+  background-color: var(--primary-color);
   width: 100%;
 }
 .catalogContainer__titleContainer__title {
-  background-color: rgba(27, 80, 156, 0.9);
   width: 100%;
   display: flex;
   justify-content: end;
@@ -2140,6 +2141,7 @@ h2 {
   font-family: "Montserrat", sans-serif;
 }
 .catalogContainer__inputSearchProduct {
+  background-color: var(--accent-color);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -2149,6 +2151,7 @@ h2 {
   gap: 1vh;
 }
 .catalogContainer__inputSearchProduct__searchProductsLabel {
+  color: var(--primary-color);
   font-size: 25px;
 }
 .catalogContainer__inputSearchProduct__input {
@@ -2167,14 +2170,14 @@ h2 {
   font-size: 18px;
 }
 .catalogContainer__grid {
-  background-color: #d6d5d5;
+  background-color: var(--primary-color);
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .catalogContainer__grid__catalog {
-  background-color: white;
+  background-color: var(--accent-color);
   width: 90%;
   border-radius: 1vh;
 }
@@ -2201,7 +2204,7 @@ h2 {
   gap: 2vh;
 }
 .catalogContainer__grid__catalog__categorieContainer__title {
-  background-color: rgb(214, 213, 213);
+  background-color: var(--primary-color);
   width: 100%;
   display: flex;
 }
@@ -2210,7 +2213,7 @@ h2 {
   font-size: 35px;
   text-transform: uppercase;
   text-decoration: none;
-  color: black;
+  color: var(--accent-color);
   font-weight: bold;
   font-family: "Montserrat", sans-serif;
 }
@@ -2222,6 +2225,7 @@ h2 {
   padding: 5vh;
 }
 .catalogContainer__grid__catalog__categorieContainer__btnMoreProducts {
+  background-color: var(--accent-color);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -2230,10 +2234,10 @@ h2 {
 }
 .catalogContainer__grid__catalog__categorieContainer__btnMoreProducts__prop {
   font-size: 20px;
-  color: black;
+  color: var(--primary-color);
 }
 .catalogContainer__grid__catalog__categorieContainer__btnMoreProducts__prop:hover {
-  color: #1b509c;
+  color: var(--secondary-color);
 }
 .catalogContainer__grid__catalog__nonProductsLabel {
   font-size: 25px;
@@ -2315,12 +2319,12 @@ h2 {
   gap: 1vh;
 }
 .itemProduct__btnContainer__btn {
-  background-color: #1b509c;
+  background-color: var(--primary-color);
   width: 60%;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: var(--accent-color);
   font-size: 16px;
   padding: 0.5vh 0vh;
   border-radius: 0.5vh;
@@ -2329,8 +2333,8 @@ h2 {
   border: 0.3vh solid black;
 }
 .itemProduct__btnContainer__btn:hover {
-  background-color: #306dc4;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
   border: 0.3vh solid black;
   cursor: pointer;
 }
@@ -3720,7 +3724,7 @@ h2 {
 }
 
 .footerContainer {
-  background-color: #1b509c;
+  background-color: var(--primary-color);
   width: 100%;
   height: auto;
   display: grid;
@@ -3750,7 +3754,7 @@ h2 {
 }
 .footerContainer__logoPhraseContainer__logoPhrase__phrase__prop {
   text-align: justify;
-  color: white;
+  color: var(--accent-color);
 }
 .footerContainer__faqContainer {
   width: 100%;
@@ -3763,12 +3767,12 @@ h2 {
   flex-direction: column;
 }
 .footerContainer__faqContainer__faq__title {
-  color: white;
+  color: var(--accent-color);
   font-size: 20px;
   padding-bottom: 2vh;
 }
 .footerContainer__faqContainer__faq__links {
-  color: white;
+  color: var(--accent-color);
   text-decoration: none;
   padding-top: 0.5vh;
 }
@@ -3785,7 +3789,7 @@ h2 {
 }
 .footerContainer__contactContainer__contact__title {
   width: 100%;
-  color: white;
+  color: var(--accent-color);
   padding-bottom: 2vh;
 }
 .footerContainer__contactContainer__contact__title__prop {
@@ -3799,7 +3803,7 @@ h2 {
   gap: 1vh;
 }
 .footerContainer__contactContainer__contact__contactProps__prop {
-  color: white;
+  color: var(--accent-color);
 }
 
 .custom-toast .Toastify__progress-bar {
@@ -3808,7 +3812,7 @@ h2 {
 
 .header {
   width: 100%;
-  height: 10vh;
+  height: auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   z-index: 1;
@@ -3850,7 +3854,7 @@ h2 {
   align-items: center;
 }
 .header__logo-menu__logoContainer__logo {
-  width: 120%;
+  width: 100%;
   transition: transform 0.3s ease-in-out;
 }
 .header__logo-menu__logoContainer__logo:hover {
@@ -3963,7 +3967,9 @@ h2 {
 }
 .header__rightMenu__menu__cart__number__prop:hover {
   background-color: black;
-  color: white;
+  background-color: var(--secondary-color);
+  color: --primary-color;
+  cursor: pointer;
 }
 .header__rightMenu__menu__name {
   width: 100%;
@@ -3989,11 +3995,11 @@ h2 {
   padding: 0.5vh 0vh;
 }
 .logOutContainer__label {
-  background-color: white;
+  background-color: var(--accent-color);
   margin-right: 1vh;
   padding: 0.5vh 2vh;
   border-radius: 2vh;
-  color: black;
+  color: var(--primary-color);
   cursor: pointer;
 }
 .logOutContainer__label:hover {
@@ -4016,7 +4022,6 @@ h2 {
 }
 
 .hMenuOptionsContainer {
-  background-color: rgba(0, 0, 0, 0.4);
   width: 100%;
   height: auto;
   display: flex;
@@ -4035,16 +4040,15 @@ h2 {
   font-size: 20px;
   padding-right: 4vh;
   cursor: pointer;
-  color: white;
+  color: var(--accent-color);
 }
 .hMenuOptionsContainer__option {
   text-decoration: none;
-  color: white;
+  color: var(--accent-color);
   padding-top: 0.5vh;
 }
 
 .categoriesContainer {
-  background-color: rgba(0, 0, 0, 0.4);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -4052,6 +4056,7 @@ h2 {
   padding: 2vh;
   position: fixed;
   z-index: 2;
+  gap: 0.5vh;
 }
 .categoriesContainer__btnCloseMenu {
   width: 100%;
@@ -4062,15 +4067,15 @@ h2 {
   font-size: 20px;
   padding-right: 4vh;
   cursor: pointer;
-  color: white;
+  color: var(--accent-color);
 }
 .categoriesContainer__category {
   text-decoration: none;
-  color: white;
+  color: var(--accent-color);
 }
 .categoriesContainer__addCategoryLink {
   text-decoration: none;
-  color: white;
+  color: var(--accent-color);
 }
 .categoriesContainer__addCategoryLink:hover {
   color: #124285;
