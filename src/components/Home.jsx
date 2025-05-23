@@ -20,9 +20,9 @@ const Home = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
     const [sellerAddresses, setSellerAddresses] = useState([]);
-    const [storeSettings, setStoreSettings] = useState({});
     //console.log(storeSettings)
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [products, setProducts] = useState([]);
     const [paginatedProducts, setPaginatedProducts] = useState([]);
@@ -373,7 +373,6 @@ const Home = () => {
             <div className='navbarContainer'>
                 <NavBar
                 isLoading={isLoading}
-                logo_store={storeSettings?.siteImages?.logoStore || ""}
                 isLoggedIn={user.isLoggedIn}
                 role={user.role}
                 first_name={user.first_name}
@@ -381,6 +380,7 @@ const Home = () => {
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
                 hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
                 primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>

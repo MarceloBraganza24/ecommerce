@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Tickets = () => {
 
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [tickets, setTickets] = useState([]);
     const [pageInfo, setPageInfo] = useState({
@@ -17,8 +19,6 @@ const Tickets = () => {
         nextPage: null,
         prevPage: null
     });   
-    //console.log(totalTickets)
-    // console.log(pageInfo)
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +26,6 @@ const Tickets = () => {
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
-    const [cookieValue, setCookieValue] = useState('');
 
     const [inputFilteredTickets, setInputFilteredTickets] = useState('');
     const [isLoadingTickets, setIsLoadingTickets] = useState(true);
@@ -247,6 +246,7 @@ const Tickets = () => {
 
     useEffect(() => {
         fetchCurrentUser();
+        fetchStoreSettings();
         fetchCategories();
     }, []);
 
@@ -254,6 +254,44 @@ const Tickets = () => {
         const value = e.target.value;
         setInputFilteredTickets(value)
     }
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
 
     return (
 
@@ -267,7 +305,9 @@ const Tickets = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
 

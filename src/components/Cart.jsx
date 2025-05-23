@@ -10,11 +10,12 @@ import Spinner from './Spinner';
 
 const Cart = () => {
     const navigate = useNavigate();
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
     const [inputDiscount, setInputDiscount] = useState('');
     const [discountApplied, setDiscountApplied] = useState('');
     const [userCart, setUserCart] = useState({});
-    const [cookieValue, setCookieValue] = useState('');
     const [categories, setCategories] = useState([]);
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -95,6 +96,35 @@ const Cart = () => {
             }
         }
     }, [user, deliveryForms]);
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
 
     const fetchSellerAddresses = async () => {
         try {
@@ -270,8 +300,18 @@ const Cart = () => {
         fetchCategories();
         fetchSellerAddresses();
         fetchDeliveryForm();
+        fetchStoreSettings();
         window.scrollTo(0, 0);
     }, []);
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
 
     const handleBtnConfirmSale = async () => {
         const date = new Date();
@@ -290,7 +330,7 @@ const Cart = () => {
             deliveryMethod: 'vendedor',
             purchase_datetime,
             user_role: user.role,
-            user_cart_id: userCart._id
+            user_cart_id: userCart._id,
         }
         try {
             setLoadingBtnConfirmSale(true)
@@ -379,7 +419,9 @@ const Cart = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
             {
@@ -614,8 +656,13 @@ const Cart = () => {
             }
 
             <Footer
+            logo_store={storeSettings?.siteImages?.logoStore || ""}
+            aboutText={storeSettings?.footerLogoText || ""}
+            phoneNumbers={storeSettings.phoneNumbers}
+            contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
+            isLoadingStoreSettings={isLoadingStoreSettings}
             />
 
         </>

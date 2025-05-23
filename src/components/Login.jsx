@@ -126,9 +126,6 @@ const Login = () => {
     return (
 
         <>
-            {/* <div className='navbarContainer'>
-                <NavBar/>
-            </div> */}
 
             <div className='loginContainer'>
 
@@ -166,8 +163,7 @@ const Login = () => {
                     </div>
 
                     <div className='loginContainer__logoContainer__logo'>
-                        {/* <img className='loginContainer__logoContainer__logo__prop' src="/src/assets/logo_ecommerce_h_500x500.png" alt="logo_tienda" /> */}
-                        {storeSettings &&
+                        {storeSettings?.siteImages?.logoStore &&
                             <img
                             className='loginContainer__logoContainer__logo__prop'
                             src={`http://localhost:8081/${storeSettings?.siteImages?.logoStore}`}

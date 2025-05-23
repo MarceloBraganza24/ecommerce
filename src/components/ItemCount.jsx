@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import Spinner from './Spinner';
 
-const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByUserId,userCart}) => {
+const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fetchCartByUserId,userCart}) => {
 
     const productoEnCarrito = userCart?.products?.find(p => p.product._id === id);
     const cantidadEnCarrito = productoEnCarrito?.quantity || 0;
@@ -185,7 +185,13 @@ const ItemCount = ({user_id,id,images,title,description,price,stock,fetchCartByU
         setLoading("addToCartAndContinue");
     
         const success = await addToCartAndSave();
-    
+
+        if(roleUser == 'admin') {
+            setTimeout(() => {
+                navigate("/cart");
+            }, 2000);
+            return;
+        }
         if (success) {
             setTimeout(() => {
                 navigate("/shipping");

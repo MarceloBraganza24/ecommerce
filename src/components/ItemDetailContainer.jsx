@@ -8,9 +8,10 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const ItemDetailContainer = () => {
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
-    const [cookieValue, setCookieValue] = useState('');
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +92,35 @@ const ItemDetailContainer = () => {
           setSelectedImage(`http://localhost:8081/${productById.images[0]}`);
         }
     }, [productById]);
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -275,10 +305,20 @@ const ItemDetailContainer = () => {
         fetchCurrentUser();
         fetchCategories();
         fetchProducts();
+        fetchStoreSettings();
         fetchSellerAddresses();
         fetchDeliveryForm();
         window.scrollTo(0, 0);
     }, []);
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
 
     return (
 
@@ -292,7 +332,9 @@ const ItemDetailContainer = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
             {
@@ -352,7 +394,8 @@ const ItemDetailContainer = () => {
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
                                             <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
-                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>numero_de_ventas_de_producto</div>
+                                            {/* <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>{productById?.numberSales && (productById?.numberSales > 10 ? '+10' : '')}</div> */}
+                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>{productById?.number_sales}</div>
                                         </div>
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>
@@ -410,6 +453,7 @@ const ItemDetailContainer = () => {
 
                                         <ItemCount
                                         user_id={user._id} 
+                                        roleUser={user.role} 
                                         id={productById?._id}
                                         images={productById?.images}
                                         title={productById?.title}
@@ -436,8 +480,13 @@ const ItemDetailContainer = () => {
             </div>
 
             <Footer
+            logo_store={storeSettings?.siteImages?.logoStore || ""}
+            aboutText={storeSettings?.footerLogoText || ""}
+            phoneNumbers={storeSettings.phoneNumbers}
+            contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
+            isLoadingStoreSettings={isLoadingStoreSettings}
             />
 
         </>

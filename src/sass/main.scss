@@ -33,7 +33,7 @@ h2 {
 }
 .spinner {
     border: 5px solid white;
-    border-top: 5px solid #0e3061; 
+    border-top: 5px solid var(--secondary-color); 
     border-radius: 50%;
     width: 15px;
     height: 15px;
@@ -95,7 +95,7 @@ h2 {
     padding: 1vh 0vh;
 }
 .cPanelContainer {
-    background-color: rgb(214, 213, 213);
+    //background-color: rgb(214, 213, 213);
     width: 100%;
     height: 90vh;
     display: flex;
@@ -105,11 +105,11 @@ h2 {
         @include disFC();
         padding: 4vh 0vh 2vh 0vh;
         &__prop {
-            font-size: 35px;
+            font-size: 40px;
+
         }
     }
     &__siteConfiguration {
-        background-color: rgb(157, 122, 122);
         background-color: white;
         padding: 1vh;
         border-bottom: 0.3vh solid grey;
@@ -127,8 +127,9 @@ h2 {
                 display: flex;
                 flex-direction: column;
                 &__title {
-                    font-size: 25px;
+                    font-size: 30px;
                     padding-bottom: 2vh;
+                    font-weight: bold;
                 }
                 &__grid {
                     //background-color: #9fbbe2;
@@ -137,12 +138,12 @@ h2 {
                     gap: 2vh;
                     padding-bottom: 1vh;
                     &__label {
-                        width: 400px;
+                        width: 500px;
                         font-size: 18px;
                     }
                     &__img {
                         width: 50px;
-                        background-color: #9fbbe2;
+                        background-color: #b0b7c2;
                         @include disFC();
                         padding: 0.3vh 1vh;
                         border-radius: 0.5vh;
@@ -159,8 +160,9 @@ h2 {
                 align-items: center;
                 gap: 2vh;
                 &__label {
-                    width: 400px;
-                    font-size: 18px;
+                    width: 500px;
+                    font-size: 30px;
+                    font-weight: bold;
                 }
                 &__input {
                     width: 250px;
@@ -181,14 +183,14 @@ h2 {
                     margin-left: 1vh;
                     width: 30%;
                     height: 40px;
-                    background-color: #1b509c;
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 16px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -198,7 +200,7 @@ h2 {
                 flex-wrap: wrap;
                 gap: 2vh;
                 &__label {
-                    width: 400px;
+                    width: 500px;
                     font-size: 18px;
                 }
                 &__inputBtn {
@@ -216,14 +218,14 @@ h2 {
                     &__btnDeletePhone {
                         margin-left: 1vh;
                         height: 30px;
-                        background-color: #1b509c;
                         padding: 0.5vh 1vh;
                         border-radius: 0.5vh;
-                        color: white;
                         font-size: 14px;
                         cursor: pointer;
+                        background-color: var(--primary-color);
+                        color: var(--accent-color);
                         &:hover {
-                            background-color: #124285;
+                            color: var(--secondary-color);
                         }
                     }
                 }
@@ -238,11 +240,12 @@ h2 {
                     gap: 1vh;
                 }
                 &__labelTitle {
-                    width: 400px;
-                    font-size: 25px;
+                    width: 500px;
+                    font-size: 30px;
+                    font-weight: bold;
                 }
                 &__label {
-                    width: 400px;
+                    width: 500px;
                     font-size: 18px;
                 }
                 &__labelInput {
@@ -303,8 +306,9 @@ h2 {
                 align-items: center;
                 gap: 2vh;
                 &__label {
-                    width: 400px;
-                    font-size: 25px;
+                    width: 500px;
+                    font-size: 30px;
+                    font-weight: bold;
                 }
                 &__input {
                     width: 250px;
@@ -318,26 +322,26 @@ h2 {
                     flex-wrap: wrap;
                     gap: 1vh;
                     &__imgBtn {
-                        background-color: #9fbbe2;
+                        background-color: #b0b7c2;
                         width: 20%;
                         @include disFC();
                         gap: 1vh;
-                        padding: 1vh;
+                        padding: 1vh 2vh;
                         border-radius: 0.5vh;
                         &__img {
                             width: 70px;
                             height: 50px;
                         }
                         &__btn {
-                            background-color: #1b509c;
                             padding: 1vh;
                             @include disFC();
                             border-radius: 0.5vh;
-                            color: white;
                             font-size: 12px;
                             cursor: pointer;
+                            background-color: var(--primary-color);
+                            color: var(--accent-color);
                             &:hover {
-                                background-color: #124285;
+                                color: var(--secondary-color);
                             }
                         }
                     }
@@ -364,28 +368,27 @@ h2 {
                     width: 15%;
                     height: 40px;
                     @include disFC();
-                    background-color: #1b509c;
                     padding: 0.5vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
         }
     }
     &__existingCategories {
-        background-color: white;
         width: 100%;
         padding: 4vh 0vh;
         display: flex;
         flex-direction: column;
         gap: 1vh;
         &__title {
-            font-size: 20px;
+            font-size: 30px;
             padding-left: 2vh;
         }
         &__loadingProps {
@@ -404,7 +407,7 @@ h2 {
             gap: 1vh;
             padding-left: 1vh;
             &__category {
-                background-color: #9fbbe2;
+                background-color: #b0b7c2;
                 display: grid;
                 grid-template-columns: 3fr 1fr;
                 padding: 1vh;
@@ -415,15 +418,15 @@ h2 {
                     align-self: center;
                 }
                 &__btn {
-                    background-color: #1b509c;
                     @include disFC();
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -462,14 +465,14 @@ h2 {
             &__btn {
                 width: 40%;
                 @include disFC();
-                background-color: #1b509c;
                 padding: 0.5vh;
                 border-radius: 0.5vh;
-                color: white;
                 font-size: 16px;
                 cursor: pointer;
+                background-color: var(--primary-color);
+                color: var(--accent-color);
                 &:hover {
-                    background-color: #124285;
+                    color: var(--secondary-color);
                 }
             }
         }
@@ -482,7 +485,7 @@ h2 {
         flex-direction: column;
         gap: 1vh;
         &__title {
-            font-size: 20px;
+            font-size: 30px;
             padding-left: 2vh;
         }
         &__withOutSellerAddressesLabel {
@@ -495,7 +498,7 @@ h2 {
             gap: 1vh;
             flex-direction: column;
             &__sellerAddress {
-                background-color: #9fbbe2;
+                background-color: #b0b7c2;
                 display: grid;
                 grid-template-columns: 3fr 1fr;
                 padding: 1vh;
@@ -506,15 +509,15 @@ h2 {
                     align-self: center;
                 }
                 &__btn {
-                    background-color: #1b509c;
                     @include disFC();
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -549,15 +552,15 @@ h2 {
         }
         &__btn {
             width: 10%;
-            background-color: #1b509c;
             @include disFC();
             padding: 1vh;
             border-radius: 0.5vh;
-            color: white;
             font-size: 14px;
             cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             &:hover {
-                background-color: #124285;
+                color: var(--secondary-color);
             }
         }
     }
@@ -568,7 +571,7 @@ h2 {
         flex-direction: column;
         gap: 1vh;
         &__title {
-            font-size: 20px;
+            font-size: 30px;
             padding-left: 2vh;
         }
         &__withOutCouponsLabel {
@@ -576,11 +579,11 @@ h2 {
             font-size: 18px;
         }
         &__itemCoupons {
-            width: 80%;
+            width: 100%;
             display: flex;
             flex-direction: column;
             &__couponsHeader {
-                background-color: #9fbbe2;
+                background-color: #b0b7c2;
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr;
                 padding: 1vh;
@@ -600,20 +603,20 @@ h2 {
                     }
                 }
                 &__btn {
-                    background-color: #1b509c;
                     @include disFC();
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
             &__coupons {
-                background-color: #9fbbe2;
+                background-color: #b0b7c2;
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr;
                 padding: 1vh;
@@ -630,18 +633,18 @@ h2 {
                 }
                 &__btn {
                     width: 50%;
-                    background-color: #1b509c;
                     @include disFC();
                     padding: 1vh;
                     display: flex;
                     justify-self: center;
                     justify-content: center;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -674,21 +677,20 @@ h2 {
         }
         &__btn {
             width: 10%;
-            background-color: #1b509c;
             @include disFC();
             padding: 1vh;
             border-radius: 0.5vh;
-            color: white;
             font-size: 14px;
             cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             &:hover {
-                background-color: #124285;
+                color: var(--secondary-color);
             }
         }
     }
 }
 .homeContainer {
-    //background-image: url('../assets/fondo_home_3.jpg');
     background-size: cover; 
     width: 100%;
     height: 100vh;
@@ -826,15 +828,15 @@ h2 {
         @include disFC();
         padding-bottom: 2vh;
         &__btn {
-            background-color: #124285;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             padding: 0.5vh 10vh;
             border-radius: 0.5vh;
             font-size: 20px;
             text-align: center;
             cursor: pointer;
             &:hover {
-                background-color: #0e3061;
+                color: var(--secondary-color);
             }
         }
     }
@@ -899,14 +901,14 @@ h2 {
                 justify-content: space-around;
                 align-items: center;
                 &__btn {
-                    background-color: #124285;
-                    color: white;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     padding: 0.5vh 1vh;
                     border-radius: 0.5vh;
                     text-align: center;
                     cursor: pointer;
                     &:hover {
-                        background-color: #0e3061;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -920,14 +922,14 @@ h2 {
         justify-content: center;
         padding: 2vh 0vh;
         &__btn {
-            background-color: #124285;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             padding: 1vh 3vh;
             border-radius: 0.5vh;
             text-align: center;
             cursor: pointer;
             &:hover {
-                background-color: #0e3061;
+                color: var(--secondary-color);
             }
         }
     }
@@ -965,16 +967,16 @@ h2 {
         @include disFC();
         padding-bottom: 2vh;
         &__btn {
-            background-color: #124285;
-            color: white;
             padding: 0.5vh 10vh;
             border-radius: 0.5vh;
             font-size: 20px;
             text-align: center;
             cursor: pointer;
             text-decoration: none;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             &:hover {
-                background-color: #0e3061;
+                color: var(--secondary-color);
             }
         }
     }
@@ -985,16 +987,16 @@ h2 {
         &__btn {
             width: 10%;
             @include disFC();
-            background-color: #124285;
-            color: white;
             padding: 0.5vh 10vh;
             border-radius: 0.5vh;
             font-size: 14px;
             text-align: center;
             cursor: pointer;
             text-decoration: none;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             &:hover {
-                background-color: #0e3061;
+                color: var(--secondary-color);
             }
         }
         &__date {
@@ -1119,29 +1121,26 @@ h2 {
                 justify-content: space-around;
                 align-items: center;
                 &__btn {
-                    background-color: #124285;
-                    color: white;
                     padding: 0.5vh 1vh;
                     border-radius: 0.5vh;
                     text-align: center;
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #0e3061;
+                        color: var(--secondary-color);
                     }
                 }
             }
         }
         &__isLoadingLabel {
             @include disFC();
-            flex-direction: column;
+            //flex-direction: column;
             padding-top: 2vh;
             &__label {
                 font-size: 22px;
                 color: black;
                 padding-top: 1vh;
-                &:hover {
-                    color: #0e3061;
-                }
             }
         }
     }
@@ -1154,14 +1153,14 @@ h2 {
         //padding: 2vh 0vh;
         padding-top: 4vh;
         &__btn {
-            background-color: #124285;
-            color: white;
             padding: 1vh 3vh;
             border-radius: 0.5vh;
             text-align: center;
             cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
             &:hover {
-                background-color: #0e3061;
+                color: var(--secondary-color);
             }
         }
     }
@@ -1450,12 +1449,15 @@ h2 {
                         gap: 1vh;
                         &__imgContainer {
                             &__btnDelete {
-                                background-color: #0e3061;
+                                background-color: var(--primary-color);
                                 width: 100%;
                                 @include disFC();
                                 padding: 0.3vh 0vh;
                                 cursor: pointer;
-                                color: white;
+                                color: var(--accent-color);
+                                &:hover {
+                                    color: var(--secondary-color);
+                                }
                             }
                             &__prop {
                                 width: 50px;
@@ -1481,10 +1483,10 @@ h2 {
                             border-radius: 0.5vh;
                             font-size: 12px;
                             cursor: pointer;
-                            background-color: #1b509c;
-                            color: white;
+                            background-color: var(--primary-color);
+                            color: var(--accent-color);
                             &:hover {
-                                background-color: #124285;
+                                color: var(--secondary-color);
                             }
                         }
                     }
@@ -1636,12 +1638,15 @@ h2 {
                         }
                     }
                     &__btn {
-                        background-color: #1b509c;
                         padding: 1vh;
                         border-radius: 0.5vh;
-                        color: white;
                         font-size: 16px;
                         cursor: pointer;
+                        background-color: var(--primary-color);
+                        color: var(--accent-color);
+                        &:hover {
+                            color: var(--secondary-color);
+                        }
                     }
                 }
             }
@@ -1655,14 +1660,14 @@ h2 {
                     height: 40px;
                     @include disFC();
                     gap: 2vh;
-                    background-color: #1b509c;
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 16px;
-                    cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
+                        cursor: pointer;
                     }
                 }
             }
@@ -1765,10 +1770,10 @@ h2 {
                             border-radius: 0.5vh;
                             font-size: 12px;
                             cursor: pointer;
-                            background-color: #1b509c;
+                            background-color: var(--primary-color);
                             color: white;
                             &:hover {
-                                background-color: #124285;
+                                color: var(--secondary-color);
                             }
                         }
                     }
@@ -1916,7 +1921,7 @@ h2 {
                         color: black;
                         padding-top: 0.5vh;
                         &:hover {
-                            color: #0e3061;
+                            color: var(--secondary-color);
                         }
                     }
                 }
@@ -1945,12 +1950,15 @@ h2 {
                         }
                     }
                     &__btn {
-                        background-color: #1b509c;
+                        background-color: var(--primary-color);
                         padding: 1vh;
                         border-radius: 0.5vh;
-                        color: white;
+                        color: var(--accent-color);
                         font-size: 16px;
                         cursor: pointer;
+                        &:hover {
+                            color: var(--secondary-color);
+                        }
                     }
                 }
             }
@@ -1964,14 +1972,14 @@ h2 {
                     height: 40px;
                     @include disFC();
                     gap: 2vh;
-                    background-color: #1b509c;
+                    background-color: var(--primary-color);
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
+                    color: var(--accent-color);
                     font-size: 16px;
                     cursor: pointer;
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -2332,14 +2340,17 @@ h2 {
                         font-weight: normal;
                     }
                     &__plusMinus {
-                        background-color: #1b509c;
                         width: 30px;
                         height: 35px;
                         font-size: 20px;
-                        color: white;
                         border-color: black;
                         border-radius: 0.5vh;
                         cursor: pointer;
+                        background-color: var(--primary-color);
+                        color: var(--accent-color);
+                        &:hover {
+                            color: var(--secondary-color);
+                        }
                     }
                     &__availability {
                         font-size: 16px;
@@ -2357,27 +2368,27 @@ h2 {
                     &__prop {
                         width: 60%;
                         @include disFC();
-                        background-color: #1b509c;
                         padding: 1vh;
                         border-radius: 0.5vh;
-                        color: white;
                         font-size: 16px;
                         cursor: pointer;
+                        background-color: var(--primary-color);
+                        color: var(--accent-color);
                         &:hover {
-                            background-color: #124285;
+                            color: var(--secondary-color);
                         }
                     }
                     &__propCart {
                         width: 60%;
                         @include disFC();
-                        background-color: #b2d2ff;
                         padding: 1vh;
                         border-radius: 0.5vh;
-                        color: #1b509c;
                         font-size: 16px;
                         cursor: pointer;
+                        background-color: var(--primary-color);
+                        color: var(--accent-color);
                         &:hover {
-                            background-color: #9fbbe2;
+                            color: var(--secondary-color);
                         }
                     }
                 }
@@ -2411,7 +2422,7 @@ h2 {
         padding: 5vh;
         border-radius: 2vh;
         &__header{
-            background-color: #1b509c;
+            background-color: var(--primary-color);
             width: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -2439,14 +2450,17 @@ h2 {
             justify-content: end;
             padding-top: 1vh;
             &__btn {
-                background-color: #1b509c;
                 width: 150px;
                 @include disFC();
-                color: white;
                 padding: 1vh;
                 border-radius: 0.5vh;
                 font-size: 16px;
                 cursor: pointer;
+                background-color: var(--primary-color);
+                color: var(--accent-color);
+                &:hover {
+                    color: var(--secondary-color);
+                }
             }
         }
     }
@@ -2504,7 +2518,7 @@ h2 {
                     text-decoration: underline;
                     cursor: pointer;
                     &:hover {
-                        color: #1b509c;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -2524,15 +2538,15 @@ h2 {
                 }
                 &__btn {
                     width: 30%;
-                    background-color: #1b509c;
                     padding: 1vh;
                     border-radius: 0.5vh;
-                    color: white;
                     font-size: 14px;
                     @include disFC();
                     cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
                     &:hover {
-                        background-color: #124285;
+                        color: var(--secondary-color);
                     }
                 }
             }
@@ -2541,16 +2555,19 @@ h2 {
                 @include disFC();
                 padding-top: 2vh;
                 &__prop {
-                    background-color: #1b509c;
                     width: 60%;
                     @include disFC();
-                    color: white;
                     padding: 1vh;
                     border-radius: 0.5vh;
                     font-size: 16px;
                     cursor: pointer;
                     text-align: center;
                     text-decoration: none;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
+                    &:hover {
+                        color: var(--secondary-color);
+                    }
                 }
             }
         }
@@ -2638,13 +2655,16 @@ h2 {
         width: 100%;
         @include disFC();
         &__prop {
-            background-color: #1b509c;
             width: 30px;
             height: 30px;
             font-size: 20px;
-            color: white;
             cursor: pointer;
             border-radius: 1vh;
+            background-color: var(--primary-color);
+            color: var(--accent-color);
+            &:hover {
+                color: var(--secondary-color);
+            }
         }
     }
 }
@@ -3199,7 +3219,6 @@ h2 {
     }
 }
 .aboutContainer {
-    background-image: url('../assets/fondo_sobre_nosotros.jpg');
     background-size: cover; 
     width: 100%;
     height: 90vh;
@@ -3224,7 +3243,6 @@ h2 {
 }
 
 .contactContainer {
-    background-image: url('../assets/fondo_contact.webP');
     background-size: cover; 
     width: 100%;
     height: 90vh;
@@ -3300,13 +3318,16 @@ h2 {
                         width: 100%;
                         @include disFC();
                         &__prop {
-                            background-color: #1b509c;
                             width: 50%;
-                            color: white;
                             padding: 0.5vh 0vh;
                             font-size: 20px;
                             border-radius: 0.5vh;
                             cursor: pointer;
+                            background-color: var(--primary-color);
+                            color: var(--accent-color);
+                            &:hover {
+                                color: var(--secondary-color);
+                            }
                         }
                     }
                 }
@@ -3346,7 +3367,7 @@ h2 {
     display: grid;
     grid-template-columns: 2fr 3.5fr;
     &__formContainer {
-        background-color: #d6d5d5;
+        background-color: var(--primary-color);
         width: 100%;
         @include disFC();
         &__form {
@@ -3355,6 +3376,7 @@ h2 {
             display: flex;
             flex-direction: column;
             gap: 2vh;
+            margin-left: 10vh;
             padding: 6vh 4vh;
             border-radius: 2vh;
             box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7);
@@ -3387,30 +3409,33 @@ h2 {
                 flex-direction: column;
                 gap: 1vh;
                 &__prop {
-                    background-color: #1b509c;
                     width: 60%;
-                    color: white;
                     padding: 1vh 0vh;
                     font-size: 16px;
                     border-radius: 0.5vh;
-                    cursor: pointer;
                     text-decoration: none;
                     text-align: center;
+                    cursor: pointer;
+                    background-color: var(--primary-color);
+                    color: var(--accent-color);
+                    &:hover {
+                        color: var(--secondary-color);
+                    }
                 }
             }
         }
     }
     &__logoContainer {
-        background-image: url('../assets/fondo_login.jpg');
-        background-size: cover; 
+        background-color: var(--primary-color);
         width: 100%;
         @include disFC();
         flex-direction: column;
-        gap: 10vh;
+        gap: 5vh;
         &__title {
             width: 100%;
             @include disFC();
             &__prop {
+                color: var(--accent-color);
                 font-size: 30px;
             }
         }
@@ -3418,7 +3443,7 @@ h2 {
             width: 100%;
             @include disFC();
             &__prop {
-                width: 30%;
+                width: 25%;
             }
         }
         &__phrase {
@@ -3426,6 +3451,7 @@ h2 {
             @include disFC();
             &__prop {
                 width: 50%;
+                color: var(--accent-color);
                 font-size: 20px;
                 text-align: justify;
             }
@@ -3516,7 +3542,7 @@ h2 {
 }
 
 .custom-toast .Toastify__progress-bar {
-    background-color: #1b509c !important; 
+    background-color: var(--secondary-color) !important; 
 }
 
 @import "header";

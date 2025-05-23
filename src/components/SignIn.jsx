@@ -6,12 +6,43 @@ import { toast } from 'react-toastify';
 
 const SignIn = () => {
     const navigate = useNavigate();
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [credentials, setCredentials] = useState({
         first_name: '',
         last_name: '',
         email: '',
         password: '',
     });
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -104,6 +135,7 @@ const SignIn = () => {
     };
 
     useEffect(() => {
+        fetchStoreSettings()
         window.scrollTo(0, 0);
     }, []);
 
@@ -154,15 +186,21 @@ const SignIn = () => {
                 <div className='loginContainer__logoContainer'>
 
                     <div className='loginContainer__logoContainer__title'>
-                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a Ecommerce</div>
+                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a "{storeSettings?.storeName}"</div>
                     </div>
 
                     <div className='loginContainer__logoContainer__logo'>
-                        <img className='loginContainer__logoContainer__logo__prop' src="/src/assets/logo_ecommerce_h_500x500.png" alt="logo" />
+                        {storeSettings?.siteImages?.logoStore &&
+                            <img
+                            className='loginContainer__logoContainer__logo__prop'
+                            src={`http://localhost:8081/${storeSettings?.siteImages?.logoStore}`}
+                            alt="logo_tienda"
+                            />
+                        }
                     </div>  
 
                     <div className='loginContainer__logoContainer__phrase'>
-                        <div className='loginContainer__logoContainer__phrase__prop'>"Ingresa a tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti."</div>
+                        <div className='loginContainer__logoContainer__phrase__prop'>"Registra tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti."</div>
                     </div>
 
                 </div>  

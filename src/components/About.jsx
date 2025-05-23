@@ -13,6 +13,8 @@ const About = () => {
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -45,6 +47,35 @@ const About = () => {
             console.error(error);
         } finally {
             setIsLoadingSellerAddresses(false)
+        }
+    };
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
         }
     };
 
@@ -158,10 +189,20 @@ const About = () => {
     useEffect(() => {
         fetchCurrentUser();
         fetchCategories();
+        fetchStoreSettings();
         fetchSellerAddresses();
         window.scrollTo(0, 0);
     }, []);
-    
+
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
     return (
 
         <>
@@ -175,20 +216,26 @@ const About = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
-            <div className="aboutContainer">
+            <div className="aboutContainer" style={{backgroundImage: `url(http://localhost:8081/${storeSettings?.siteImages?.aboutImage || ''})`}}>
 
                 <div className="aboutContainer__phraseContainer">
-                    {/* <div className="aboutContainer__phraseContainer__phrase">"En Ecommerce, creemos que la moda es más que solo ropa: es una forma de expresión, una declaración de estilo y una herramienta para sentirte seguro y auténtico en cada momento de tu vida. Nos apasiona ofrecerte prendas cuidadosamente seleccionadas que combinan calidad, comodidad y las últimas tendencias, para que puedas armar looks únicos y reflejar tu personalidad sin esfuerzo. Trabajamos con materiales de primera y un equipo comprometido en brindarte una experiencia de compra fácil, segura y emocionante. Porque sabemos que la moda no solo se viste, sino que se vive. ¡Bienvenido a nuestra comunidad!"</div> */}
-                    <div className="aboutContainer__phraseContainer__phrase">about_text</div>
+                    <div className="aboutContainer__phraseContainer__phrase">{storeSettings?.aboutText}</div>
                 </div>
             </div>
 
             <Footer
+            logo_store={storeSettings?.siteImages?.logoStore || ""}
+            aboutText={storeSettings?.footerLogoText || ""}
+            phoneNumbers={storeSettings.phoneNumbers}
+            contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
+            isLoadingStoreSettings={isLoadingStoreSettings}
             />
 
         </>

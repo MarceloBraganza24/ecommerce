@@ -1052,10 +1052,6 @@ const CPanel = () => {
 
                 <div className='cPanelContainer__siteConfiguration'>
 
-                    <div className='cPanelContainer__siteConfiguration__title'>
-                        <div className='cPanelContainer__siteConfiguration__title__prop'>Configuración del sitio</div>
-                    </div>
-
                     <div className="cPanelContainer__siteConfiguration__form">
 
                         <div className='cPanelContainer__siteConfiguration__form__grid'>
@@ -1326,7 +1322,7 @@ const CPanel = () => {
                 
                         <>
                             <div className="cPanelContainer__existingCategories">
-                                <h2 className='cPanelContainer__existingCategories__title'>Categorías existentes</h2>
+                                <div className='cPanelContainer__existingCategories__title'>Categorías existentes</div>
                                 {categories.length === 0 ? (
                                     <p className='cPanelContainer__existingCategories__withOutCategoriesLabel'>No hay categorías aún</p>
                                     ) 
@@ -1350,7 +1346,7 @@ const CPanel = () => {
                             </div>
 
                             <div className="cPanelContainer__newCategoryForm">
-                                <h2 className='cPanelContainer__newCategoryForm__title'>Crear nueva categoría</h2>
+                                <div className='cPanelContainer__newCategoryForm__title'>Crear nueva categoría</div>
                                 <form onSubmit={handleSubmitCategory} className='cPanelContainer__newCategoryForm__form'>
                                     <input
                                     className='cPanelContainer__newCategoryForm__form__input'
@@ -1385,7 +1381,7 @@ const CPanel = () => {
                         
 
                             <div className="cPanelContainer__existingSellerAddresses">
-                                <h2 className='cPanelContainer__existingSellerAddresses__title'>Domicilios del vendedor</h2>
+                                <div className='cPanelContainer__existingSellerAddresses__title'>Domicilios del vendedor</div>
                                 {sellerAddresses.length === 0 ? (
                                     <p className='cPanelContainer__existingSellerAddresses__withOutSellerAddressesLabel'>No hay domicilios aún</p>
                                     ) 
@@ -1410,7 +1406,7 @@ const CPanel = () => {
 
                             <div className="cPanelContainer__createNewSellerAddress">
 
-                                <h2 className='cPanelContainer__createNewSellerAddress__title'>Crear nuevo domicilio</h2>
+                                <div className='cPanelContainer__createNewSellerAddress__title'>Crear nuevo domicilio</div>
                                 {
                                     isLoaded && 
                                     <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
@@ -1445,7 +1441,7 @@ const CPanel = () => {
                     
 
                         <div className="cPanelContainer__existingCoupons">
-                            <h2 className='cPanelContainer__existingCoupons__title'>Cupones</h2>
+                            <div className='cPanelContainer__existingCoupons__title'>Cupones</div>
                             {couponsByExpirationDate.length === 0 ? (
                                 <p className='cPanelContainer__existingCoupons__withOutCouponsLabel'>No hay cupones aún</p>
                                 ) 
@@ -1489,7 +1485,7 @@ const CPanel = () => {
 
                         <div className="cPanelContainer__createNewCoupons">
 
-                            <h2 className='cPanelContainer__createNewCoupons__title'>Crear nuevo cupón</h2>
+                            <div className='cPanelContainer__createNewCoupons__title'>Crear nuevo cupón</div>
                             <div>Código</div>
                             <input
                             className='cPanelContainer__createNewCoupons__input'
