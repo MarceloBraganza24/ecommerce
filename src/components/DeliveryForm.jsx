@@ -8,7 +8,6 @@ import Spinner from './Spinner';
 
 const DeliveryForm = () => {
     const [user, setUser] = useState('');
-    const [cookieValue, setCookieValue] = useState('');
     const [loadingDeleteId, setLoadingDeleteId] = useState(null);
     const [loadingSaveDeliveryForm, setLoadingSaveDeliveryForm] = useState(false);
     const [deliveryForms, setDeliveryForms] = useState([]);
@@ -21,6 +20,8 @@ const DeliveryForm = () => {
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [selectedAddress, setSelectedAddress] = useState(null);
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [deliveryAddressFormData, setDeliveryAddressFormData] = useState({
         street: "",
         street_number: "",
@@ -78,6 +79,35 @@ const DeliveryForm = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
+    };
 
     const handleSelectAddress = async (address) => {
         setSelectedAddress(address);
@@ -410,6 +440,7 @@ const DeliveryForm = () => {
         fetchCurrentUser();
         fetchSellerAddresses();
         fetchCategories();
+        fetchStoreSettings();
         fetchDeliveryForm();
         window.scrollTo(0, 0);
     }, []);
@@ -504,6 +535,15 @@ const DeliveryForm = () => {
         cursor: 'not-allowed'
     }
 
+    function hexToRgba(hex, opacity) {
+        const cleanHex = hex.replace('#', '');
+        const bigint = parseInt(cleanHex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
     return (
         
         <>
@@ -517,7 +557,9 @@ const DeliveryForm = () => {
                 categories={categories}
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
-                cookieValue={cookieValue}
+                hexToRgba={hexToRgba}
+                logo_store={storeSettings?.siteImages?.logoStore || ""}
+                primaryColor={storeSettings?.primaryColor || ""}
                 />
             </div>
             <DeliveryAddress
@@ -686,8 +728,13 @@ const DeliveryForm = () => {
             </div>
         
             <Footer
+            logo_store={storeSettings?.siteImages?.logoStore || ""}
+            aboutText={storeSettings?.footerLogoText || ""}
+            phoneNumbers={storeSettings.phoneNumbers}
+            contactEmail={storeSettings.contactEmail}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
+            isLoadingStoreSettings={isLoadingStoreSettings}
             />
 
         </>

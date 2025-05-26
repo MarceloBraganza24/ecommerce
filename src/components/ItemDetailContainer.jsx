@@ -394,8 +394,10 @@ const ItemDetailContainer = () => {
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
                                             <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
-                                            {/* <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>{productById?.numberSales && (productById?.numberSales > 10 ? '+10' : '')}</div> */}
-                                            <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>{productById?.number_sales}</div>
+                                            {
+                                                productById?.number_sales &&
+                                                <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+{productById?.number_sales} Vendidos</div>
+                                            }
                                         </div>
 
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__title'>

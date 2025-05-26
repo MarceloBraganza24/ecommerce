@@ -2,6 +2,7 @@ import {useEffect,useState,useContext} from 'react'
 import NavBar from './NavBar'
 import Footer from './Footer'
 import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
 const Contact = () => {
     const [storeSettings, setStoreSettings] = useState({});
@@ -350,40 +351,59 @@ const Contact = () => {
 
                     </div>
 
-                    <div className='contactContainer__formMap__mapContainer'>
+                    {
+                        isLoadingSellerAddresses ?
 
-                        <div className='contactContainer__formMap__mapContainer__map'>
-
-                            {selectedAddress ? (
-                                <iframe
-                                    className='contactContainer__formMap__mapContainer__map__prop'
-                                    src={generateMapUrl(selectedAddress)}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                />
-                            ) : (
-                                <p>No hay direcciones disponibles.</p>
-                            )}
-
-                            <select
-                                className='contactContainer__formMap__mapContainer__map__select'
-                                value={selectedAddress ? selectedAddress._id : ''}
-                                onChange={(e) => {
-                                    const selected = sellerAddresses.find(addr => addr._id === e.target.value);
-                                    setSelectedAddress(selected);
-                                }}
-                                >
-                                {sellerAddresses.map(addr => (
-                                    <option key={addr._id} value={addr._id}>
-                                    {buildFullAddress(addr)}
-                                    </option>
-                                ))}
-                            </select>
-
+                        <div className="contactContainer__formMap__spinnerContainer">
+                            <Spinner/>
                         </div>
 
-                    </div>
+                        :
+                        <div className='contactContainer__formMap__mapContainer'>
+
+                            <div className='contactContainer__formMap__mapContainer__map'>
+
+                                {selectedAddress ? (
+                                    <iframe
+                                        className='contactContainer__formMap__mapContainer__map__prop'
+                                        src={generateMapUrl(selectedAddress)}
+                                        allowFullScreen=""
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                    />
+                                ) : (
+                                    <p className='contactContainer__formMap__mapContainer__map__label'>Aún no existen direcciones físicas del vendedor</p>
+                                )}
+
+                                {
+                                    sellerAddresses.length == 1 ?
+                                    <div className='contactContainer__formMap__mapContainer__map__label'>Sucursal</div>
+                                    : sellerAddresses.length > 1 &&
+                                    <div className='contactContainer__formMap__mapContainer__map__label'>Sucursales</div>
+                                }
+
+                                {
+                                    sellerAddresses.length >= 1 &&
+                                    <select
+                                    className='contactContainer__formMap__mapContainer__map__select'
+                                    value={selectedAddress ? selectedAddress._id : ''}
+                                    onChange={(e) => {
+                                            const selected = sellerAddresses.find(addr => addr._id === e.target.value);
+                                            setSelectedAddress(selected);
+                                        }}
+                                        >
+                                        {sellerAddresses.map(addr => (
+                                            <option key={addr._id} value={addr._id}>
+                                            {buildFullAddress(addr)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
 
                 </div>
 

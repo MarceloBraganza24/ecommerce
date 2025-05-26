@@ -8,13 +8,10 @@ import Spinner from './Spinner';
 const CPanel = () => {
     const [creatingCategory, setCreatingCategory] = useState(false);
     const [deletingIdCategory, setDeletingIdCategory] = useState(null);
-
     const [creatingAddress, setCreatingAddress] = useState(false);
     const [deletingIdAddress, setDeletingIdAddress] = useState(null);
-
     const [creatingCoupon, setCreatingCoupon] = useState(false);
     const [deletingIdCoupon, setDeletingIdCoupon] = useState(null);
-
     const [user, setUser] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [categoryName, setCategoryName] = useState('');

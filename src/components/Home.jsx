@@ -15,6 +15,7 @@ import BtnGoUp from "./BtnGoUp";
 import Spinner from "./Spinner";
 
 const Home = () => {
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png'); // Negro por defecto
     const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
@@ -39,6 +40,7 @@ const Home = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
+    const SERVER_URL = "http://localhost:8081/";
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -63,6 +65,29 @@ const Home = () => {
         acc[product.category].push(product);
         return acc;
     }, {});
+
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        // Elimina el símbolo #
+        hex = hex.replace("#", "");
+
+        // Convierte a RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Fórmula de luminancia percibida
+        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminancia > 186; // Umbral típico: > 186 es claro
+    }
+
+    useEffect(() => {
+        if (storeSettings?.primaryColor) {
+            const claro = esColorClaro(storeSettings.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [storeSettings]);
 
     const fetchCartByUserId = async (user_id) => {
         try {
@@ -380,6 +405,7 @@ const Home = () => {
                 userCart={userCart}
                 showLogOutContainer={showLogOutContainer}
                 hexToRgba={hexToRgba}
+                cartIcon={cartIcon}
                 logo_store={storeSettings?.siteImages?.logoStore || ""}
                 primaryColor={storeSettings?.primaryColor || ""}
                 />
@@ -394,30 +420,16 @@ const Home = () => {
 
             </div>
 
-            {/* {storeSettings?.siteImages?.homeImage && (
-            <div
-                className="homeContainer"
-                style={{
-                backgroundImage: `url(${storeSettings.siteImages.homeImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width: '100%',
-                height: '100vh'
-                }}
-            >
-            </div>
-            )} */}
-
             {
-                logosSlider.length != 0 &&
+                storeSettings?.sliderLogos?.length != 0 &&
 
                 <div className="slider-logos">
 
                     <div className="slider-logos__logo-slider">
                         <div className="slider-logos__logo-slider__slider-track">
-                            {logosSlider.concat(logosSlider).map((logo, index) => (
+                            {storeSettings?.sliderLogos?.concat(storeSettings?.sliderLogos).map((logo, index) => (
                                 <div key={index} className="slider-logos__logo-slider__slider-track__slide">
-                                <img className="slider-logos__logo-slider__slider-track__slide__img" src={logo.src} alt={logo.alt} />
+                                <img className="slider-logos__logo-slider__slider-track__slide__img" src={`${SERVER_URL}${logo}`} alt={logo.alt} />
                             </div>
                             ))}
                         </div>
@@ -546,7 +558,6 @@ const Home = () => {
                             :
                             <>
                                 <div className="catalogContainer__grid__catalog__nonProductsLabel"><Spinner/></div>
-                                {/* <div className="catalogContainer__grid__catalog__nonProductsLabel">Aún no existen productos</div> */}
                                 {
                                     user.role == 'admin' &&
                                     <Link className='catalogContainer__grid__catalog__goCpanelLink' to={`/cpanel/products`}>

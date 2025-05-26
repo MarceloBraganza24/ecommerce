@@ -329,6 +329,10 @@ const CategoryContainer = () => {
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
     return (
 
         <>  
@@ -356,7 +360,21 @@ const CategoryContainer = () => {
             }
             <div className="categoryContainer__grid">
 
-                <div>0</div>
+                <div className='categoryContainer__grid__categoriesListContainer'>
+
+                    
+                    <div className='categoryContainer__grid__categoriesListContainer__categoriesList'>
+                        <div className='categoryContainer__grid__categoriesListContainer__categoriesList__label'>Categorías</div>
+                        {
+                            categories.map(category => (
+                                <Link className='categoryContainer__grid__categoriesListContainer__categoriesList__category' to={`/category/${category.name}`}>
+                                    - {capitalizeFirstLetter(category.name)}
+                                </Link>
+                            ))
+                        }
+                    </div>
+
+                </div>
                                 
                 <div className="categoryContainer__grid__catalog">
 

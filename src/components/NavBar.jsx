@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const NavBar = ({hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
+const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,categories,isLoading,role,first_name,cookieValue,fetchUser,setShowLogOutContainer,showLogOutContainer}) => {
     const [quantity, setQuantity] = useState(null);
     const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+    //console.log(primaryColor)
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -74,11 +76,9 @@ const NavBar = ({hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,categorie
 
                     <div className='header__logo-menu__hMenuContainer'>
                         {
-                            /* isLoading && (role == 'admin') ? */
                             isLoading ?
                             <Spinner/>
                             :
-                            /* role == 'admin' && showLogOutContainer && */
                             showLogOutContainer &&
                             <div onClick={handleBtnShowHMenuOptions} className='header__logo-menu__hMenuContainer__hMenu'>
                                 <div className='header__logo-menu__hMenuContainer__hMenu__line'></div>
@@ -124,7 +124,7 @@ const NavBar = ({hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,categorie
                         <div className='header__rightMenu__menu__cart'>
 
                             <Link to={"/cart"} className='header__rightMenu__menu__cart__logo'>
-                                <img className='header__rightMenu__menu__cart__logo__prop' src="/src/assets/cart.png" alt="" />
+                                <img className='header__rightMenu__menu__cart__logo__prop' src={cartIcon} alt="" />
                             </Link>
                             <div className='header__rightMenu__menu__cart__number'>
                                 {

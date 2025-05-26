@@ -14,6 +14,8 @@ const Shipping = () => {
     const [metodoEntrega, setMetodoEntrega] = useState("domicilio");
     const [userCart, setUserCart] = useState({});
     const [user, setUser] = useState('');
+    const [storeSettings, setStoreSettings] = useState({});
+    const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [isLoadingGeneralData, setIsLoadingGeneralData] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
@@ -139,6 +141,35 @@ const Shipping = () => {
                 return palabra.charAt(0).toUpperCase() + palabra.slice(1);
             })
             .join(' ');
+    };
+
+    const fetchStoreSettings = async () => {
+        try {
+            setIsLoadingStoreSettings(true)
+            const response = await fetch('http://localhost:8081/api/settings');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setStoreSettings(data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingStoreSettings(false)
+        }
     };
 
     const fetchCartByUserId = async (user_id) => {
@@ -299,6 +330,7 @@ const Shipping = () => {
     useEffect(() => {
         fetchCurrentUser()
         fetchDeliveryForm();
+        fetchStoreSettings();
         fetchSellerAddresses();
     }, []);
 
@@ -363,6 +395,18 @@ const Shipping = () => {
                 setShowLabelAddCoupon(false)
                 setShowInputCouponContainer(false)
                 setShowLabelValidatedCoupon(true)
+            } else if(data.error === 'coupon has expired') {
+                toast('El cupón ya expiró!', {
+                    position: "top-right",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
             } else {
                 toast('Cupón inválido', {
                     position: "top-right",
@@ -445,8 +489,18 @@ const Shipping = () => {
 
             <div className='headerPurchase'>
                 
-                <Link to={"/"} className='headerPurchase__logo'>
+                {/* <Link to={"/"} className='headerPurchase__logo'>
                     <img className='headerPurchase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
+                </Link> */}
+
+                <Link to={"/"} className='headerPurchase__logo'>
+                    {storeSettings?.siteImages?.logoStore && 
+                        <img
+                        className='headerPurchase__logo__prop'
+                        src={`http://localhost:8081/${storeSettings?.siteImages?.logoStore}`}
+                        alt="logo_tienda"
+                        />
+                    }
                 </Link>
                 
             </div>
