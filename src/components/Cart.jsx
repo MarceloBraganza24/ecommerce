@@ -10,6 +10,7 @@ import Spinner from './Spinner';
 
 const Cart = () => {
     const navigate = useNavigate();
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
@@ -55,6 +56,29 @@ const Cart = () => {
         }
     }, [user.isLoggedIn]);
 
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        // Elimina el símbolo #
+        hex = hex.replace("#", "");
+
+        // Convierte a RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Fórmula de luminancia percibida
+        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminancia > 186; // Umbral típico: > 186 es claro
+    }
+
+    useEffect(() => {
+        if (storeSettings?.primaryColor) {
+            const claro = esColorClaro(storeSettings.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [storeSettings]);
+
     const [total, setTotal] = useState('');
     const [totalQuantity, setTotalQuantity] = useState('');
     const [totalWithDiscount, setTotalWithDiscount] = useState('');
@@ -66,9 +90,6 @@ const Cart = () => {
             setTotal(total)
             const totalQuantity = Array.isArray(userCart.products)?userCart.products.reduce((sum, producto) => sum + producto.quantity, 0):0;
             setTotalQuantity(totalQuantity)
-            // const discountPercentage = validatedCoupon.discount;
-            // const totalWithDiscount = total - (total * (discountPercentage / 100));
-            // setTotalWithDiscount(totalWithDiscount)
         }
 
     }, [userCart]);
@@ -422,6 +443,7 @@ const Cart = () => {
                 hexToRgba={hexToRgba}
                 logo_store={storeSettings?.siteImages?.logoStore || ""}
                 primaryColor={storeSettings?.primaryColor || ""}
+                cartIcon={cartIcon}
                 />
             </div>
             {

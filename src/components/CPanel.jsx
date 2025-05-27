@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import Spinner from './Spinner';
 
 const CPanel = () => {
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [creatingCategory, setCreatingCategory] = useState(false);
     const [deletingIdCategory, setDeletingIdCategory] = useState(null);
     const [creatingAddress, setCreatingAddress] = useState(false);
@@ -37,6 +38,29 @@ const CPanel = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        // Elimina el símbolo #
+        hex = hex.replace("#", "");
+
+        // Convierte a RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Fórmula de luminancia percibida
+        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminancia > 186; // Umbral típico: > 186 es claro
+    }
+
+    /* useEffect(() => {
+        if (configurationSiteformData?.primaryColor) {
+            const claro = esColorClaro(configurationSiteformData.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [configurationSiteformData]); */
 
     const couponsByExpirationDate = coupons.sort((a, b) => new Date(a.expiration_date) - new Date(b.expiration_date));
 
@@ -760,6 +784,13 @@ const CPanel = () => {
         sliderLogos: [],
     });
 
+    useEffect(() => {
+        if (configurationSiteformData?.primaryColor) {
+            const claro = esColorClaro(configurationSiteformData.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [configurationSiteformData]);
+
     const handleSliderImagesUpload = (e) => {
         const files = Array.from(e.target.files);
         const currentCount = configurationSiteformData.sliderLogos.length;
@@ -1036,6 +1067,7 @@ const CPanel = () => {
                 hexToRgba={hexToRgba}
                 primaryColor={configurationSiteformData?.primaryColor || ""}
                 logo_store={configurationSiteformData?.siteImages?.logoStore || ""}
+                cartIcon={cartIcon}
                 />
             </div>
 
@@ -1186,7 +1218,7 @@ const CPanel = () => {
                         </div>
 
                         <ColorInput
-                        label="Color primario"
+                        label="Color primario ('Navbar', 'Footer', 'Fondo botones')"
                         name="primaryColor"
                         value={colorSelectFormData.primaryColor}
                         inputMode={colorSelectFormData.colorInputMode}
@@ -1195,7 +1227,7 @@ const CPanel = () => {
                         />
 
                         <ColorInput
-                        label="Color secundario"
+                        label="Color secundario ('Combinación de color primario')"
                         name="secondaryColor"
                         value={colorSelectFormData.secondaryColor}
                         inputMode={colorSelectFormData.colorInputMode}
@@ -1203,14 +1235,14 @@ const CPanel = () => {
                         colorOptions={colorOptions}
                         />
 
-                        <ColorInput
+                        {/* <ColorInput
                         label="Color terciario"
                         name="accentColor"
                         value={colorSelectFormData.accentColor}
                         inputMode={colorSelectFormData.colorInputMode}
                         onChange={handleColorSelect}
                         colorOptions={colorOptions}
-                        />
+                        /> */}
 
                         <div className="cPanelContainer__siteConfiguration__form__images" style={{marginTop: '2vh'}}>
                             <div className="cPanelContainer__siteConfiguration__form__images__title">Imágenes del sitio</div>

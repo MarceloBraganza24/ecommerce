@@ -15,7 +15,7 @@ import BtnGoUp from "./BtnGoUp";
 import Spinner from "./Spinner";
 
 const Home = () => {
-    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png'); // Negro por defecto
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
@@ -390,6 +390,11 @@ const Home = () => {
     return (
 
         <>
+
+            {/* <a class="networksContainer">
+                <img id="logoWhatsapp" class="networksContainer__network" src="img/WhatsApp_icon.png" alt="WhatsApp"/>
+            </a> */}
+
             <BtnGoUp
             isVisible={isVisible}
             scrollToTop={scrollToTop}

@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const CPanelProducts = () => {
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
@@ -37,6 +38,29 @@ const CPanelProducts = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        // Elimina el símbolo #
+        hex = hex.replace("#", "");
+
+        // Convierte a RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Fórmula de luminancia percibida
+        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminancia > 186; // Umbral típico: > 186 es claro
+    }
+
+    useEffect(() => {
+        if (storeSettings?.primaryColor) {
+            const claro = esColorClaro(storeSettings.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [storeSettings]);
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
@@ -263,6 +287,7 @@ const CPanelProducts = () => {
                 hexToRgba={hexToRgba}
                 primaryColor={storeSettings?.primaryColor || ""}
                 logo_store={storeSettings?.siteImages?.logoStore || ""}
+                cartIcon={cartIcon}
                 />
             </div>
             <div className='cPanelProductsContainer'>

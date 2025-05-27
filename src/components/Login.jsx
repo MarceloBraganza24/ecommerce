@@ -1,6 +1,7 @@
 import {useEffect,useState,useContext} from 'react'
 import { Link,useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -123,7 +124,7 @@ const Login = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    function esColorClaro(hex) {
+    /* function esColorClaro(hex) {
         if (!hex) return true;
 
         hex = hex.replace("#", "");
@@ -143,8 +144,15 @@ const Login = () => {
 
     const colorFondo = storeSettings?.primaryColor || '#ffffff';
     const textoEsNegro = esColorClaro(colorFondo);
-    const colorTexto = textoEsNegro ? '#000000' : '#ffffff';
+    const colorTexto = textoEsNegro ? '#000000' : '#ffffff'; */
 
+    if (isLoadingStoreSettings) {
+        return (
+            <div className="loadingContainer">
+                <Spinner/>
+            </div>
+        );
+    }
 
     return (
 
@@ -169,11 +177,14 @@ const Login = () => {
                         </div>
 
                         <div className='loginContainer__formContainer__form__btn'>
-                            {/* <button onClick={handleSubmit} className='loginContainer__formContainer__form__btn__prop'>Iniciar sesión</button> */}
-                            <button onClick={handleSubmit} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__dark' : 'loginContainer__formContainer__form__btn__white'}>Iniciar sesión</button>
+                            <button onClick={handleSubmit} className='loginContainer__formContainer__form__btn__prop'>Iniciar sesión</button>
+                            <Link to={"/signIn"} className='loginContainer__formContainer__form__btn__prop'>
+                                Registrarse
+                            </Link>
+                            {/* <button onClick={handleSubmit} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__dark' : 'loginContainer__formContainer__form__btn__white'}>Iniciar sesión</button>
                             <Link to={"/signIn"} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__dark' : 'loginContainer__formContainer__form__btn__white'}>
                                 Registrarse
-                            </Link> 
+                            </Link>  */}
                         </div>
 
                     </div>
@@ -183,8 +194,8 @@ const Login = () => {
                 <div className='loginContainer__logoContainer'>
 
                     <div className='loginContainer__logoContainer__title'>
-                        {/* <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a "{storeSettings?.storeName}"</div> */}
-                        <div className={textoEsNegro ? 'loginContainer__logoContainer__title__dark' : 'loginContainer__logoContainer__title__white'}>Bienvenidos/as a "{storeSettings?.storeName}"</div>
+                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a "{storeSettings?.storeName}"</div>
+                        {/* <div className={textoEsNegro ? 'loginContainer__logoContainer__title__dark' : 'loginContainer__logoContainer__title__white'}>Bienvenidos/as a "{storeSettings?.storeName}"</div> */}
                     </div>
 
                     <div className='loginContainer__logoContainer__logo'>
@@ -198,8 +209,8 @@ const Login = () => {
                     </div>  
 
                     <div className='loginContainer__logoContainer__phrase'>
-                        {/* <div className='loginContainer__logoContainer__phrase__prop'>"Ingresa a tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div> */}
-                        <div className={textoEsNegro ? 'loginContainer__logoContainer__phrase__dark' : 'loginContainer__logoContainer__phrase__white'}>"Ingresa a tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div>
+                        <div className='loginContainer__logoContainer__phrase__prop'>"Ingresa a tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div>
+                        {/* <div className={textoEsNegro ? 'loginContainer__logoContainer__phrase__dark' : 'loginContainer__logoContainer__phrase__white'}>"Ingresa a tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div> */}
                     </div>
 
                 </div>  

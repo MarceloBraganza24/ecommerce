@@ -8,7 +8,6 @@ import CategoryContainer from './components/CategoryContainer.jsx';
 import SignIn from './components/SignIn.jsx';
 import Shipping from './components/Shipping.jsx';
 import DeliveryForm from './components/DeliveryForm.jsx';
-import PurchaseCompleted from './components/PurchaseCompleted.jsx';
 import CPanelProducts from './components/CPanelProducts.jsx';
 import { IsLoggedInContext } from './context/IsLoggedContext.jsx';
 import CPanel from './components/CPanel.jsx';
@@ -27,8 +26,18 @@ import { ThemeProvider } from './context/ThemeProviderContext.jsx';
 
 function App() {
 
+    const handleBtnWhatsAppIcon = () => {
+        window.open("https://wa.me/5492926459172", "_blank");
+    }
+
     return (
 
+        <>
+
+        <a class="networksContainer">
+            <img onClick={handleBtnWhatsAppIcon} class="networksContainer__network" src="/src/assets/WhatsApp_icon.png" alt="WhatsApp"/>
+        </a>
+        
         <BrowserRouter>
 
             <ThemeProvider>
@@ -49,7 +58,6 @@ function App() {
                             <Route exact path="/category/:category" element={<CategoryContainer/>}/>
                             <Route exact path="/shipping" element={<Shipping/>}/>
                             <Route exact path="/deliveryForm" element={<DeliveryForm/>}/>
-                            <Route exact path="/purchaseCompleted" element={<PurchaseCompleted/>}/>
                             <Route exact path="/cpanel/products" element={<CPanelProducts/>}/>
                             <Route exact path="/cpanel" element={<CPanel/>}/>
                             <Route exact path="/tickets" element={<Tickets/>}/>
@@ -67,6 +75,7 @@ function App() {
 
         </BrowserRouter>
         
+        </>
     )
 }
 

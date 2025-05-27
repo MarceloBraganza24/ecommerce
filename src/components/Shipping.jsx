@@ -488,10 +488,6 @@ const Shipping = () => {
         <>
 
             <div className='headerPurchase'>
-                
-                {/* <Link to={"/"} className='headerPurchase__logo'>
-                    <img className='headerPurchase__logo__prop' src="/src/assets/logo_ecommerce_h.png" alt="logo" />
-                </Link> */}
 
                 <Link to={"/"} className='headerPurchase__logo'>
                     {storeSettings?.siteImages?.logoStore && 

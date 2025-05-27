@@ -18,6 +18,14 @@ export const ThemeProvider = ({ children }) => {
 
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
 
+    function getContrastingTextColor(hexColor) {
+        const r = parseInt(hexColor.substr(1, 2), 16);
+        const g = parseInt(hexColor.substr(3, 2), 16);
+        const b = parseInt(hexColor.substr(5, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness > 128 ? '#000000' : '#FFFFFF'; // texto negro o blanco
+    }
+
     useEffect(() => {
         const fetchStoreSettings = async () => {
         try {
@@ -55,6 +63,11 @@ export const ThemeProvider = ({ children }) => {
         root.style.setProperty('--primary-color', colorSelectFormData.primaryColor);
         root.style.setProperty('--secondary-color', colorSelectFormData.secondaryColor);
         root.style.setProperty('--accent-color', colorSelectFormData.accentColor);
+
+        const contrastPrimaryColorText = getContrastingTextColor(colorSelectFormData.primaryColor);
+        const contrastSecondaryColorText = getContrastingTextColor(colorSelectFormData.secondaryColor);
+        root.style.setProperty('--primary-text-color', contrastPrimaryColorText);
+        root.style.setProperty('--secondary-text-color', contrastSecondaryColorText);
     }, [colorSelectFormData]);
 
     useEffect(() => {

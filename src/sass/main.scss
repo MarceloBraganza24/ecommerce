@@ -14,14 +14,31 @@ p {
 h2 {
     margin-bottom: 0;
 }
-.btnGoUp {
+.networksContainer {
+    width: 80px;
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    z-index: 1;
+    bottom: 4vh;
+    right: 2vh;
+    &__network {
+        width: 90%;
+        transition: transform 0.3s ease-in-out;
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+    }
+}
+.btnGoUp {
+    width: 70px;
+    height: 70px;
+    position: fixed;
+    bottom: 16vh;
+    right: 3vh;
     z-index: 5;
     background-color: #0e3061;
     background-color: var(--secondary-color);
-    color: var(--primary-color);
+    color: var(--secondary-text-color);
     padding: 0.5vh 2vh 1.5vh 2vh;
     border-radius: 50%;
     font-size: 30px;
@@ -32,8 +49,8 @@ h2 {
     }
 }
 .spinner {
-    border: 5px solid white;
-    border-top: 5px solid var(--secondary-color); 
+    border: 5px solid var(--secondary-color);
+    border-top: 5px solid var(--primary-color); 
     border-radius: 50%;
     width: 15px;
     height: 15px;
@@ -48,6 +65,19 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@mixin btn {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    &:hover {
+        background-color: var(--secondary-color);
+        color: var(--secondary-text-color);
+    }
+}
+
+.link {
+    color: black;
 }
  
 .slider-logos {
@@ -89,13 +119,11 @@ h2 {
     }
 }
 .navbarContainer {
-    //background-color: rgb(10, 54, 116);
     background-color: var(--primary-color);
     width: 100%;
     padding: 1vh 0vh;
 }
 .cPanelContainer {
-    //background-color: rgb(214, 213, 213);
     width: 100%;
     height: 90vh;
     display: flex;
@@ -132,7 +160,6 @@ h2 {
                     font-weight: bold;
                 }
                 &__grid {
-                    //background-color: #9fbbe2;
                     display: flex;
                     align-items: center;
                     gap: 2vh;
@@ -694,65 +721,20 @@ h2 {
     background-size: cover; 
     width: 100%;
     height: 100vh;
-    &__gridOffer {
-        width: 100%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        &__offerContainer {
-            width: 100%;
-            height: 90vh;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            padding: 10vh 0vh 0vh 10vh;
-            gap: 2vh;
-            &__offerUp {
-                font-weight: bold;
-                font-size: 60px;
-                color: white;
-            }
-            &__offerDown {
-                font-weight: 400;
-                color: white;
-                font-size: 40px;
-            }
-            &__btnContainer {
-                width: 100%;
-                padding-top: 4vh;
-                &__btn {
-                    background: none;
-                    color: white;
-                    border: 0.3vh solid white;
-                    padding: 2vh 4vh;
-                    font-weight: bold;
-                    letter-spacing: 0.2vh;
-                    text-decoration: none;
-                    &:hover {
-                        background-color: white;
-                        color: black;
-                        border: 0.3vh solid white;
-                    }
-                }
-            }
-        }
-    }
 }
 
 .categoryContainer {
     width: 100%;
     &__grid {
-        background-color: rgb(214, 213, 213);
+        background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
         width: 100%;
-        //@include disFC();
         display: grid;
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: 1fr 3fr;
         justify-items: center;
         padding: 5vh 0vh;
         &__categoriesListContainer {
-            //width: 100%;
-            //background-color: white;
             &__categoriesList {
-                background-color: white;
+                background-color: whitesmoke;
                 padding: 2vh 20vh 2vh 2vh;
                 margin: 10vh 0vh 0vh 20vh;
                 display: flex;
@@ -771,8 +753,8 @@ h2 {
             }
         }
         &__catalog {
-            background-color: white;
-            width: 70%;
+            background-color: whitesmoke;
+            width: 80%;
             padding: 4vh 4vh;
             border-radius: 1vh;
             &__categorieContainer {
@@ -808,7 +790,7 @@ h2 {
                             font-size: 20px;
                             color: black;
                             &:hover {
-                                color: #0e3061;
+                                color: var(--secondary-color);
                             }
                         }
                     }
@@ -1041,7 +1023,6 @@ h2 {
             width: 95%;
             display: grid;
             grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
-            //border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
             &__item {
                 font-size: 18px;
@@ -1994,18 +1975,16 @@ h2 {
     align-items: center;
     flex-direction: column;
     &__titleContainer {
-        //background-color: #1b509c;
         background-color: var(--primary-color);
         width: 100%;
         &__title {
-            //background-color: rgb(27, 80, 156, 0.9);
             width: 100%;
             display: flex;
             justify-content: end;
             padding: 2vh 0vh;
             &__prop {
                 font-size: 40px;
-                color: white;
+                color: var(--primary-text-color);
                 font-weight: bold;
                 padding-right: 2vh;
                 font-family: "Montserrat", sans-serif;
@@ -2013,14 +1992,13 @@ h2 {
         }
     }
     &__inputSearchProduct {
-        background-color: var(--accent-color);
+        background-color: whitesmoke;
         width: 100%;
         @include disFC();
         padding: 2vh 0vh;
         flex-direction: column;
         gap: 1vh;
         &__searchProductsLabel {
-            color: var(--primary-color);
             font-size: 25px;
         }
         &__input {
@@ -2036,14 +2014,11 @@ h2 {
         }
     }
     &__grid {
-        //background-color: #d6d5d5;
         background-color: var(--primary-color);
         width: 100%;
         @include disFC();
-        //padding: 5vh 0vh 0vh 0vh;
         &__catalog {
-            //background-color: white;
-            background-color: var(--accent-color);
+            background-color: whitesmoke;
             width: 90%;
             border-radius: 1vh;
             &__isLoadingLabel {
@@ -2074,26 +2049,28 @@ h2 {
                         font-size: 35px;
                         text-transform: uppercase;
                         text-decoration: none;
-                        color: var(--accent-color);
+                        color: var(--primary-text-color);
                         font-weight: bold;
                         font-family: "Montserrat", sans-serif;
                     }
                 }
                 &__productsContainer {
+                    background-color: whitesmoke;
                     width: 90%;
                     &__swiper {
+                        background-color: whitesmoke;
                         width: 85%;
                         padding: 5vh;
                     }
                 }
                 &__btnMoreProducts {
-                    background-color: var(--accent-color);
+                    background-color: whitesmoke;
                     width: 100%;
                     @include disFC();
                     padding-bottom: 5vh;
                     &__prop {
                         font-size: 20px;
-                        color: var(--primary-color);
+                        color: black;
                         &:hover {
                             color: var(--secondary-color);
                         }
@@ -2113,7 +2090,7 @@ h2 {
                 font-size: 20px;
                 color: black;
                 &:hover {
-                    color: #1b509c;
+                    color: var(--secondary-color);
                 }
             }
         }
@@ -2121,7 +2098,7 @@ h2 {
 }
 
 .itemProduct {
-    background-color: ghostwhite;
+    background-color: whitesmoke;
     width: 300px;
     height: 450px;
     display: grid;
@@ -2135,7 +2112,6 @@ h2 {
     }
     &__imgContainer {
         width: 100%;
-        //@include disFC();
         overflow: hidden;
         border-top-left-radius: 2vh;
         border-top-right-radius: 2vh;
@@ -2143,17 +2119,31 @@ h2 {
             width: 100%;
         }
     }
-    &__titleContainer {
-        width: 100%;
-        @include disFC();
+     &__titleContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 0vh 1vh;
+        &::-webkit-scrollbar {
+            display: none; /* Oculta la barra de desplazamiento */
+        }
         &__prop {
             font-size: 20px;
             text-align: center;
         }
     }
-    &__descriptionContainer {
-        width: 100%;
-        @include disFC();
+     &__descriptionContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 0vh 1vh;
+        &::-webkit-scrollbar {
+            display: none; /* Oculta la barra de desplazamiento */
+        }
         &__prop {
             font-size: 16px;
             text-align: center;
@@ -2172,12 +2162,10 @@ h2 {
         flex-direction: column;
         gap: 1vh;
         &__btn {
-            //background-color: #1b509c;
             background-color: var(--primary-color);
             width: 60%;
             @include disFC();
-            color: var(--accent-color);
-            //background-color: var(--primary-color);
+            color: var(--primary-text-color);
             font-size: 16px;
             padding: 0.5vh 0vh;
             border-radius: 0.5vh;
@@ -2185,9 +2173,6 @@ h2 {
             text-align: center;
             border: 0.3vh solid black;
             &:hover {
-                //background-color: #306dc4;
-                background-color: var(--primary-color);
-                //color: white;
                 color: var(--secondary-color);
                 border: 0.3vh solid black;
                 cursor: pointer;
@@ -2197,12 +2182,12 @@ h2 {
 }
 
 .itemDetailContainer {
-    background-color: #d6d5d5;
+    background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
     width: 100%;
     height: 90vh;
     @include disFC();
     &__itemDetail {
-        background-color: white;
+        background-color: whitesmoke;
         width: 80%;
         height: auto;
         display: grid;
@@ -2210,6 +2195,7 @@ h2 {
         padding: 5vh;
         border-radius: 1vh;
         &__loadingProducts {
+            background-color: whitesmoke;
             width: 100%;
             height: 50vh;
             grid-column: 1/3;
@@ -2254,7 +2240,7 @@ h2 {
             @include disFC();
             flex-direction: column;
             &__info {
-                background-color: #d6d5d5;
+                background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
                 width: 80%;
                 padding: 2vh 4vh;
                 border: 0.3vh solid rgb(163, 163, 163);
@@ -2348,11 +2334,7 @@ h2 {
                         border-color: black;
                         border-radius: 0.5vh;
                         cursor: pointer;
-                        background-color: var(--primary-color);
-                        color: var(--accent-color);
-                        &:hover {
-                            color: var(--secondary-color);
-                        }
+                        @include btn();
                     }
                     &__availability {
                         font-size: 16px;
@@ -2374,11 +2356,7 @@ h2 {
                         border-radius: 0.5vh;
                         font-size: 16px;
                         cursor: pointer;
-                        background-color: var(--primary-color);
-                        color: var(--accent-color);
-                        &:hover {
-                            color: var(--secondary-color);
-                        }
+                        @include btn();
                     }
                     &__propCart {
                         width: 60%;
@@ -2387,11 +2365,7 @@ h2 {
                         border-radius: 0.5vh;
                         font-size: 16px;
                         cursor: pointer;
-                        background-color: var(--primary-color);
-                        color: var(--accent-color);
-                        &:hover {
-                            color: var(--secondary-color);
-                        }
+                        @include btn();
                     }
                 }
             }
@@ -2400,7 +2374,7 @@ h2 {
 }
 
 .cartContainer {    
-    background-color: rgb(214, 213, 213);
+    background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
     width: 100%;
     height: auto;
     display: flex;
@@ -2413,13 +2387,12 @@ h2 {
         @include disFC();
         &__prop {
             font-size: 40px;
-            color: black;
             font-family: "Montserrat", sans-serif;
             font-weight: bold;
         }
     }
     &__cart {
-        background-color: white;
+        background-color: whitesmoke;
         width: 90%;
         padding: 5vh;
         border-radius: 2vh;
@@ -2436,7 +2409,7 @@ h2 {
                 @include disFC();
                 &__prop {
                     font-size: 20px;
-                    color: white;
+                    color: var(--primary-text-color);
                 }
             }
         }
@@ -2458,11 +2431,12 @@ h2 {
                 border-radius: 0.5vh;
                 font-size: 16px;
                 cursor: pointer;
-                background-color: var(--primary-color);
+                /* background-color: var(--primary-color);
                 color: var(--accent-color);
                 &:hover {
                     color: var(--secondary-color);
-                }
+                } */
+                @include btn();
             }
         }
     }
@@ -2471,7 +2445,7 @@ h2 {
         display: flex;
         justify-content: end;
         &__accountSummary {
-            background-color: white;
+            background-color: whitesmoke;
             width: 30%;
             @include disFC();
             flex-direction: column;
@@ -2510,7 +2484,7 @@ h2 {
                     justify-self: end;
                 }
             }
-            &__itemDiscount {
+            /* &__itemDiscount {
                 width: 100%;
                 display: flex;
                 padding-top: 1vh;
@@ -2551,7 +2525,7 @@ h2 {
                         color: var(--secondary-color);
                     }
                 }
-            }
+            } */
             &__btn {
                 width: 100%;
                 @include disFC();
@@ -2565,11 +2539,8 @@ h2 {
                     cursor: pointer;
                     text-align: center;
                     text-decoration: none;
-                    background-color: var(--primary-color);
-                    color: var(--accent-color);
-                    &:hover {
-                        color: var(--secondary-color);
-                    }
+                    @include btn();
+                    border: 0.3vh solid black;
                 }
             }
         }
@@ -2662,16 +2633,12 @@ h2 {
             font-size: 20px;
             cursor: pointer;
             border-radius: 1vh;
-            background-color: var(--primary-color);
-            color: var(--accent-color);
-            &:hover {
-                color: var(--secondary-color);
-            }
+            @include btn();
         }
     }
 }
 .shippingContainer {
-    background-color: rgb(214, 213, 213);
+    background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
     width: 100%;
     height: 90vh;
     display: grid;
@@ -2696,7 +2663,7 @@ h2 {
             }
         }
         &__deliveryMethod {
-            background-color: white;
+            background-color: whitesmoke;
             width: 70%;
             border-radius: 0.5vh;
             padding: 2vh;
@@ -2767,11 +2734,7 @@ h2 {
                 cursor: pointer;
                 text-align: center;
                 text-decoration: none;
-                background-color: var(--primary-color);
-                color: var(--accent-color);
-                &:hover {
-                    color: var(--secondary-color);
-                }    
+                @include btn();
             }
             &__prop {
                 width: 20%;
@@ -2780,12 +2743,8 @@ h2 {
                 font-size: 16px;
                 cursor: pointer;
                 text-align: center;
-                text-decoration: none;
-                background-color: var(--primary-color);
-                color: var(--accent-color);
-                &:hover {
-                    color: var(--secondary-color);
-                }        
+                text-decoration: none;  
+                @include btn();
             }
         }
     }
@@ -2795,7 +2754,7 @@ h2 {
         align-items: center;
         flex-direction: column;
         &__accountSummary {
-            background-color: white;
+            background-color: whitesmoke;
             width: 85%;
             height: 100%;
             display: flex;
@@ -2865,11 +2824,7 @@ h2 {
                     font-size: 14px;
                     @include disFC();
                     cursor: pointer;
-                    background-color: var(--primary-color);
-                    color: var(--accent-color);
-                    &:hover {
-                        color: var(--secondary-color);
-                    }
+                    @include btn();
                 }
             }
             &__itemGrid {
@@ -2930,28 +2885,25 @@ h2 {
         cursor: pointer;
         text-decoration: none;
         text-align: center;
+        border: 0.3vh solid black;
         @include disFC();
-        background-color: var(--primary-color);
-        color: var(--accent-color);
+        @include btn();
         &:hover {
-            color: var(--secondary-color);
+            border: 0.3vh solid black;
         }
     }
 }
 .deliveryFormContainer {
-    background-color: rgb(214, 213, 213);
+    background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
     width: 100%;
     height: auto;
-    //@include disFC();
     display: flex;
     justify-content: center;
-    //padding: 4vh 0vh;
     &__deliveryForm {
-        background-color: white;
+        background-color: whitesmoke;
         width: 60%;
         display: flex;
         flex-direction: column;
-        //border-radius: 0.5vh;
         padding: 4vh 8vh;
         &__title{
             width: 100%;
@@ -2962,7 +2914,7 @@ h2 {
             }
         }
         &__existingAddresses {
-            background-color: white;
+            background-color: whitesmoke;
             width: 100%;
             padding: 4vh 0vh;
             display: flex;
@@ -3000,7 +2952,6 @@ h2 {
                     }
                     &__address {
                         font-size: 18px;
-                        //text-align: center;
                         align-self: center;
                         padding-left: 2vh;
                     }
@@ -3010,11 +2961,7 @@ h2 {
                         border-radius: 0.5vh;
                         font-size: 14px;
                         cursor: pointer;
-                        background-color: var(--primary-color);
-                        color: var(--accent-color);
-                        &:hover {
-                            color: var(--secondary-color);
-                        }
+                        @include btn();
                     }
                 }
             }
@@ -3035,13 +2982,9 @@ h2 {
             gap: 4vh;
             padding-top: 4vh;
             &__labelInput {
-                //background-color: sandybrown;
                 width: 100%;
                 display: flex;
                 flex-direction: column;
-                //align-self: center;
-                //justify-content: center;
-                //padding-top: 1vh;
                 gap: 1vh;
                 &__label {
                     font-size: 18px;
@@ -3051,7 +2994,6 @@ h2 {
                 }
                 &__inputContainer {
                     width: 100%;
-                   // @include disFC();
                     &__input {
                         width: 100%;
                         height: 40px;
@@ -3108,122 +3050,9 @@ h2 {
                 border-radius: 0.5vh;
                 font-size: 16px;
                 cursor: pointer;
-                background-color: var(--primary-color);
-                color: var(--accent-color);
-                &:hover {
-                    color: var(--secondary-color);
-                }
+                @include btn();
             }
         }
-    }
-}
-.paymentFormContainer {
-    background-color: rgb(214, 213, 213);
-    width: 100%;
-    height: 90vh;
-    display: flex;
-    justify-content: center;
-    &__paymentForm {
-        background-color: white;
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0vh 5vh;
-        &__title {
-            width: 100%;
-            @include disFC();
-            padding-top: 4vh;
-            &__prop {
-                font-size: 30px;
-            }
-        }
-        &__form {
-            width: 80%;
-            @include disFC();
-            flex-direction: column;
-            &__gridLabelInput {
-                width: 100%;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 4vh;
-                padding-top: 4vh;
-                &__labelInput {
-                    //background-color: sandybrown;
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    //align-self: center;
-                    //justify-content: center;
-                    //padding-top: 1vh;
-                    gap: 1vh;
-                    &__label {
-                        font-size: 18px;
-                    }
-                    &__inputContainer {
-                        width: 100%;
-                       // @include disFC();
-                        &__input {
-                            width: 100%;
-                            height: 40px;
-                            padding-left: 1vh;
-                            font-size: 18px;
-                            border-radius: 0.5vh;
-                            border: 0.1vh solid black;
-                            &::placeholder {
-                                font-size: 16px;
-                                //padding-left: 1vh;
-                            }
-                        }
-                        &__inputShort {
-                            width: 20%;
-                            height: 40px;
-                            //padding-left: 1vh;
-                            font-size: 18px;
-                            border-radius: 0.5vh;
-                            text-align: center;
-                            border: 0.1vh solid black;
-                            &::placeholder {
-                                font-size: 16px;
-                                //padding-left: 1vh;
-                            }
-                        }
-                    }
-                }
-                &__btn {
-                    grid-column: 2/3;
-                    display: flex;
-                    justify-content: end;
-                    &__prop {
-                        width: 40%;
-                        background-color: #1b509c;
-                        color: white;
-                        padding: 1vh;
-                        //justify-self: end;
-                        border-radius: 0.5vh;
-                        font-size: 16px;
-                        cursor: pointer;
-                        &:hover {
-                            background-color: #124285;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-.purchaseCompletedContainer {
-    width: 100%;
-    height: 90vh;
-    @include disFC();
-    flex-direction: column;
-    &__msj {
-        font-size: 30px;
-    }
-    &__goCatalog {
-        padding-top: 1vh;
-        font-size: 25px;
-        color: black;
     }
 }
 .aboutContainer {
@@ -3295,7 +3124,6 @@ h2 {
                         width: 100%;
                         @include disFC();
                         &__prop {
-                            color: black;
                             font-size: 22px;
                         }
                     }
@@ -3331,11 +3159,7 @@ h2 {
                             font-size: 20px;
                             border-radius: 0.5vh;
                             cursor: pointer;
-                            background-color: var(--primary-color);
-                            color: var(--accent-color);
-                            &:hover {
-                                color: var(--secondary-color);
-                            }
+                            @include btn();
                         }
                     }
                 }
@@ -3387,22 +3211,10 @@ h2 {
         width: 100%;
         @include disFC();
         &__form {
-            /* background-color: white;
-            width: 70%;
-            display: flex;
-            flex-direction: column;
-            gap: 2vh;
-            margin-left: 10vh;
-            padding: 6vh 4vh;
-            border-radius: 2vh;
-            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.7); */
-
-            
             background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
             backdrop-filter: blur(6px); // desenfoque de fondo
             -webkit-backdrop-filter: blur(6px); // compatibilidad Safari
-            color: black;
-            width: 70%;
+            width: 65%;
             display: flex;
             flex-direction: column;
             gap: 2vh;
@@ -3423,7 +3235,7 @@ h2 {
                 display: flex;
                 &__prop {
                     background-color: white;
-                    width: 90%;
+                    width: 100%;
                     height: 20px;
                     border-radius: 1vh;
                     font-size: 16px;
@@ -3446,46 +3258,8 @@ h2 {
                     text-decoration: none;
                     text-align: center;
                     cursor: pointer;
-                    background-color: var(--primary-color);
                     border: 0.3vh solid black;
-                    //color: var(--accent-color);
-                    &:hover {
-                        color: var(--secondary-color);
-                    }
-                }
-                &__dark {
-                    // background-color: var(--primary-color);
-                    // color: black;
-                    width: 60%;
-                    padding: 1vh 0vh;
-                    font-size: 16px;
-                    border-radius: 0.5vh;
-                    text-decoration: none;
-                    text-align: center;
-                    cursor: pointer;
-                    background-color: white;
-                    border: 0.3vh solid black;
-                    color: black;
-                    &:hover {
-                        background-color: black;
-                        color: white;
-                    }
-                }
-                &__white {
-                    width: 60%;
-                    padding: 1vh 0vh;
-                    font-size: 16px;
-                    border-radius: 0.5vh;
-                    text-decoration: none;
-                    text-align: center;
-                    cursor: pointer;
-                    background-color: black;
-                    border: 0.3vh solid black;
-                    color: white;
-                    &:hover {
-                        background-color: white;
-                        color: black;
-                    }
+                    @include btn();
                 }
             }
         }
@@ -3499,13 +3273,9 @@ h2 {
         &__title {
             width: 100%;
             @include disFC();
-            &__dark {
+            &__prop {
                 font-size: 30px;
-                color: black;
-            }
-            &__white {
-                font-size: 30px;
-                color: white;
+                color: var(--primary-text-color);
             }
         }
         &__logo {
@@ -3518,23 +3288,23 @@ h2 {
         &__phrase {
             width: 100%;
             @include disFC();
-            &__dark {
-                color: black;
+            &__prop {
                 width: 50%;
                 font-size: 20px;
                 text-align: justify;
-            }
-            &__white {
-                width: 50%;
-                font-size: 20px;
-                text-align: justify;
-                color: white;
+                color: var(--primary-text-color);
             }
         }
     }
 }
+.loadingContainer {
+    background-color: var(--primary-color);
+    width: 100%;
+    height: 100vh;
+    @include disFC();
+    color: black;
+}
 .footerContainer {
-    //background-color: #1b509c;
     background-color: var(--primary-color);
     width: 100%;
     height: auto;
@@ -3559,8 +3329,7 @@ h2 {
                 width: 100%;
                 &__prop {
                     text-align: justify;
-                    //color: white;
-                    color: var(--accent-color);
+                    color: var(--primary-text-color);
                 }
             }
         }
@@ -3572,14 +3341,12 @@ h2 {
             display: flex;
             flex-direction: column;
             &__title {
-                //color: white;
-                color: var(--accent-color);
+                color: var(--primary-text-color);
                 font-size: 20px;
                 padding-bottom: 2vh;
             }
             &__links {
-                //color: white;
-                color: var(--accent-color);
+                color: var(--primary-text-color);
                 text-decoration: none;
                 padding-top: 0.5vh;
             }
@@ -3594,8 +3361,7 @@ h2 {
             flex-direction: column;
             &__title {
                 width: 100%;
-                //color: white;
-                color: var(--accent-color);
+                color: var(--primary-text-color);
                 padding-bottom: 2vh;
                 &__prop {
                     font-size: 20px;
@@ -3608,8 +3374,7 @@ h2 {
                 align-self: center;
                 gap: 1vh;
                 &__prop {
-                    //color: white;
-                    color: var(--accent-color);
+                    color: var(--primary-text-color);
                 }
             }
         }

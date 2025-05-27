@@ -3,6 +3,7 @@ import NavBar from './NavBar'
 import Footer from './Footer'
 import { Link,useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Spinner from './Spinner';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -139,7 +140,7 @@ const SignIn = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    function esColorClaro(hex) {
+    /* function esColorClaro(hex) {
         if (!hex) return true;
 
         hex = hex.replace("#", "");
@@ -159,7 +160,15 @@ const SignIn = () => {
 
     const colorFondo = storeSettings?.primaryColor || '#ffffff';
     const textoEsNegro = esColorClaro(colorFondo);
-    const colorTexto = textoEsNegro ? '#000000' : '#ffffff';
+    const colorTexto = textoEsNegro ? '#000000' : '#ffffff'; */
+
+    if (isLoadingStoreSettings) {
+        return (
+            <div className="loadingContainer">
+                <Spinner/>
+            </div>
+        );
+    }
 
     return (
 
@@ -192,8 +201,12 @@ const SignIn = () => {
                         </div>
 
                         <div className='loginContainer__formContainer__form__btn'>
-                            <button onClick={handleSubmit} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__dark' : 'loginContainer__formContainer__form__btn__white'}>Registrarse</button>
-                            <Link to={"/logIn"} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__dark' : 'loginContainer__formContainer__form__btn__white'}>
+                            {/* <button onClick={handleSubmit} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__white' : 'loginContainer__formContainer__form__btn__dark'}>Registrarse</button>
+                            <Link to={"/logIn"} className={textoEsNegro ? 'loginContainer__formContainer__form__btn__white' : 'loginContainer__formContainer__form__btn__dark'}>
+                                Iniciar sesión
+                            </Link> */}
+                            <button onClick={handleSubmit} className='loginContainer__formContainer__form__btn__prop'>Registrarse</button>
+                            <Link to={"/logIn"} className='loginContainer__formContainer__form__btn__prop'>
                                 Iniciar sesión
                             </Link>
                         </div>
@@ -205,7 +218,8 @@ const SignIn = () => {
                 <div className='loginContainer__logoContainer'>
 
                     <div className='loginContainer__logoContainer__title'>
-                        <div className={textoEsNegro ? 'loginContainer__logoContainer__title__dark' : 'loginContainer__logoContainer__title__white'}>Bienvenidos/as a "{storeSettings?.storeName}"</div>
+                        {/* <div className={textoEsNegro ? 'loginContainer__logoContainer__title__dark' : 'loginContainer__logoContainer__title__white'}>Bienvenidos/as a "{storeSettings?.storeName}"</div> */}
+                        <div className='loginContainer__logoContainer__title__prop'>Bienvenidos/as a "{storeSettings?.storeName}"</div>
                     </div>
 
                     <div className='loginContainer__logoContainer__logo'>
@@ -219,7 +233,8 @@ const SignIn = () => {
                     </div>  
 
                     <div className='loginContainer__logoContainer__phrase'>
-                        <div className={textoEsNegro ? 'loginContainer__logoContainer__phrase__dark' : 'loginContainer__logoContainer__phrase__white'}>"Registra tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div>
+                        <div className='loginContainer__logoContainer__phrase__prop'>"Registra tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div>
+                        {/* <div className={textoEsNegro ? 'loginContainer__logoContainer__phrase__dark' : 'loginContainer__logoContainer__phrase__white'}>"Registra tu cuenta y disfruta de una experiencia única con nuestros productos especialmente para ti"</div> */}
                     </div>
 
                 </div>  

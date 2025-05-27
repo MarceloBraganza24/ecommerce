@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Tickets = () => {
 
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -47,6 +48,29 @@ const Tickets = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        // Elimina el símbolo #
+        hex = hex.replace("#", "");
+
+        // Convierte a RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        // Fórmula de luminancia percibida
+        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminancia > 186; // Umbral típico: > 186 es claro
+    }
+
+    useEffect(() => {
+        if (storeSettings?.primaryColor) {
+            const claro = esColorClaro(storeSettings.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [storeSettings]);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -308,6 +332,7 @@ const Tickets = () => {
                 hexToRgba={hexToRgba}
                 logo_store={storeSettings?.siteImages?.logoStore || ""}
                 primaryColor={storeSettings?.primaryColor || ""}
+                cartIcon={cartIcon}
                 />
             </div>
 
