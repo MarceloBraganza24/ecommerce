@@ -66,7 +66,7 @@ const Home = () => {
         return acc;
     }, {});
 
-    function esColorClaro(hex) {
+    /* function esColorClaro(hex) {
         if (!hex) return true;
 
         // Elimina el símbolo #
@@ -80,7 +80,19 @@ const Home = () => {
         // Fórmula de luminancia percibida
         const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
         return luminancia > 186; // Umbral típico: > 186 es claro
+    } */
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        hex = hex.replace("#", "");
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+        return brightness > 128; // <-- usar el mismo umbral que en getContrastingTextColor
     }
+
 
     useEffect(() => {
         if (storeSettings?.primaryColor) {
@@ -390,10 +402,6 @@ const Home = () => {
     return (
 
         <>
-
-            {/* <a class="networksContainer">
-                <img id="logoWhatsapp" class="networksContainer__network" src="img/WhatsApp_icon.png" alt="WhatsApp"/>
-            </a> */}
 
             <BtnGoUp
             isVisible={isVisible}

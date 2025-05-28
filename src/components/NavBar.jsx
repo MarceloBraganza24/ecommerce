@@ -165,7 +165,7 @@ const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,
             
             {
                 showHMenuOptions &&
-                <div className='hMenuOptionsContainer' style={{backgroundColor: hexToRgba(primaryColor || '#e8cd02', 0.4)}}>
+                <div className='hMenuOptionsContainer' style={{backgroundColor: hexToRgba(primaryColor, 0.4)}}>
                     <div className='hMenuOptionsContainer__btnCloseMenu'>
                         <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
                     </div>

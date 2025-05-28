@@ -39,7 +39,7 @@ const CPanel = () => {
         }
     }, [user.isLoggedIn]);
 
-    function esColorClaro(hex) {
+    /* function esColorClaro(hex) {
         if (!hex) return true;
 
         // Elimina el símbolo #
@@ -53,6 +53,17 @@ const CPanel = () => {
         // Fórmula de luminancia percibida
         const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
         return luminancia > 186; // Umbral típico: > 186 es claro
+    } */
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        hex = hex.replace("#", "");
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+        return brightness > 128; // <-- usar el mismo umbral que en getContrastingTextColor
     }
 
     /* useEffect(() => {
@@ -1351,7 +1362,7 @@ const CPanel = () => {
                 
                         <>
                             <div className="cPanelContainer__existingCategories">
-                                <div className='cPanelContainer__existingCategories__title'>Categorías existentes</div>
+                                <div className='cPanelContainer__existingCategories__title'>Categorías</div>
                                 {categories.length === 0 ? (
                                     <p className='cPanelContainer__existingCategories__withOutCategoriesLabel'>No hay categorías aún</p>
                                     ) 
@@ -1372,29 +1383,31 @@ const CPanel = () => {
                                         ))}
                                     </ul>
                                 )}
+
+                                <div className="cPanelContainer__newCategoryForm">
+                                    <div className='cPanelContainer__newCategoryForm__title'>Crear nueva categoría</div>
+                                    <form onSubmit={handleSubmitCategory} className='cPanelContainer__newCategoryForm__form'>
+                                        <input
+                                        className='cPanelContainer__newCategoryForm__form__input'
+                                        type="text"
+                                        id="categoryName"
+                                        placeholder='Nombre categoría'
+                                        value={categoryName}
+                                        onChange={(e) => setCategoryName(e.target.value)}
+                                        required
+                                        />
+                                        <button
+                                            className='cPanelContainer__newCategoryForm__form__btn'
+                                            type="submit"
+                                            disabled={creatingCategory}
+                                            >
+                                            {creatingCategory ? <Spinner/> : 'Crear categoría'}
+                                        </button>
+                                    </form>
+                                </div>
+
                             </div>
 
-                            <div className="cPanelContainer__newCategoryForm">
-                                <div className='cPanelContainer__newCategoryForm__title'>Crear nueva categoría</div>
-                                <form onSubmit={handleSubmitCategory} className='cPanelContainer__newCategoryForm__form'>
-                                    <input
-                                    className='cPanelContainer__newCategoryForm__form__input'
-                                    type="text"
-                                    id="categoryName"
-                                    placeholder='Nombre categoría'
-                                    value={categoryName}
-                                    onChange={(e) => setCategoryName(e.target.value)}
-                                    required
-                                    />
-                                    <button
-                                        className='cPanelContainer__newCategoryForm__form__btn'
-                                        type="submit"
-                                        disabled={creatingCategory}
-                                        >
-                                        {creatingCategory ? <Spinner/> : 'Crear categoría'}
-                                    </button>
-                                </form>
-                            </div>
                         </>
                 }
 
@@ -1407,7 +1420,6 @@ const CPanel = () => {
                         </>
                     :
                         <>
-                        
 
                             <div className="cPanelContainer__existingSellerAddresses">
                                 <div className='cPanelContainer__existingSellerAddresses__title'>Domicilios del vendedor</div>
@@ -1431,30 +1443,32 @@ const CPanel = () => {
                                         ))}
                                     </ul>
                                 )}
+
+                                <div className="cPanelContainer__createNewSellerAddress">
+
+                                    <div className='cPanelContainer__createNewSellerAddress__title'>Crear nuevo domicilio</div>
+                                    {
+                                        isLoaded && 
+                                        <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
+                                            <input id='inputCreateAddress' className='cPanelContainer__createNewSellerAddress__input' type="text" placeholder='Buscar dirección' />
+                                        </StandaloneSearchBox>
+                                    }
+                                    <div className='cPanelContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
+                                    <div className='cPanelContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
+                                    <div className='cPanelContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
+                                    <div className='cPanelContainer__createNewSellerAddress__label'>Provincia: {addressData.province}</div>
+                                    <button
+                                        className='cPanelContainer__createNewSellerAddress__btn'
+                                        disabled={creatingAddress}
+                                        onClick={() => handleSubmitAddress()}
+                                        >
+                                        {creatingAddress ? <Spinner/> : 'Guardar'}
+                                    </button>
+                                    
+                                </div>
+
                             </div>
 
-                            <div className="cPanelContainer__createNewSellerAddress">
-
-                                <div className='cPanelContainer__createNewSellerAddress__title'>Crear nuevo domicilio</div>
-                                {
-                                    isLoaded && 
-                                    <StandaloneSearchBox onLoad={(ref) => inputRef.current = ref} onPlacesChanged={handleOnPlacesChanged}>
-                                        <input id='inputCreateAddress' className='cPanelContainer__createNewSellerAddress__input' type="text" placeholder='Buscar dirección' />
-                                    </StandaloneSearchBox>
-                                }
-                                <div className='cPanelContainer__createNewSellerAddress__label'>Calle: {addressData.street}</div>
-                                <div className='cPanelContainer__createNewSellerAddress__label'>Número: {addressData.street_number}</div>
-                                <div className='cPanelContainer__createNewSellerAddress__label'>Localidad: {addressData.locality}</div>
-                                <div className='cPanelContainer__createNewSellerAddress__label'>Provincia: {addressData.province}</div>
-                                <button
-                                    className='cPanelContainer__createNewSellerAddress__btn'
-                                    disabled={creatingAddress}
-                                    onClick={() => handleSubmitAddress()}
-                                    >
-                                    {creatingAddress ? <Spinner/> : 'Guardar'}
-                                </button>
-                                
-                            </div>
                         </>
                 }
 
@@ -1510,47 +1524,49 @@ const CPanel = () => {
                                 </ul>
                                 
                             )}
-                        </div>
 
-                        <div className="cPanelContainer__createNewCoupons">
+                            <div className="cPanelContainer__createNewCoupons">
 
-                            <div className='cPanelContainer__createNewCoupons__title'>Crear nuevo cupón</div>
-                            <div>Código</div>
-                            <input
-                            className='cPanelContainer__createNewCoupons__input'
-                            type="text"
-                            placeholder='Código cupón'
-                            value={codeCoupon}
-                            onChange={(e) => setCodeCoupon(e.target.value)}
-                            required
-                            />
-                            <div>Descuento</div>
-                            <input
+                                <div className='cPanelContainer__createNewCoupons__title'>Crear nuevo cupón</div>
+                                <div>Código</div>
+                                <input
                                 className='cPanelContainer__createNewCoupons__input'
-                                type="number"
-                                placeholder='Descuento (%)'
-                                value={discount}
-                                onChange={(e) => setDiscount(e.target.value)}
+                                type="text"
+                                placeholder='Código cupón'
+                                value={codeCoupon}
+                                onChange={(e) => setCodeCoupon(e.target.value)}
                                 required
                                 />
-                            <div>Fecha de expiración</div>
-                            <input
-                                className='cPanelContainer__createNewCoupons__input'
-                                type="date"
-                                placeholder='Fecha de expiración'
-                                value={expirationDate}
-                                onChange={(e) => setExpirationDate(e.target.value)}
-                                required
-                                />
-                            <button
-                                className='cPanelContainer__createNewCoupons__btn'
-                                disabled={creatingCoupon}
-                                onClick={() => handleSubmitCoupon()}
-                                >
-                                {creatingCoupon ? <Spinner/> : 'Guardar'}
-                            </button>
-                            
+                                <div>Descuento</div>
+                                <input
+                                    className='cPanelContainer__createNewCoupons__input'
+                                    type="number"
+                                    placeholder='Descuento (%)'
+                                    value={discount}
+                                    onChange={(e) => setDiscount(e.target.value)}
+                                    required
+                                    />
+                                <div>Fecha de expiración</div>
+                                <input
+                                    className='cPanelContainer__createNewCoupons__input'
+                                    type="date"
+                                    placeholder='Fecha de expiración'
+                                    value={expirationDate}
+                                    onChange={(e) => setExpirationDate(e.target.value)}
+                                    required
+                                    />
+                                <button
+                                    className='cPanelContainer__createNewCoupons__btn'
+                                    disabled={creatingCoupon}
+                                    onClick={() => handleSubmitCoupon()}
+                                    >
+                                    {creatingCoupon ? <Spinner/> : 'Guardar'}
+                                </button>
+                                
+                            </div>
+
                         </div>
+
                     </>
                 }
 

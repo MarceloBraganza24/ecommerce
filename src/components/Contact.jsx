@@ -27,17 +27,13 @@ const Contact = () => {
     function esColorClaro(hex) {
         if (!hex) return true;
 
-        // Elimina el símbolo #
         hex = hex.replace("#", "");
-
-        // Convierte a RGB
         const r = parseInt(hex.substr(0, 2), 16);
         const g = parseInt(hex.substr(2, 2), 16);
         const b = parseInt(hex.substr(4, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-        // Fórmula de luminancia percibida
-        const luminancia = 0.299 * r + 0.587 * g + 0.114 * b;
-        return luminancia > 186; // Umbral típico: > 186 es claro
+        return brightness > 128; // <-- usar el mismo umbral que en getContrastingTextColor
     }
 
     useEffect(() => {

@@ -221,12 +221,13 @@
             font-size: 20px;
             padding-right: 4vh;
             cursor: pointer;
-            color: var(--accent-color);
+            //color: var(--accent-color);
+            color: var(--primary-text-color);
         }
     }
     &__option {
         text-decoration: none;
-        color: var(--accent-color);
+        color: var(--primary-text-color);
         padding-top: 0.5vh;
     }
 }
@@ -248,16 +249,16 @@
             font-size: 20px;
             padding-right: 4vh;
             cursor: pointer;
-            color: var(--accent-color);
+            color: var(--primary-text-color);
         }
     }
     &__category {
         text-decoration: none;
-        color: var(--accent-color);
+        color: var(--primary-text-color);
     }
     &__addCategoryLink {
         text-decoration: none;
-        color: var(--accent-color);
+        color: var(--primary-text-color);
         &:hover {
             color: var(--secondary-color);
         }

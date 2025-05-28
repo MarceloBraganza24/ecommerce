@@ -72,6 +72,7 @@ h2 {
 }
 
 .slider-logos {
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   height: auto;
   display: flex;
@@ -120,8 +121,8 @@ h2 {
 }
 
 .cPanelContainer {
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
-  height: 90vh;
   display: flex;
   flex-direction: column;
 }
@@ -137,8 +138,11 @@ h2 {
 }
 .cPanelContainer__siteConfiguration {
   background-color: white;
-  padding: 1vh;
-  border-bottom: 0.3vh solid grey;
+  width: 95%;
+  display: flex;
+  align-self: center;
+  padding: 4vh 2vh;
+  border-radius: 1vh;
 }
 .cPanelContainer__siteConfiguration__title {
   padding: 1vh 0vh 2vh 0vh;
@@ -150,6 +154,7 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 1vh;
+  padding-left: 2vh;
 }
 .cPanelContainer__siteConfiguration__form__images {
   display: flex;
@@ -254,10 +259,11 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__gridPhone__inputBtn__btnDeletePhone:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__gridColor {
   display: flex;
@@ -319,15 +325,16 @@ h2 {
 .cPanelContainer__siteConfiguration__form__gridColor__inputBtn__btnDeletePhone {
   margin-left: 1vh;
   height: 30px;
-  background-color: #1b509c;
   padding: 0.5vh 1vh;
   border-radius: 0.5vh;
-  color: white;
   font-size: 14px;
   cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__gridColor__inputBtn__btnDeletePhone:hover {
-  background-color: #124285;
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__gridImages {
   display: grid;
@@ -359,7 +366,7 @@ h2 {
   justify-content: center;
   align-items: center;
   gap: 1vh;
-  padding: 1vh 2vh;
+  padding: 1vh 3vh;
   border-radius: 0.5vh;
 }
 .cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img {
@@ -375,10 +382,11 @@ h2 {
   font-size: 12px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__aboutText {
   display: flex;
@@ -409,20 +417,26 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__siteConfiguration__form__btnContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__existingCategories {
-  width: 100%;
-  padding: 4vh 0vh;
+  background-color: white;
+  width: 95%;
+  padding: 4vh 2vh;
+  border-radius: 1vh;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 1vh;
+  margin-top: 4vh;
 }
 .cPanelContainer__existingCategories__title {
   font-size: 30px;
+  text-align: center;
   padding-left: 2vh;
 }
 .cPanelContainer__existingCategories__loadingProps {
@@ -435,10 +449,11 @@ h2 {
   font-size: 16px;
 }
 .cPanelContainer__existingCategories__itemCategory {
-  width: 60%;
+  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1vh;
+  align-self: center;
   padding-left: 1vh;
 }
 .cPanelContainer__existingCategories__itemCategory__category {
@@ -462,19 +477,18 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__existingCategories__itemCategory__category__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__newCategoryForm {
-  background-color: white;
   width: 100%;
-  padding-bottom: 4vh;
+  padding-top: 2vh;
   display: flex;
   flex-direction: column;
   gap: 1vh;
-  border-bottom: 0.3vh solid grey;
 }
 .cPanelContainer__newCategoryForm__title {
   font-size: 20px;
@@ -512,37 +526,44 @@ h2 {
   font-size: 16px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__newCategoryForm__form__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__existingSellerAddresses {
   background-color: white;
-  width: 100%;
-  padding: 4vh 0vh;
+  width: 95%;
+  padding: 4vh 2vh;
   display: flex;
   flex-direction: column;
+  align-self: center;
+  border-radius: 1vh;
   gap: 1vh;
+  margin-top: 4vh;
 }
 .cPanelContainer__existingSellerAddresses__title {
-  font-size: 30px;
+  text-align: center;
   padding-left: 2vh;
+  font-size: 30px;
 }
 .cPanelContainer__existingSellerAddresses__withOutSellerAddressesLabel {
   padding-left: 2vh;
   font-size: 18px;
 }
 .cPanelContainer__existingSellerAddresses__itemSellerAddress {
-  width: 65%;
+  padding-left: 2vh;
+  width: 100%;
   display: flex;
+  align-self: center;
   gap: 1vh;
   flex-direction: column;
 }
 .cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress {
   background-color: #b0b7c2;
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 5fr 1fr;
   padding: 1vh;
   border-radius: 1vh;
 }
@@ -560,18 +581,17 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__existingSellerAddresses__itemSellerAddress__sellerAddress__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__createNewSellerAddress {
-  background-color: white;
   display: flex;
   flex-direction: column;
   gap: 1vh;
-  padding: 2vh;
-  border-bottom: 0.3vh solid grey;
+  padding: 2vh 0vh 0vh 2vh;
 }
 .cPanelContainer__createNewSellerAddress__title {
   font-size: 20px;
@@ -607,20 +627,27 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__createNewSellerAddress__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__existingCoupons {
-  width: 100%;
-  padding: 4vh 0vh;
+  background-color: white;
+  width: 95%;
+  padding: 4vh 2vh;
+  border-radius: 1vh;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 1vh;
+  margin-bottom: 4vh;
+  margin-top: 4vh;
 }
 .cPanelContainer__existingCoupons__title {
   font-size: 30px;
+  text-align: center;
   padding-left: 2vh;
 }
 .cPanelContainer__existingCoupons__withOutCouponsLabel {
@@ -630,6 +657,7 @@ h2 {
 .cPanelContainer__existingCoupons__itemCoupons {
   width: 100%;
   display: flex;
+  align-self: center;
   flex-direction: column;
 }
 .cPanelContainer__existingCoupons__itemCoupons__couponsHeader {
@@ -652,20 +680,6 @@ h2 {
 }
 .cPanelContainer__existingCoupons__itemCoupons__couponsHeader__coupon::-webkit-scrollbar {
   display: none;
-}
-.cPanelContainer__existingCoupons__itemCoupons__couponsHeader__btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1vh;
-  border-radius: 0.5vh;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: var(--primary-color);
-  color: var(--accent-color);
-}
-.cPanelContainer__existingCoupons__itemCoupons__couponsHeader__btn:hover {
-  color: var(--secondary-color);
 }
 .cPanelContainer__existingCoupons__itemCoupons__coupons {
   background-color: #b0b7c2;
@@ -697,16 +711,17 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__existingCoupons__itemCoupons__coupons__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelContainer__createNewCoupons {
   display: flex;
   flex-direction: column;
   gap: 1vh;
-  padding: 2vh;
+  padding: 2vh 0vh 0vh 2vh;
 }
 .cPanelContainer__createNewCoupons__title {
   font-size: 20px;
@@ -742,10 +757,11 @@ h2 {
   font-size: 14px;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelContainer__createNewCoupons__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .homeContainer {
@@ -832,6 +848,7 @@ h2 {
 }
 
 .cPanelProductsContainer {
+  background-color: whitesmoke;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -876,16 +893,17 @@ h2 {
   padding-bottom: 2vh;
 }
 .cPanelProductsContainer__btnCreateProduct__btn {
-  background-color: var(--primary-color);
-  color: var(--accent-color);
   padding: 0.5vh 10vh;
   border-radius: 0.5vh;
   font-size: 20px;
   text-align: center;
   cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
 }
 .cPanelProductsContainer__btnCreateProduct__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelProductsContainer__quantityProducts {
   width: 100%;
@@ -957,15 +975,16 @@ h2 {
   align-items: center;
 }
 .cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn {
-  background-color: var(--primary-color);
-  color: var(--accent-color);
   padding: 0.5vh 1vh;
   border-radius: 0.5vh;
   text-align: center;
   cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
 }
 .cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelProductsContainer__btnsPagesContainer {
   width: 100%;
@@ -976,19 +995,22 @@ h2 {
   padding: 2vh 0vh;
 }
 .cPanelProductsContainer__btnsPagesContainer__btn {
-  background-color: var(--primary-color);
-  color: var(--accent-color);
   padding: 1vh 3vh;
   border-radius: 0.5vh;
   text-align: center;
   cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
 }
 .cPanelProductsContainer__btnsPagesContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .cPanelSalesContainer {
+  background-color: whitesmoke;
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -1039,10 +1061,12 @@ h2 {
   cursor: pointer;
   text-decoration: none;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
+  border: 0.3vh solid black;
 }
 .cPanelSalesContainer__btnCreateSale__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelSalesContainer__dateFilter {
   display: flex;
@@ -1063,10 +1087,11 @@ h2 {
   cursor: pointer;
   text-decoration: none;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelSalesContainer__dateFilter__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelSalesContainer__dateFilter__date {
   font-size: 20px;
@@ -1206,10 +1231,11 @@ h2 {
   text-align: center;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .cPanelSalesContainer__salesTable__isLoadingLabel {
   display: flex;
@@ -1236,13 +1262,17 @@ h2 {
   text-align: center;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
+  border: 0.3vh solid black;
 }
 .cPanelSalesContainer__btnsPagesContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .myPurchasesContainer {
+  background-color: whitesmoke;
+  height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -1423,16 +1453,16 @@ h2 {
   text-align: center;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .myPurchasesContainer__purchasesTable__itemContainer__btnsContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .myPurchasesContainer__purchasesTable__isLoadingLabel {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   padding-top: 2vh;
 }
 .myPurchasesContainer__purchasesTable__isLoadingLabel__label {
@@ -1441,7 +1471,7 @@ h2 {
   padding-top: 1vh;
 }
 .myPurchasesContainer__purchasesTable__isLoadingLabel__label:hover {
-  color: #0e3061;
+  color: var(--secondary-color);
 }
 .myPurchasesContainer__btnsPagesContainer {
   width: 100%;
@@ -1457,10 +1487,12 @@ h2 {
   text-align: center;
   cursor: pointer;
   background-color: var(--primary-color);
-  color: var(--accent-color);
+  color: var(--primary-text-color);
+  border: 0.3vh solid black;
 }
 .myPurchasesContainer__btnsPagesContainer__btn:hover {
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .updateProductModalContainer {
@@ -2125,7 +2157,7 @@ h2 {
   font-family: "Montserrat", sans-serif;
 }
 .catalogContainer__inputSearchProduct {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -2160,7 +2192,7 @@ h2 {
   align-items: center;
 }
 .catalogContainer__grid__catalog {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 90%;
   border-radius: 1vh;
 }
@@ -2201,16 +2233,14 @@ h2 {
   font-family: "Montserrat", sans-serif;
 }
 .catalogContainer__grid__catalog__categorieContainer__productsContainer {
-  background-color: whitesmoke;
   width: 90%;
+  border-radius: 1vh;
 }
 .catalogContainer__grid__catalog__categorieContainer__productsContainer__swiper {
-  background-color: whitesmoke;
   width: 85%;
   padding: 5vh;
 }
 .catalogContainer__grid__catalog__categorieContainer__btnMoreProducts {
-  background-color: whitesmoke;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -2314,23 +2344,22 @@ h2 {
   gap: 1vh;
 }
 .itemProduct__btnContainer__btn {
-  background-color: var(--primary-color);
   width: 60%;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--primary-text-color);
   font-size: 16px;
   padding: 0.5vh 0vh;
   border-radius: 0.5vh;
   text-decoration: none;
   text-align: center;
   border: 0.3vh solid black;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
 }
 .itemProduct__btnContainer__btn:hover {
-  color: var(--secondary-color);
-  border: 0.3vh solid black;
-  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .itemDetailContainer {
@@ -2651,48 +2680,6 @@ h2 {
   flex-direction: column;
   padding: 2vh 4vh;
   border-radius: 1vh;
-  /* &__itemDiscount {
-      width: 100%;
-      display: flex;
-      padding-top: 1vh;
-      &__prop {
-          font-size: 16px;
-          color: black;
-          text-decoration: underline;
-          cursor: pointer;
-          &:hover {
-              color: var(--secondary-color);
-          }
-      }
-  }
-  &__inputCouponContainer {
-      width: 100%;
-      display: flex;
-      gap: 2vh;
-      padding: 1vh;
-      &__input {
-          width: 70%;
-          height: 30px;
-          align-self: center;
-          text-align: center;
-          &::placeholder {
-              text-align: center;
-          }
-      }
-      &__btn {
-          width: 30%;
-          padding: 1vh;
-          border-radius: 0.5vh;
-          font-size: 14px;
-          @include disFC();
-          cursor: pointer;
-          background-color: var(--primary-color);
-          color: var(--accent-color);
-          &:hover {
-              color: var(--secondary-color);
-          }
-      }
-  } */
 }
 .cartContainer__accountSummaryContainer__accountSummary__title {
   width: 80%;
@@ -2757,7 +2744,7 @@ h2 {
 }
 
 .noProductsContainer {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   height: 90vh;
   display: flex;
@@ -3124,7 +3111,7 @@ h2 {
 }
 
 .deliveryAddressContainer {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   padding: 1vh 0vh;
   display: flex;
@@ -3992,11 +3979,11 @@ h2 {
   font-size: 20px;
   padding-right: 4vh;
   cursor: pointer;
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .hMenuOptionsContainer__option {
   text-decoration: none;
-  color: var(--accent-color);
+  color: var(--primary-text-color);
   padding-top: 0.5vh;
 }
 
@@ -4019,15 +4006,15 @@ h2 {
   font-size: 20px;
   padding-right: 4vh;
   cursor: pointer;
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .categoriesContainer__category {
   text-decoration: none;
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .categoriesContainer__addCategoryLink {
   text-decoration: none;
-  color: var(--accent-color);
+  color: var(--primary-text-color);
 }
 .categoriesContainer__addCategoryLink:hover {
   color: var(--secondary-color);

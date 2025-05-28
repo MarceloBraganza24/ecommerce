@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const MyPurchases = () => {
     const navigate = useNavigate();
+    const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState('');
     const [categories, setCategories] = useState([]);
@@ -32,6 +33,25 @@ const MyPurchases = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    function esColorClaro(hex) {
+        if (!hex) return true;
+
+        hex = hex.replace("#", "");
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+        return brightness > 128; // <-- usar el mismo umbral que en getContrastingTextColor
+    }
+
+    useEffect(() => {
+        if (storeSettings?.primaryColor) {
+            const claro = esColorClaro(storeSettings.primaryColor);
+            setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
+        }
+    }, [storeSettings]);
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
@@ -274,6 +294,7 @@ const MyPurchases = () => {
                 hexToRgba={hexToRgba}
                 logo_store={storeSettings?.siteImages?.logoStore || ""}
                 primaryColor={storeSettings?.primaryColor || ""}
+                cartIcon={cartIcon}
                 />
             </div>
 
