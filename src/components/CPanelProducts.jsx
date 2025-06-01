@@ -239,6 +239,7 @@ const CPanelProducts = () => {
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
                 setIsLoadingProducts(false)
+                navigate('/')
             } else {
                 const user = data.data
                 if(user) {

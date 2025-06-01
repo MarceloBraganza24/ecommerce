@@ -1213,8 +1213,9 @@ h2 {
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine {
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 2fr;
   cursor: pointer;
+  padding-bottom: 0.5vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity {
   justify-self: end;
@@ -1329,7 +1330,7 @@ h2 {
   width: 95%;
   display: grid;
   align-self: center;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
   padding: 1vh 0vh;
 }
 .myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item {
@@ -1363,7 +1364,7 @@ h2 {
   background-color: #d6d5d5;
   width: 95%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
   margin-top: 1vh;
@@ -1435,8 +1436,9 @@ h2 {
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine {
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 2fr;
   cursor: pointer;
+  padding-bottom: 0.5vh;
 }
 .myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__quantity {
   justify-self: end;
@@ -2716,6 +2718,59 @@ h2 {
   font-size: 22px;
   justify-self: end;
 }
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount {
+  width: 100%;
+  display: flex;
+  align-self: center;
+}
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop {
+  padding-top: 1vh;
+  text-decoration: underline;
+}
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop:hover {
+  color: var(--secondary-text-color);
+  cursor: pointer;
+}
+.cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount {
+  padding-top: 1vh;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  gap: 2vh;
+  padding: 1vh;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input {
+  width: 50%;
+  height: 30px;
+  align-self: center;
+  text-align: center;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input::-moz-placeholder {
+  text-align: center;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input::placeholder {
+  text-align: center;
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn {
+  width: 20%;
+  padding: 1vh;
+  border-radius: 0.5vh;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+}
+.cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
 .cartContainer__accountSummaryContainer__accountSummary__btn {
   width: 100%;
   display: flex;
@@ -2948,7 +3003,7 @@ h2 {
   color: black;
 }
 .shippingContainer__deliveryMethodContainer__deliveryMethod__editAddressContainer__btn:hover {
-  color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .shippingContainer__deliveryMethodContainer__btnContinue {
   width: 70%;
@@ -3040,11 +3095,10 @@ h2 {
 }
 .shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon {
   padding: 1vh 0vh 0vh 2vh;
-  color: black;
   text-decoration: underline;
 }
 .shippingContainer__accountSummaryContainer__accountSummary__itemCoupon__labelCoupon:hover {
-  color: var(--secondary-color);
+  color: var(--secondary-text-color);
   cursor: pointer;
 }
 .shippingContainer__accountSummaryContainer__accountSummary__inputCouponContainer {
@@ -3137,7 +3191,7 @@ h2 {
   align-items: center;
 }
 .deliveryAddressContainer__address:hover {
-  color: var(--secondary-color);
+  color: var(--secondary-text-color);
   cursor: pointer;
 }
 .deliveryAddressContainer__btnEdit {

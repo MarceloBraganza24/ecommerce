@@ -172,6 +172,9 @@
     display: flex;
     justify-content: end;
     padding: 0.5vh 0vh;
+    //position: fixed;
+    // z-index: 2;
+    // margin-top: 12vh;
     &__label {
         //background-color: white;
         margin-right: 1vh;

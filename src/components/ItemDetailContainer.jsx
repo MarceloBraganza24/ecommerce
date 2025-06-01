@@ -12,13 +12,16 @@ const ItemDetailContainer = () => {
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
-    const [products, setProducts] = useState([]);
+    //const [products, setProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
-    const productById = products.find((product) => product._id == id)
+    const [productById, setProductById] = useState({});
+    console.log(productById)
+    //let productById;
+    /* const productById = products.find((product) => product._id == id) */
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [sellerAddresses, setSellerAddresses] = useState([]);
@@ -54,6 +57,13 @@ const ItemDetailContainer = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
+
+    /* useEffect(() => {
+        if(products.length > 0) {
+            const prod = products.find((product) => product._id == id)
+            setProductById(prod)
+        }
+    }, [products]); */
 
     function esColorClaro(hex) {
         if (!hex) return true;
@@ -109,7 +119,7 @@ const ItemDetailContainer = () => {
 
     useEffect(() => {
         if (productById) {
-          setSelectedImage(`http://localhost:8081/${productById.images[0]}`);
+          setSelectedImage(`http://localhost:8081/${productById?.images[0]}`);
         }
     }, [productById]);
 
@@ -197,9 +207,9 @@ const ItemDetailContainer = () => {
     const fetchProducts = async () => {
         try {
             setIsLoadingProducts(true); 
-            const response = await fetch(`http://localhost:8081/api/products`)
-            const productsAll = await response.json();
-            setProducts(productsAll.data)
+            const response = await fetch(`http://localhost:8081/api/products/${id}`)
+            const productById = await response.json();
+            setProductById(productById.data)
         } catch (error) {
             console.error('Error al obtener datos:', error);
         } finally {

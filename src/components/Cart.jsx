@@ -593,7 +593,7 @@ const Cart = () => {
                                 showLabelDiscountApplied &&
                                 <>
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount'>Has aplicado un descuento del {inputDiscount}%</div>
+                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount'>Has aplicado un descuento del <strong>{inputDiscount}%</strong></div>
                                 </div>
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
                                     <div onClick={handleBtnChangeDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount' style={{cursor: 'pointer', textDecoration: 'underline'}}>Cambiar descuento</div>

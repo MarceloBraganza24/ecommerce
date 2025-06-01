@@ -98,20 +98,39 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                             }
 
                             const product = item.product;
-                            const title = product?.title
+                            /* const title = product?.title
                                 ? product.title.charAt(0).toUpperCase() + product.title.slice(1).toLowerCase()
                                 : '-';
 
                             const relativePath = Array.isArray(product?.images) && product.images.length > 0
                                 ? product.images[0]
-                                : null;
+                                : null; */
+                            const snapshot = item.snapshot;
+
+                            const title = product?.title
+                                ? product.title.charAt(0).toUpperCase() + product.title.slice(1).toLowerCase()
+                                : snapshot?.title || 'Producto eliminado';
+
+                            const images = Array.isArray(product?.images)
+                                ? product.images
+                                : snapshot?.image
+                                    ? [snapshot.image]
+                                    : [];
+
+                            const relativePath = images.length > 0 ? images[0] : null;
 
                             const imageUrl = relativePath
                                 ? `http://localhost:8081/${relativePath}`  // <-- reemplazá con tu dominio real
                                 : '/default-image.jpg';
 
                             return (
-                                <div key={index} onClick={handleLinkToProductDetail} className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine">
+                                <div
+                                    key={index}
+                                    onClick={product?._id ? handleLinkToProductDetail : undefined}
+                                    className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine"
+                                    style={{ cursor: product?._id ? 'pointer' : 'default' }}
+                                >
+                                {/* <div key={index} onClick={handleLinkToProductDetail} className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine"> */}
                                     <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img">
                                         <img className='cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img__prop' src={imageUrl} alt='#image' />
                                     </div>
@@ -120,6 +139,9 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                                     </div>
                                     <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity">
                                         x {item.quantity}
+                                    </div>
+                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity">
+                                        ${item.snapshot.price}
                                     </div>
                                 </div>
                             );
@@ -181,33 +203,53 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
 
                     <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products">
                         {ticket.items.map((item, index) => {
-                            const handleLinkToProductDetail = () => {
-                                window.location.href = `/item/${item.product._id}`
-                            }
-
                             const product = item.product;
+                            const snapshot = item.snapshot;
+
                             const title = product?.title
                                 ? product.title.charAt(0).toUpperCase() + product.title.slice(1).toLowerCase()
-                                : '-';
+                                : snapshot?.title || 'Producto eliminado';
 
-                            const relativePath = Array.isArray(product?.images) && product.images.length > 0
-                                ? product.images[0]
-                                : null;
+                            const images = Array.isArray(product?.images)
+                                ? product.images
+                                : snapshot?.image
+                                    ? [snapshot.image]
+                                    : [];
+
+                            const relativePath = images.length > 0 ? images[0] : null;
 
                             const imageUrl = relativePath
-                                ? `http://localhost:8081/${relativePath}`  // <-- reemplazá con tu dominio real
+                                ? `http://localhost:8081/${relativePath}` // reemplazá con tu dominio real
                                 : '/default-image.jpg';
 
+                            const handleLinkToProductDetail = () => {
+                                if (product?._id) {
+                                    window.location.href = `/item/${product._id}`;
+                                }
+                            };
+
                             return (
-                                <div key={index} onClick={handleLinkToProductDetail} className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine">
+                                <div
+                                    key={index}
+                                    onClick={product?._id ? handleLinkToProductDetail : undefined}
+                                    className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine"
+                                    style={{ cursor: product?._id ? 'pointer' : 'default' }}
+                                >
                                     <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__img">
-                                        <img className='myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__img__prop' src={imageUrl} alt='#image' />
+                                        <img
+                                            className='myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__img__prop'
+                                            src={imageUrl}
+                                            alt='Producto'
+                                        />
                                     </div>
                                     <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__title">
                                         {title}
                                     </div>
                                     <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__quantity">
                                         x {item.quantity}
+                                    </div>
+                                    <div className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__quantity">
+                                        ${snapshot?.price || product?.price || '-'}
                                     </div>
                                 </div>
                             );

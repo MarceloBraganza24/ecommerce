@@ -55,14 +55,17 @@ const MyPurchases = () => {
 
     function filtrarPorTitle(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
+
         const objetosFiltrados = tickets.filter(ticket => {
-            return ticket.items.some(item => 
-                item.product.title.toLowerCase().includes(valorMinusculas)
-            );
+            return ticket.items.some(item => {
+                const tituloProducto = item.product?.title || item.snapshot?.title || '';
+                return tituloProducto.toLowerCase().includes(valorMinusculas);
+            });
         });
 
         return objetosFiltrados;
     }
+
     const objetosFiltrados = filtrarPorTitle(inputFilteredPurchases);
 
     const ticketsOrdenados = [...objetosFiltrados].sort((a, b) => new Date(b.purchase_datetime) - new Date(a.purchase_datetime));
@@ -321,10 +324,10 @@ const MyPurchases = () => {
 
                         <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable">
 
-                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Fecha y hora</div>
-                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Código</div>
-                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Productos</div>
-                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item">Precio</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Fecha y hora</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Código</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Productos</div>
+                            <div className="myPurchasesContainer__headerTableMyPurchasesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Precio</div>
 
                         </div>
 
