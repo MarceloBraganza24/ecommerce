@@ -12,16 +12,13 @@ const ItemDetailContainer = () => {
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
-    //const [products, setProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [userCart, setUserCart] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
     const [productById, setProductById] = useState({});
-    console.log(productById)
-    //let productById;
-    /* const productById = products.find((product) => product._id == id) */
+    //console.log(productById)
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [sellerAddresses, setSellerAddresses] = useState([]);
@@ -31,7 +28,6 @@ const ItemDetailContainer = () => {
         street_number: "",
         locality: "",
     });
-    //console.log(userCart)
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
@@ -57,13 +53,6 @@ const ItemDetailContainer = () => {
             setShowLogOutContainer(true)
         }
     }, [user.isLoggedIn]);
-
-    /* useEffect(() => {
-        if(products.length > 0) {
-            const prod = products.find((product) => product._id == id)
-            setProductById(prod)
-        }
-    }, [products]); */
 
     function esColorClaro(hex) {
         if (!hex) return true;
@@ -119,16 +108,26 @@ const ItemDetailContainer = () => {
 
     useEffect(() => {
         if (productById) {
-          setSelectedImage(`http://localhost:8081/${productById?.images[0]}`);
+            const images = Array.isArray(productById.images)
+                ? productById.images
+                : productById.images
+                    ? [productById.images]
+                    : [];
+
+            if (images.length > 0) {
+                setSelectedImage(`http://localhost:8081/${images[0]}`);
+            } else {
+                setSelectedImage('/default-image.jpg');
+            }
         }
     }, [productById]);
+
 
     const fetchStoreSettings = async () => {
         try {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -426,7 +425,7 @@ const ItemDetailContainer = () => {
                                         <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer'>
                                             <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__state'>{capitalizeFirstLetter(`${productById?.state}`)}</div>
                                             {
-                                                productById?.number_sales &&
+                                                productById?.number_sales > 0 &&
                                                 <div className='itemDetailContainer__itemDetail__infoContainer__info__stateContainer__salesQuantity'>+{productById?.number_sales} Vendidos</div>
                                             }
                                         </div>

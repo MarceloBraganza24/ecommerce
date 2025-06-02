@@ -28,6 +28,8 @@ const CPanelProducts = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [categories, setCategories] = useState([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+    //console.log(categories)
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
@@ -176,6 +178,8 @@ const CPanelProducts = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setIsLoadingCategories(false)
         }
     };
 
@@ -269,6 +273,174 @@ const CPanelProducts = () => {
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [percentage, setPercentage] = useState('');
+
+    const handleCheckboxChange = (id) => {
+        setSelectedCategories(prev =>
+        prev.includes(id)
+            ? prev.filter(catId => catId !== id)
+            : [...prev, id]
+        );
+    };
+
+    const handleSubmitUpdatedPrices = async (e) => {
+        e.preventDefault();
+
+        if (selectedCategories.length === 0) {
+            toast('Debes seleccionar al menos una categoría.', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return; // evita que se continúe con el fetch
+        }
+        if (!percentage || isNaN(percentage) || Number(percentage) === 0) {
+            toast('Debes ingresar un porcentaje válido (mayor o menor a 0).', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+
+        const categoriasSeleccionadasNames = categories
+            .filter(cat => selectedCategories.includes(cat._id))
+            .map(cat => cat.name);
+
+        const response = await fetch('http://localhost:8081/api/products/update-prices-category', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                percentage: Number(percentage),
+                categories: categoriasSeleccionadasNames
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            toast('Has aplicado los cambios correctamente!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            setPercentage('');
+            setSelectedCategories([]);
+            fetchProducts()
+            //setMensaje(`✅ ${result.modifiedCount} productos actualizados correctamente.`);
+        } else {
+            toast('Ha ocurrido un error al aplicar los cambios, intente nuevamente!', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            //setMensaje(`❌ Error: ${result.error}`);
+        }
+    };
+
+    const handleRestorePricesByCategory = async () => {
+        if (selectedCategories.length === 0) {
+            toast('Debes seleccionar al menos una categoría para restaurar.', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+
+        const categoriasSeleccionadasNames = categories
+            .filter(cat => selectedCategories.includes(cat._id))
+            .map(cat => cat.name);
+
+        try {
+            const response = await fetch('http://localhost:8081/api/products/restore-prices-category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ categories: categoriasSeleccionadasNames })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                toast(`Restauración exitosa! Se actualizaron ${result.modifiedCount || 'los'} productos.`, {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                setPercentage('');
+                setSelectedCategories([]);
+                fetchProducts()
+            } else {
+                toast('Error al restaurar los precios.', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            toast('Error en la conexión al intentar restaurar precios.', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+
+    const capitalizeFirstLetter = (text) => {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    };
+
     return (
 
         <>
@@ -301,6 +473,60 @@ const CPanelProducts = () => {
                     <button onClick={()=>setShowCreateProductModal(true)} className='cPanelProductsContainer__btnCreateProduct__btn'>Crear producto</button>
                 </div>
 
+                <form onSubmit={handleSubmitUpdatedPrices} className='cPanelProductsContainer__formUpdatePrices'>
+                    <div className='cPanelProductsContainer__formUpdatePrices__title'>Actualizaciones de precios</div>
+                    <div className='cPanelProductsContainer__formUpdatePrices__subTitle'>Seleccioná las categorías:</div>
+                        <div className='cPanelProductsContainer__formUpdatePrices__categories'>
+                            {
+                                
+                                isLoadingCategories ? 
+                                    <>
+                                        <div className="cPanelProductsContainer__formUpdatePrices__categories__spinner">
+                                            <Spinner/>
+                                        </div>
+                                    </>
+                                :
+                                categories.map(categoria => (
+                                    <label className='cPanelProductsContainer__formUpdatePrices__categories__labelInput' key={categoria._id}>
+                                        <input
+                                        className='cPanelProductsContainer__formUpdatePrices__categories__labelInput__input'
+                                        type="checkbox"
+                                        value={categoria._id}
+                                        checked={selectedCategories.includes(categoria._id)}
+                                        onChange={() => handleCheckboxChange(categoria._id)}
+                                        />
+                                        <div className='cPanelProductsContainer__formUpdatePrices__categories__labelInput__label'>
+                                            {capitalizeFirstLetter(categoria.name)}
+                                        </div>
+                                    </label>
+                                ))
+                            }
+                        </div>
+
+                    <div className='cPanelProductsContainer__formUpdatePrices__inputPercentage'>
+                        <label>Porcentaje a aplicar (%):</label>
+                        <input
+                        className='cPanelProductsContainer__formUpdatePrices__inputPercentage__input'
+                        type="number"
+                        value={percentage}
+                        onChange={(e) => setPercentage(e.target.value)}
+                        required
+                        placeholder='%'
+                        />
+                    </div>
+
+                    <div className='cPanelProductsContainer__formUpdatePrices__btnSubmitContainer'>
+                        <button className='cPanelProductsContainer__formUpdatePrices__btnSubmitContainer__btnSubmit' type="submit">Actualizar precios</button>
+                        <button
+                            className='cPanelProductsContainer__formUpdatePrices__btnSubmitContainer__btnSubmit'
+                            type="button"
+                            onClick={handleRestorePricesByCategory}
+                            >
+                            Restaurar precios originales
+                        </button>
+                    </div>
+                </form>
+
                 <div className='cPanelProductsContainer__quantityProducts'>
                     <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {totalProducts}</div>        
                 </div>
@@ -311,12 +537,12 @@ const CPanelProducts = () => {
 
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable">
 
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Imagen</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Título</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Descripción</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Precio</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Stock</div>
-                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item">Categoría</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Imagen</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Título</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Descripción</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Precio</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Stock</div>
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Categoría</div>
 
                         </div>
 

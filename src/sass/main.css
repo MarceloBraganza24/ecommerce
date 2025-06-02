@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Chewy&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 * {
@@ -770,6 +771,29 @@ h2 {
   height: 100vh;
 }
 
+.rc-slider-track {
+  background-color: var(--primary-color);
+  height: 6px;
+}
+
+.rc-slider-rail {
+  background-color: var(--primary-color);
+  height: 6px;
+}
+
+.rc-slider-handle {
+  border: 2px solid var(--secondary-color);
+  background-color: var(--primary-color);
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  box-shadow: none;
+  /* &:focus {
+    border-color: darken(#3498db, 10%);
+    box-shadow: 0 0 5px lighten(#3498db, 20%);
+  } */
+}
+
 .categoryContainer {
   width: 100%;
 }
@@ -798,6 +822,31 @@ h2 {
   padding-bottom: 0.5vh;
   text-decoration: none;
   color: black;
+}
+.categoryContainer__grid__categoriesListContainer__pricesRangeContainer {
+  background-color: white;
+  margin: 5vh 0vh 0vh 10vh;
+  padding: 2vh 2vh 2vh 2vh;
+  border-radius: 0.5vh;
+}
+.categoryContainer__grid__categoriesListContainer__sortSelectContainer {
+  background-color: white;
+  margin: 2vh 0vh 0vh 10vh;
+  padding: 2vh 2vh 2vh 2vh;
+  border-radius: 0.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.categoryContainer__grid__categoriesListContainer__sortSelectContainer__select {
+  width: 75%;
+  height: 30px;
+  border: 0.3vh solid black;
+  border-radius: 0.3vh;
+  text-align: center;
+}
+.categoryContainer__grid__categoriesListContainer__sortSelectContainer__select__option {
+  font-size: 18px;
 }
 .categoryContainer__grid__catalog {
   background-color: whitesmoke;
@@ -844,11 +893,11 @@ h2 {
   color: black;
 }
 .categoryContainer__grid__catalog__categorieContainer__productsContainer__nonProductsYet__link:hover {
-  color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 
 .cPanelProductsContainer {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -910,23 +959,89 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 2vh;
+  padding: 2vh 0vh;
 }
 .cPanelProductsContainer__quantityProducts__prop {
   font-size: 18px;
 }
+.cPanelProductsContainer__formUpdatePrices {
+  background-color: whitesmoke;
+  width: 95%;
+  padding: 2vh;
+  display: flex;
+  align-self: center;
+  border-radius: 0.5vh;
+  flex-direction: column;
+  border-bottom: 0.2vh solid black;
+  border-top: 0.2vh solid black;
+}
+.cPanelProductsContainer__formUpdatePrices__title {
+  font-size: 25px;
+  padding-bottom: 2vh;
+}
+.cPanelProductsContainer__formUpdatePrices__subTitle {
+  font-size: 20px;
+}
+.cPanelProductsContainer__formUpdatePrices__categories {
+  display: flex;
+  padding: 1vh 0vh;
+  gap: 2vh;
+}
+.cPanelProductsContainer__formUpdatePrices__categories__labelInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5vh;
+}
+.cPanelProductsContainer__formUpdatePrices__categories__labelInput__input {
+  width: 20px;
+  height: 20px;
+}
+.cPanelProductsContainer__formUpdatePrices__categories__labelInput__label {
+  font-size: 16px;
+}
+.cPanelProductsContainer__formUpdatePrices__inputPercentage {
+  padding: 1vh 0vh;
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+.cPanelProductsContainer__formUpdatePrices__inputPercentage__input {
+  border-radius: 0.5vh;
+  text-align: center;
+  padding: 0.5vh 0vh;
+}
+.cPanelProductsContainer__formUpdatePrices__btnSubmitContainer {
+  display: flex;
+  gap: 2vh;
+}
+.cPanelProductsContainer__formUpdatePrices__btnSubmitContainer__btnSubmit {
+  width: 15%;
+  padding: 0.5vh 0vh;
+  border-radius: 0.5vh;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  cursor: pointer;
+}
+.cPanelProductsContainer__formUpdatePrices__btnSubmitContainer__btnSubmit:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
 .cPanelProductsContainer__headerTableContainer {
-  width: 100%;
+  background-color: whitesmoke;
+  width: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
+  align-self: center;
+  border-top-left-radius: 0.5vh;
+  border-top-right-radius: 0.5vh;
 }
 .cPanelProductsContainer__headerTableContainer__headerTable {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
-  padding: 1vh 0vh;
+  padding: 2vh 0vh;
 }
 .cPanelProductsContainer__headerTableContainer__headerTable__item {
   font-size: 18px;
@@ -934,10 +1049,14 @@ h2 {
   text-align: center;
 }
 .cPanelProductsContainer__productsTable {
-  width: 100%;
+  background-color: whitesmoke;
+  width: 95%;
   display: flex;
   flex-direction: column;
   align-self: center;
+  margin-bottom: 4vh;
+  border-bottom-left-radius: 0.5vh;
+  border-bottom-right-radius: 0.5vh;
 }
 .cPanelProductsContainer__productsTable__itemContainer {
   width: 100%;
@@ -1008,7 +1127,7 @@ h2 {
 }
 
 .cPanelSalesContainer {
-  background-color: whitesmoke;
+  background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
   height: 100vh;
   display: flex;
@@ -1139,7 +1258,7 @@ h2 {
   padding: 2vh 0vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer {
-  background-color: #d6d5d5;
+  background-color: white;
   width: 95%;
   display: grid;
   align-self: center;
@@ -2367,7 +2486,7 @@ h2 {
 .itemDetailContainer {
   background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
-  height: 90vh;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4015,6 +4134,7 @@ h2 {
 }
 
 .hMenuOptionsContainer {
+  background-color: var(--primary-color);
   width: 100%;
   height: auto;
   display: flex;
@@ -4023,6 +4143,14 @@ h2 {
   padding: 2vh;
   position: fixed;
   z-index: 2;
+  margin-top: 1vh;
+  border-top: 0.3vh solid black;
+  border-bottom: 0.3vh solid black;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+.hMenuOptionsContainer.active {
+  transform: translateX(0);
 }
 .hMenuOptionsContainer__btnCloseMenu {
   width: 100%;
@@ -4041,7 +4169,60 @@ h2 {
   padding-top: 0.5vh;
 }
 
+/* .categoriesContainer {
+    background-color: var(--primary-color);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 2vh;
+    position: fixed;
+    z-index: 2;
+    gap: 0.5vh;
+    margin-top: 1vh;
+    border-top: 0.3vh solid black;
+    border-bottom: 0.3vh solid black;
+    &__btnCloseMenu {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+        &__btn {
+            font-size: 20px;
+            padding-right: 4vh;
+            cursor: pointer;
+            color: var(--primary-text-color);
+        }
+    }
+    &__category {
+        text-decoration: none;
+        color: var(--primary-text-color);
+    }
+    &__addCategoryLink {
+        text-decoration: none;
+        color: var(--primary-text-color);
+        &:hover {
+            color: var(--secondary-color);
+        }
+    }
+} */
 .categoriesContainer {
+  /* background-color: var(--primary-color);
+  width: 70%; // o 100% si querés que ocupe todo
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%); // oculto por la izquierda
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2vh;
+  gap: 0.5vh;
+  border-right: 0.3vh solid black; */
+  background-color: var(--primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -4050,6 +4231,13 @@ h2 {
   position: fixed;
   z-index: 2;
   gap: 0.5vh;
+  border-top: 0.3vh solid black;
+  border-bottom: 0.3vh solid black;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+.categoriesContainer.open {
+  transform: translateX(0);
 }
 .categoriesContainer__btnCloseMenu {
   width: 100%;

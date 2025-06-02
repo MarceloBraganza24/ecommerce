@@ -163,64 +163,72 @@ const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,
                 
             </div>
             
-            {
+            {/* {
                 showHMenuOptions &&
-                <div className='hMenuOptionsContainer' style={{backgroundColor: hexToRgba(primaryColor, 0.4)}}>
+                <div className='hMenuOptionsContainer'>
                     <div className='hMenuOptionsContainer__btnCloseMenu'>
                         <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
                     </div>
                     {
                         role == 'admin' ?
                         <>
-                            <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Productos</Link>
-                            <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Panel de control</Link>
-                            <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Ventas</Link>
+                            <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PRODUCTOS</Link>
+                            <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PANEL DE CONTROL</Link>
+                            <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- VENTAS</Link>
                         </>
                         :
-                        <Link to={`/myPurchases`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- Mis compras</Link>
+                        <Link to={`/myPurchases`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- MIS COMPRAS</Link>
                     }
                 </div>
-            }
+            } */}
+            <div className={`hMenuOptionsContainer ${showHMenuOptions ? 'active' : ''}`}>
+                <div className='hMenuOptionsContainer__btnCloseMenu'>
+                    <div onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
+                </div>
 
-            {
-                showCategories && (
-                    <div className='categoriesContainer' style={{backgroundColor: hexToRgba(primaryColor || '#e8cd02', 0.4)}}>
-                        <div className='categoriesContainer__btnCloseMenu'>
-                            <div
-                            onClick={() => setShowCategories(false)}
-                            className='categoriesContainer__btnCloseMenu__btn'
-                            >
-                            X
-                            </div>
-                        </div>
+                {role === 'admin' ? (
+                    <>
+                        <Link to={`/cpanel/products`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PRODUCTOS</Link>
+                        <Link to={`/cpanel`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PANEL DE CONTROL</Link>
+                        <Link to={`/tickets`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- VENTAS</Link>
+                    </>
+                ) : (
+                    <Link to={`/myPurchases`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- MIS COMPRAS</Link>
+                )}
+            </div>
 
-                        {categories && categories.length > 0 ? (
-                            categories.map((category) => (
-                            <Link
-                                key={category._id}
-                                to={`/category/${category.name.toLowerCase()}`}
-                                onClick={() => setShowCategories(false)}
-                                className="categoriesContainer__category"
-                            >
-                                - {category.name.toUpperCase()}
-                            </Link>
-                            ))
-                        ) : (
-                            <>
-                                <p className="categoriesContainer__category">Aún no hay categorías</p>
-                                <Link
-                                    to={`/cpanel`}
-                                    className="categoriesContainer__addCategoryLink"
-                                    >
-                                    Agregar categoría
-                                </Link>
-                            </>
-                        
-                        )}
 
+            <div className={`categoriesContainer ${showCategories ? 'open' : ''}`}>
+                <div className='categoriesContainer__btnCloseMenu'>
+                    <div
+                        onClick={() => setShowCategories(false)}
+                        className='categoriesContainer__btnCloseMenu__btn'
+                    >
+                        X
                     </div>
-                )
-            }
+                </div>
+
+                {categories && categories.length > 0 ? (
+                    categories.map((category) => (
+                        <Link
+                            key={category._id}
+                            to={`/category/${category.name.toLowerCase()}`}
+                            onClick={() => setShowCategories(false)}
+                            className="categoriesContainer__category"
+                        >
+                            - {category.name.toUpperCase()}
+                        </Link>
+                    ))
+                ) : (
+                    <>
+                        <p className="categoriesContainer__category">Aún no hay categorías</p>
+                        <Link to={`/cpanel`} className="categoriesContainer__addCategoryLink">
+                            Agregar categoría
+                        </Link>
+                    </>
+                )}
+            </div>
+
 
         </>
 

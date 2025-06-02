@@ -208,6 +208,7 @@
 }
 
 .hMenuOptionsContainer {
+    background-color: var(--primary-color);
     width: 100%;
     height: auto;
     display: flex;
@@ -216,6 +217,14 @@
     padding: 2vh;
     position: fixed;
     z-index: 2;
+    margin-top: 1vh;
+    border-top: 0.3vh solid black;
+    border-bottom: 0.3vh solid black;
+    transform: translateX(-100%); // oculto por la izquierda
+    transition: transform 0.3s ease-in-out;
+    &.active {
+        transform: translateX(0); // visible
+    }
     &__btnCloseMenu {
         width: 100%;
         display: flex;
@@ -235,7 +244,8 @@
     }
 }
 
-.categoriesContainer {
+/* .categoriesContainer {
+    background-color: var(--primary-color);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -244,6 +254,69 @@
     position: fixed;
     z-index: 2;
     gap: 0.5vh;
+    margin-top: 1vh;
+    border-top: 0.3vh solid black;
+    border-bottom: 0.3vh solid black;
+    &__btnCloseMenu {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+        &__btn {
+            font-size: 20px;
+            padding-right: 4vh;
+            cursor: pointer;
+            color: var(--primary-text-color);
+        }
+    }
+    &__category {
+        text-decoration: none;
+        color: var(--primary-text-color);
+    }
+    &__addCategoryLink {
+        text-decoration: none;
+        color: var(--primary-text-color);
+        &:hover {
+            color: var(--secondary-color);
+        }
+    }
+} */
+ .categoriesContainer {
+    /* background-color: var(--primary-color);
+    width: 70%; // o 100% si querés que ocupe todo
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%); // oculto por la izquierda
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2vh;
+    gap: 0.5vh;
+    border-right: 0.3vh solid black; */
+
+    
+    background-color: var(--primary-color);
+    width: 100%;
+    //height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 2vh;
+    position: fixed;
+    z-index: 2;
+    gap: 0.5vh;
+    //margin-top: 1vh;
+    border-top: 0.3vh solid black;
+    border-bottom: 0.3vh solid black;
+    transform: translateX(-100%); // oculto por la izquierda
+    transition: transform 0.3s ease-in-out;
+    &.open {
+        transform: translateX(0); // visible
+    }
     &__btnCloseMenu {
         width: 100%;
         display: flex;
