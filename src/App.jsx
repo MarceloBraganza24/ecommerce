@@ -13,6 +13,7 @@ import { IsLoggedInContext } from './context/IsLoggedContext.jsx';
 import CPanel from './components/CPanel.jsx';
 import Tickets from './components/Tickets.jsx';
 import MyPurchases from './components/MyPurchases.jsx';
+import Bin from './components/Bin.jsx';
 
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -62,6 +63,7 @@ function App() {
                             <Route exact path="/cpanel" element={<CPanel/>}/>
                             <Route exact path="/tickets" element={<Tickets/>}/>
                             <Route exact path="/myPurchases" element={<MyPurchases/>}/>
+                            <Route exact path="/bin" element={<Bin/>}/>
 
                         </Routes>
 

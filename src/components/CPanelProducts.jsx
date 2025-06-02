@@ -8,6 +8,9 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const CPanelProducts = () => {
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
+
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const navigate = useNavigate();
     const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
@@ -30,6 +33,8 @@ const CPanelProducts = () => {
     const [categories, setCategories] = useState([]);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
     //console.log(categories)
+    const [selectedField, setSelectedField] = useState('title');
+
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
@@ -60,15 +65,37 @@ const CPanelProducts = () => {
         }
     }, [storeSettings]);
 
-    function filtrarPorTitle(valorIngresado) {
+    const fieldLabels = {
+        title: 'Título',
+        description: 'Descripción',
+        category: 'Categoría',
+        state: 'Estado',
+        price: 'Precio',
+        stock: "Stock",
+        all: 'Todos'
+    };
+
+    function filtrarProductos(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
-        const objetosFiltrados = products.filter(objeto => {
-            const nombreMinusculas = objeto.title.toLowerCase();
-            return nombreMinusculas.includes(valorMinusculas);
+
+        const camposParaFiltrar = ['title', 'description', 'category', 'state', 'price'];
+
+        return products.filter((producto) => {
+            if (selectedField === 'all') {
+            return camposParaFiltrar.some((campo) => {
+                const valorCampo = producto[campo];
+                return valorCampo !== undefined && valorCampo !== null &&
+                    valorCampo.toString().toLowerCase().includes(valorMinusculas);
+            });
+            } else {
+            const valorCampo = producto[selectedField];
+            return valorCampo !== undefined && valorCampo !== null &&
+                    valorCampo.toString().toLowerCase().includes(valorMinusculas);
+            }
         });
-        return objetosFiltrados;
     }
-    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
+
+    const objetosFiltrados = filtrarProductos(inputFilteredProducts);
 
     const productosOrdenados = [...objetosFiltrados].sort((a, b) => {
         if (a.category < b.category) return -1;
@@ -80,25 +107,27 @@ const CPanelProducts = () => {
 
     const handleInputFilteredProducts = (e) => {
         const value = e.target.value;
-        setInputFilteredProducts(value)
+        const soloLetrasYNumeros = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '');
+        setInputFilteredProducts(soloLetrasYNumeros);
     }
 
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchProducts(1, inputFilteredProducts); // Buscar desde la primera página con el término de búsqueda
-        }, 500);
-    
-        return () => clearTimeout(delayDebounceFn);
-    }, [inputFilteredProducts]);
+        const delay = setTimeout(() => {
+            fetchProducts(1, inputFilteredProducts, selectedField);
+        }, 300); // debounce
+
+        return () => clearTimeout(delay);
+    }, [inputFilteredProducts, selectedField]);
     
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [pageInfo.page]);
 
-    const fetchProducts = async (page = 1, search = "") => {
+    const fetchProducts = async (page = 1, search = "",field = "") => {
         try {
-            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}`)
+            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&field=${field}`)
             const productsAll = await response.json();
+            //console.log(productsAll)
             setTotalProducts(productsAll.data.totalDocs)
             setProducts(productsAll.data.docs)
             setPageInfo({
@@ -441,6 +470,73 @@ const CPanelProducts = () => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
 
+    const handleMassDelete = async () => {
+        const confirm = window.confirm('¿Estás seguro que querés eliminar los productos seleccionados?');
+        if (!confirm) return;
+
+        try {
+            const res = await fetch('http://localhost:8081/api/products/mass-delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedProducts })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setSelectedProducts([]);
+                fetchProducts(1, inputFilteredProducts, selectedField);
+                toast('Productos eliminados correctamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } 
+        } catch (error) {
+            console.error(error);
+            toast('Error al eliminar productos', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleSelectAll = (checked) => {
+        setSelectAll(checked);
+
+        if (checked) {
+            const allIds = products.map(product => product._id);
+            setSelectedProducts(allIds);
+        } else {
+            setSelectedProducts([]);
+        }
+    };
+
+    useEffect(() => {
+        setSelectAll(selectedProducts.length === products.length && products.length > 0);
+    }, [selectedProducts, products]);
+
+    const toggleSelectProduct = (id) => {
+        setSelectedProducts(prev =>
+            prev.includes(id)
+            ? prev.filter(pId => pId !== id)
+            : [...prev, id]
+        );
+    };
+
+
     return (
 
         <>
@@ -466,7 +562,21 @@ const CPanelProducts = () => {
                 </div>
 
                 <div className='cPanelProductsContainer__inputSearchProduct'>
-                    <input type="text" onChange={handleInputFilteredProducts} value={inputFilteredProducts} placeholder='Buscar por título' className='cPanelProductsContainer__inputSearchProduct__input' name="" id="" />
+                    <div className='cPanelProductsContainer__inputSearchProduct__selectContainer'>
+                        <div>Buscar por:</div>
+                        <select
+                            className='cPanelProductsContainer__inputSearchProduct__selectContainer__select'
+                            value={selectedField}
+                            onChange={(e) => setSelectedField(e.target.value)}
+                            >
+                            {Object.entries(fieldLabels).map(([key, label]) => (
+                                <option key={key} value={key}>{label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='cPanelProductsContainer__inputSearchProduct__inputContainer'>
+                        <input type="text" onChange={handleInputFilteredProducts} value={inputFilteredProducts} placeholder={`Buscar por ${fieldLabels[selectedField]}`} className='cPanelProductsContainer__inputSearchProduct__inputContainer__input' name="" id="" />
+                    </div>
                 </div>
 
                 <div className='cPanelProductsContainer__btnCreateProduct'>
@@ -528,15 +638,37 @@ const CPanelProducts = () => {
                 </form>
 
                 <div className='cPanelProductsContainer__quantityProducts'>
+                    <div className='cPanelProductsContainer__quantityProducts__massDeleteBtnContainer'>
+                        <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        />
+                        <span>Seleccionar todos</span>
+                        {selectedProducts.length > 0 ? (
+                        <div className='cPanelProductsContainer__quantityProducts__massDeleteBtnContainer'>
+                            <button
+                            onClick={handleMassDelete}
+                            className='cPanelProductsContainer__quantityProducts__massDeleteBtnContainer__btn'
+                            >
+                            Eliminar seleccionados ({selectedProducts.length})
+                            </button>
+                        </div>
+                        )
+                        :
+                        <><div></div></>
+                        }
+                    </div>
                     <div className='cPanelProductsContainer__quantityProducts__prop'>Cantidad de productos: {totalProducts}</div>        
                 </div>
 
                 {
-                    objetosFiltrados.length != 0 &&
+                    products.length != 0 &&
                     <div className='cPanelProductsContainer__headerTableContainer'>
 
                         <div className="cPanelProductsContainer__headerTableContainer__headerTable">
 
+                            <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}></div>
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Imagen</div>
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Título</div>
                             <div className="cPanelProductsContainer__headerTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Descripción</div>
@@ -560,32 +692,37 @@ const CPanelProducts = () => {
                                 </div>
                             </>
                         :
-                        productosOrdenados.map((product) => (
+                        products.map((product) => (
                             <>
                                 <ItemCPanelProduct
                                 product={product}
                                 fetchProducts={fetchProducts}
                                 categories={categories}
+                                selectedProducts={selectedProducts}
+                                setSelectedProducts={setSelectedProducts}
+                                toggleSelectProduct={toggleSelectProduct}
                                 />
                             </>
                         ))}
-                        <div className='cPanelProductsContainer__btnsPagesContainer'>
-                            <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                disabled={!pageInfo.hasPrevPage}
-                                onClick={() => fetchProducts(pageInfo.prevPage)}
-                                >
-                                Anterior
-                            </button>
-                            
-                            <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+                            <div className='cPanelProductsContainer__btnsPagesContainer'>
+                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                    disabled={!pageInfo.hasPrevPage}
+                                    //onClick={() => fetchProducts(pageInfo.prevPage)}
+                                    onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
+                                    >
+                                    Anterior
+                                </button>
+                                
+                                <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
 
-                            <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                disabled={!pageInfo.hasNextPage}
-                                onClick={() => fetchProducts(pageInfo.nextPage)}
-                                >
-                                Siguiente
-                            </button>
-                        </div>
+                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                                    disabled={!pageInfo.hasNextPage}
+                                    //onClick={() => fetchProducts(pageInfo.nextPage)}
+                                    onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
+                                    >
+                                    Siguiente
+                                </button>
+                            </div>
 
                 </div>
 

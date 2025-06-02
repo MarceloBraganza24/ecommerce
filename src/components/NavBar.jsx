@@ -163,24 +163,6 @@ const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,
                 
             </div>
             
-            {/* {
-                showHMenuOptions &&
-                <div className='hMenuOptionsContainer'>
-                    <div className='hMenuOptionsContainer__btnCloseMenu'>
-                        <div onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
-                    </div>
-                    {
-                        role == 'admin' ?
-                        <>
-                            <Link to={`/cpanel/products`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PRODUCTOS</Link>
-                            <Link to={`/cpanel`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PANEL DE CONTROL</Link>
-                            <Link to={`/tickets`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- VENTAS</Link>
-                        </>
-                        :
-                        <Link to={`/myPurchases`} onClick={()=>setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- MIS COMPRAS</Link>
-                    }
-                </div>
-            } */}
             <div className={`hMenuOptionsContainer ${showHMenuOptions ? 'active' : ''}`}>
                 <div className='hMenuOptionsContainer__btnCloseMenu'>
                     <div onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__btnCloseMenu__btn'>X</div>
@@ -191,6 +173,7 @@ const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,
                         <Link to={`/cpanel/products`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PRODUCTOS</Link>
                         <Link to={`/cpanel`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PANEL DE CONTROL</Link>
                         <Link to={`/tickets`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- VENTAS</Link>
+                        <Link to={`/bin`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- PAPELERA</Link>
                     </>
                 ) : (
                     <Link to={`/myPurchases`} onClick={() => setShowHMenuOptions(false)} className='hMenuOptionsContainer__option'>- MIS COMPRAS</Link>

@@ -3,8 +3,9 @@ import UpdateProductModal from './UpdateProductModal'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,setSelectedProducts,toggleSelectProduct}) => {
+const ItemBinProduct = ({product,fetchDeletedProducts,categories,selectedProducts,setSelectedProducts}) => {
     const [loading, setLoading] = useState(false);
+    const [loadingBtnRestore, setLoadingBtnRestore] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const capitalizeFirstLetter = (text) => {
@@ -12,21 +13,21 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
     };
 
     const handleBtnDeleteProduct = async () => {
-        setLoading(true);
-        
-        try {
-            const res = await fetch(`http://localhost:8081/api/products/${product._id}/soft-delete`, {
-                method: 'PUT',  // Usamos PUT o PATCH para actualizar, no DELETE
-            });
 
+        setLoading(true);
+            
+        try {
+            const res = await fetch(`http://localhost:8081/api/products/${product._id}`, {
+                method: 'DELETE'
+            });
             if (res.ok) {
-                toast('Has eliminado el producto con éxito (soft delete)', {
+                toast('Has eliminado el producto con éxito', {
                     position: "top-right",
                     autoClose: 2000,
                     theme: "dark",
                     className: "custom-toast",
                 });
-                fetchProducts(); // recarga los productos visibles
+                fetchDeletedProducts();
                 setSelectedProducts([])
             } else {
                 toast('No se ha podido borrar el producto, intente nuevamente', {
@@ -41,6 +42,38 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
         } finally {
             setLoading(false);
         }
+        
+    };
+
+    const handleBtnRestoreProduct = async () => {
+        try {
+            setLoadingBtnRestore(true);
+            const res = await fetch(`http://localhost:8081/api/products/${product._id}/restore`, {
+                method: 'PUT',
+            });
+
+            if (res.ok) {
+                toast('Producto restaurado correctamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchDeletedProducts(); // Recargá los productos para ver el cambio
+                setSelectedProducts([])
+            } else {
+                toast('No se pudo restaurar el producto', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error('Error al restaurar el producto:', error);
+        }finally {
+            setLoadingBtnRestore(false);
+        }
     };
 
 
@@ -50,19 +83,15 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
                     <input
-                        // type="checkbox"
-                        // checked={selectedProducts.includes(product._id)}
-                        // onChange={() => {
-                        // if (selectedProducts.includes(product._id)) {
-                        //     setSelectedProducts(selectedProducts.filter(id => id !== product._id));
-                        // } else {
-                        //     setSelectedProducts([...selectedProducts, product._id]);
-                        // }
-                        // }}
-                        
                         type="checkbox"
                         checked={selectedProducts.includes(product._id)}
-                        onChange={() => toggleSelectProduct(product._id)}
+                        onChange={() => {
+                        if (selectedProducts.includes(product._id)) {
+                            setSelectedProducts(selectedProducts.filter(id => id !== product._id));
+                        } else {
+                            setSelectedProducts([...selectedProducts, product._id]);
+                        }
+                        }}
                     />
                 </div>
 
@@ -92,7 +121,22 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
                 </div>
 
                 <div className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer'>
-                    <button onClick={() => setShowUpdateModal(true)} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Editar</button>
+                    {/* <button onClick={handleBtnRestoreProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Restaurar</button> */}
+                    {loadingBtnRestore ? (
+                        <button
+                        disabled
+                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        >
+                        <Spinner/>
+                        </button>
+                    ) : (
+                        <button
+                        onClick={handleBtnRestoreProduct}
+                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        >
+                        Restaurar
+                        </button>
+                    )}
                     {/* <button onClick={handleBtnDeleteProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Borrar</button> */}
 
                     {loading ? (
@@ -115,7 +159,7 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
 
             </div>
 
-            {
+            {/* {
                 showUpdateModal &&
                 <UpdateProductModal
                 product={product}
@@ -123,10 +167,10 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
                 setShowUpdateModal={setShowUpdateModal}
                 categories={categories}
                 />
-            }
+            } */}
         </>
     )
 
 }
 
-export default ItemCPanelProduct
+export default ItemBinProduct

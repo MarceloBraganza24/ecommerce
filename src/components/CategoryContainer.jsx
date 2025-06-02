@@ -42,22 +42,6 @@ const CategoryContainer = () => {
     
     const [productsByCategory, setProductsByCategory] = useState([]);
     const {category} = useParams()
-    //const productsByCategory = products.filter((product) => product.category == category)
-
-    useEffect(() => {
-        if (category) {
-            setProducts([]); // Limpiá productos anteriores
-            setIsLoadingProducts(true);
-            fetchProducts();
-        }
-    }, [category]);
-
-    useEffect(() => {
-        if (products) {
-            const productsByCategory = products.filter((product) => product.category == category)
-            setProductsByCategory(productsByCategory)
-        }
-    }, [products]);
 
     function esColorClaro(hex) {
         if (!hex) return true;
@@ -255,28 +239,33 @@ const CategoryContainer = () => {
 
     const fetchProducts = async (page = 1) => {
         try {
-            //setIsLoadingProducts(true);  
             const url = new URL(`http://localhost:8081/api/products/by`, window.location.origin);
             const params = new URLSearchParams();
-    
+
             if (category) params.append("category", category);
-            params.append("page", page);  // 👈 Envía el número de página
-            params.append("limit", 8); // 👈 Define el límite de productos por página
-    
-            url.search = params.toString();  // Genera la URL con los parámetros
+            if (sortOrder) params.append("sort", sortOrder);
+            if (priceRange) {
+                params.append("minPrice", priceRange.min);
+                params.append("maxPrice", priceRange.max);
+            }
+
+            params.append("page", page);
+            params.append("limit", 8);
+
+            url.search = params.toString();
             
             const response = await fetch(url);
             const data = await response.json();
-            //console.log(data)
+
             if (response.ok) {
-                setProducts(data.data);  // 👈 Guarda los productos correctamente
+                setProducts(data.data.docs);
                 setPageInfo({
                     page,
-                    totalPages: data.totalPages,
-                    hasNextPage: data.hasNextPage,
-                    hasPrevPage: data.hasPrevPage,
-                    nextPage: data.nextPage,
-                    prevPage: data.prevPage
+                    totalPages: data.data.totalPages,
+                    hasNextPage: data.data.hasNextPage,
+                    hasPrevPage: data.data.hasPrevPage,
+                    nextPage: data.data.nextPage,
+                    prevPage: data.data.prevPage
                 });
             } else {
                 console.error("Error al obtener productos:", data.message);
@@ -284,9 +273,10 @@ const CategoryContainer = () => {
         } catch (error) {
             console.error('Error al obtener datos:', error);
         } finally {
-            setIsLoadingProducts(false);  
+            setIsLoadingProducts(false);
         }
     };
+
 
     const fetchCurrentUser = async () => {
         try {
@@ -362,29 +352,13 @@ const CategoryContainer = () => {
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
-
     
     const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
-    const [filteredProducts, setFilteredProducts] = useState([]);
     const [sortOrder, setSortOrder] = useState('desc'); // 'asc' para ascendente, 'desc' para descendente
 
     useEffect(() => {
-        if (!productsByCategory.length) return;
-
-        const filteredProducts = productsByCategory.filter(product =>
-        product.price >= priceRange.min && product.price <= priceRange.max
-        );
-
-        setFilteredProducts(filteredProducts);
-    }, [productsByCategory, priceRange]);
-
-    const sortedProducts = [...filteredProducts].sort((a, b) => {
-        if (sortOrder === 'asc') {
-            return a.price - b.price;
-        } else {
-            return b.price - a.price;
-        }
-    });
+        fetchProducts(1); // 👈 Reinicia en la página 1 al cambiar filtros
+    }, [category, priceRange, sortOrder]);
 
     return (
 
@@ -415,7 +389,6 @@ const CategoryContainer = () => {
             <div className="categoryContainer__grid">
 
                 <div className='categoryContainer__grid__categoriesListContainer'>
-
                     
                     <div className='categoryContainer__grid__categoriesListContainer__categoriesList'>
                         <div className='categoryContainer__grid__categoriesListContainer__categoriesList__label'>Categorías</div>
@@ -462,9 +435,9 @@ const CategoryContainer = () => {
                                 <div className="catalogContainer__grid__catalog__isLoadingLabel">
                                     Cargando productos&nbsp;&nbsp;<Spinner />
                                 </div>
-                            ) : sortedProducts.length !== 0 ? (
+                            ) : products.length !== 0 ? (
                                 <>
-                                {sortedProducts.map((product) => (
+                                {products.map((product) => (
                                     <ItemProduct
                                     key={product._id}
                                     user_id={user._id}
