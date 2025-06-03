@@ -50,16 +50,6 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
 
                 <div className="cPanelProductsContainer__productsTable__itemContainer__item">
                     <input
-                        // type="checkbox"
-                        // checked={selectedProducts.includes(product._id)}
-                        // onChange={() => {
-                        // if (selectedProducts.includes(product._id)) {
-                        //     setSelectedProducts(selectedProducts.filter(id => id !== product._id));
-                        // } else {
-                        //     setSelectedProducts([...selectedProducts, product._id]);
-                        // }
-                        // }}
-                        
                         type="checkbox"
                         checked={selectedProducts.includes(product._id)}
                         onChange={() => toggleSelectProduct(product._id)}

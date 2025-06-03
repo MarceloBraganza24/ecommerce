@@ -818,9 +818,10 @@ h2 {
     //background-color: whitesmoke;
     background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
     width: 100%;
-    height: 90vh;
+    //height: 90vh;
     display: flex;
     flex-direction: column;
+    padding-bottom: 15vh;
     &__title {
         width: 100%;
         @include disFC();
@@ -1236,6 +1237,26 @@ h2 {
             font-size: 18px;
         }
     }
+    &__btnDeleteSelected {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 1vh 0vh;
+        &__btnContainer {
+            @include disFC();
+            padding-left: 2vh;
+            &__span {
+                padding-left: 1vh;            }
+            &__btn {
+                width: 50%;
+                font-size: 16px;
+                padding: 0.5vh 1vh;
+                border-radius: 0.5vh;
+                cursor: pointer;
+                @include btn();
+                margin-left: 4vh;
+            }
+        }
+    }
     &__headerTableCPanelSalesContainer {
         width: 100%;
         @include disFC();
@@ -1243,7 +1264,7 @@ h2 {
         &__headerTable {
             width: 95%;
             display: grid;
-            grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
             padding: 1vh 0vh;
             &__item {
                 font-size: 18px;
@@ -1268,7 +1289,7 @@ h2 {
             width: 95%;
             display: grid;
             align-self: center;
-            grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
             border-bottom: 0.3vh solid #d6d5d5;
             padding: 1vh 0vh;
             border-radius: 1vh;
@@ -1305,38 +1326,39 @@ h2 {
             &__itemProduct {
                 width: 100%;
                 &__products {
-                    display: flex;
+                    @include disFC();
                     flex-direction: column;
                     gap: 0.5vh;
-                    &__title {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-around;
-                        overflow-x: auto;
-                        white-space: nowrap;
-                        &::-webkit-scrollbar {
-                            display: none; /* Oculta la barra de desplazamiento */
-                        }
-                        &__prop {
-                            display: inline-block;
-                            font-size: 16px;
-                        }
-                    }
-                    &__img {
-                        @include disFC();
-                        &__prop {
-                            width: 50%;
-                        }
-                    }
                     &__productLine {
                         display: grid;
                         align-items: center;
                         grid-template-columns: 1fr 3fr 1fr 2fr;
                         cursor: pointer;
-                        padding-bottom: 0.5vh;
-                    }
-                    &__quantity {
-                        justify-self: end;
+                        //gap: 0.5vh;
+                        //padding-bottom: 0.5vh;
+                        &__title {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-around;
+                            overflow-x: auto;
+                            white-space: nowrap;
+                            &::-webkit-scrollbar {
+                                display: none; /* Oculta la barra de desplazamiento */
+                            }
+                            &__prop {
+                                display: inline-block;
+                                font-size: 16px;
+                            }
+                        }
+                        &__img {
+                            @include disFC();
+                            &__prop {
+                                width: 50%;
+                            }
+                        }
+                        &__quantity {
+                            justify-self: end;
+                        }
                     }
                 }
             }
@@ -2379,6 +2401,7 @@ h2 {
             text-decoration: none;
             text-align: center;
             border: 0.3vh solid black;
+            cursor: pointer;
             @include btn();
         }
     }

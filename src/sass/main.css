@@ -899,9 +899,9 @@ h2 {
 .binContainer {
   background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
-  height: 90vh;
   display: flex;
   flex-direction: column;
+  padding-bottom: 15vh;
 }
 .binContainer__title {
   width: 100%;
@@ -1408,6 +1408,34 @@ h2 {
 .cPanelSalesContainer__quantitySales__prop {
   font-size: 18px;
 }
+.cPanelSalesContainer__btnDeleteSelected {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 1vh 0vh;
+}
+.cPanelSalesContainer__btnDeleteSelected__btnContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 2vh;
+}
+.cPanelSalesContainer__btnDeleteSelected__btnContainer__span {
+  padding-left: 1vh;
+}
+.cPanelSalesContainer__btnDeleteSelected__btnContainer__btn {
+  width: 50%;
+  font-size: 16px;
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  margin-left: 4vh;
+}
+.cPanelSalesContainer__btnDeleteSelected__btnContainer__btn:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
 .cPanelSalesContainer__headerTableCPanelSalesContainer {
   width: 100%;
   display: flex;
@@ -1418,7 +1446,7 @@ h2 {
 .cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable {
   width: 95%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
   padding: 1vh 0vh;
 }
 .cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item {
@@ -1445,7 +1473,7 @@ h2 {
   width: 95%;
   display: grid;
   align-self: center;
-  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
   border-bottom: 0.3vh solid #d6d5d5;
   padding: 1vh 0vh;
   border-radius: 1vh;
@@ -1487,39 +1515,40 @@ h2 {
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products {
   display: flex;
-  flex-direction: column;
-  gap: 0.5vh;
-}
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title::-webkit-scrollbar {
-  display: none; /* Oculta la barra de desplazamiento */
-}
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title__prop {
-  display: inline-block;
-  font-size: 16px;
-}
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img {
-  display: flex;
   justify-content: center;
   align-items: center;
-}
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img__prop {
-  width: 50%;
+  flex-direction: column;
+  gap: 0.5vh;
 }
 .cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine {
   display: grid;
   align-items: center;
   grid-template-columns: 1fr 3fr 1fr 2fr;
   cursor: pointer;
-  padding-bottom: 0.5vh;
 }
-.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity {
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__title::-webkit-scrollbar {
+  display: none; /* Oculta la barra de desplazamiento */
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__title__prop {
+  display: inline-block;
+  font-size: 16px;
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img__prop {
+  width: 50%;
+}
+.cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity {
   justify-self: end;
 }
 .cPanelSalesContainer__salesTable__itemContainer__btnsContainer {
@@ -2658,6 +2687,7 @@ h2 {
   text-decoration: none;
   text-align: center;
   border: 0.3vh solid black;
+  cursor: pointer;
   background-color: var(--primary-color);
   color: var(--primary-text-color);
 }

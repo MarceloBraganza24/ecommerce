@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import ItemBinProduct from "./ItemBinProduct";
 import Spinner from "./Spinner";
 import { toast } from "react-toastify";
+import ItemBinTicket from "./ItemBinTicket";
 
 const Bin = () => {
+    const [selectedTickets, setSelectedTickets] = useState([]);
+    const [selectAllTickets, setSelectAllTickets] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +20,10 @@ const Bin = () => {
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [isLoadingTickets, setIsLoadingTickets] = useState(true);
     const [products, setProducts] = useState([]);
+    const [tickets, setTickets] = useState([]);
+    //console.log(tickets)
     const navigate = useNavigate();
 
     function hexToRgba(hex, opacity) {
@@ -65,6 +71,33 @@ const Bin = () => {
             console.error('Error:', error);
         } finally {
             setIsLoadingProducts(false)
+        }
+    };
+
+    const fetchDeletedTickets = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/tickets/deleted');
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setTickets(data.payload);
+            } else {
+                toast('Error al cargar tickets eliminados, intente nuevamente!', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsLoadingTickets(false)
         }
     };
 
@@ -224,17 +257,95 @@ const Bin = () => {
         fetchCategories();
         fetchCurrentUser();
         fetchDeletedProducts();
+        fetchDeletedTickets();
         fetchStoreSettings();
-        /* const toggleVisibility = () => {
-            if (window.scrollY > 300) {
-              setIsVisible(true);
-            } else {
-              setIsVisible(false);
-            }
-        };
-        window.addEventListener('scroll', toggleVisibility);
-        return () => window.removeEventListener('scroll', toggleVisibility); */
     }, []);
+
+    const handleMassDeleteTickets = async () => {
+        const confirm = window.confirm('¿Estás seguro que querés eliminar los tickets seleccionados permanentemente?');
+        if (!confirm) return;
+
+        try {
+            const res = await fetch('http://localhost:8081/api/tickets/mass-delete-permanent', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedTickets })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setSelectedTickets([]);
+                fetchDeletedTickets()
+                toast('Tickets eliminados de manera permanente con éxito', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } 
+        } catch (error) {
+            console.error(error);
+            toast('Error al eliminar tickets', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleMassRestoreTickets = async () => {
+        const confirm = window.confirm('¿Estás seguro que querés restaurar los tickets seleccionados?');
+        if (!confirm) return;
+
+        try {
+            const res = await fetch('http://localhost:8081/api/tickets/mass-restore', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedTickets })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setSelectedTickets([]);
+                fetchDeletedTickets()
+                toast('Tickets restaurados correctamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } 
+        } catch (error) {
+            console.error(error);
+            toast('Error al restaurar tickets', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
     const handleMassDelete = async () => {
         const confirm = window.confirm('¿Estás seguro que querés eliminar los productos seleccionados?');
@@ -251,7 +362,6 @@ const Bin = () => {
             if (res.ok) {
                 setSelectedProducts([]);
                 fetchDeletedProducts()
-                //fetchProducts(1, inputFilteredProducts, selectedField);
                 toast('Productos eliminados de manera permanente con éxito', {
                     position: "top-right",
                     autoClose: 2000,
@@ -295,7 +405,6 @@ const Bin = () => {
             if (res.ok) {
                 setSelectedProducts([]);
                 fetchDeletedProducts()
-                //fetchProducts(1, inputFilteredProducts, selectedField);
                 toast('Productos restaurados correctamente', {
                     position: "top-right",
                     autoClose: 2000,
@@ -307,20 +416,7 @@ const Bin = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
-            } /* else {
-                //alert(data.message || 'Error al eliminar productos');
-                toast('Error al eliminar productos', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            } */
+            } 
         } catch (error) {
             console.error(error);
             toast('Error al restaurar productos', {
@@ -352,6 +448,29 @@ const Bin = () => {
         setSelectAll(selectedProducts.length === products.length && products.length > 0);
     }, [selectedProducts, products]);
 
+    const handleSelectAllTickets = (checked) => {
+        setSelectAllTickets(checked);
+
+        if (checked) {
+            const allIds = tickets.map(ticket => ticket._id);
+            setSelectedTickets(allIds);
+        } else {
+            setSelectedTickets([]);
+        }
+    };
+
+    useEffect(() => {
+        setSelectAllTickets(selectedTickets.length === tickets.length && tickets.length > 0);
+    }, [selectedTickets, tickets]);
+
+    const toggleSelectTicket = (id) => {
+        setSelectedTickets(prev =>
+            prev.includes(id)
+            ? prev.filter(pId => pId !== id)
+            : [...prev, id]
+        );
+    };
+
     return (
 
         <>
@@ -380,21 +499,6 @@ const Bin = () => {
                 <div className="binContainer__subTitle">
                     <div className="binContainer__subTitle__prop">Productos eliminados:</div>
                 </div>
-
-                {/* <div className='binContainer__massDeleteBtnContainer'>
-                    <button
-                    onClick={handleMassDelete}
-                    className='binContainer__massDeleteBtnContainer__btn'
-                    >
-                    Eliminar permamentemente ({selectedProducts.length})
-                    </button>
-                    <button
-                    onClick={handleMassRestore}
-                    className='binContainer__massDeleteBtnContainer__btn'
-                    >
-                    Restaurar ({selectedProducts.length})
-                    </button>
-                </div> */}
 
                 {
                     products.length > 0 &&
@@ -476,25 +580,109 @@ const Bin = () => {
                             </div>
                         </>
                     }
-                            {/* <div className='cPanelProductsContainer__btnsPagesContainer'>
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasPrevPage}
-                                    //onClick={() => fetchProducts(pageInfo.prevPage)}
-                                    onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
-                                    >
-                                    Anterior
-                                </button>
-                                
-                                <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
 
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasNextPage}
-                                    //onClick={() => fetchProducts(pageInfo.nextPage)}
-                                    onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
-                                    >
-                                    Siguiente
-                                </button>
-                            </div> */}
+                </div>
+
+                <div className="binContainer__subTitle">
+                    <div className="binContainer__subTitle__prop">Tickets eliminados:</div>
+                </div>
+
+                {
+                    tickets.length > 0 &&
+                    <>
+                        <div className='binContainer__massDeleteBtnContainer'>
+                            <button
+                            onClick={handleMassDeleteTickets}
+                            className='binContainer__massDeleteBtnContainer__btn'
+                            >
+                            Eliminar permamentemente ({selectedTickets.length})
+                            </button>
+                            <button
+                            onClick={handleMassRestoreTickets}
+                            className='binContainer__massDeleteBtnContainer__btn'
+                            >
+                            Restaurar ({selectedTickets.length})
+                            </button>
+                        </div>
+
+                        <div className='binContainer__quantityProducts'>
+                            <div className="binContainer__quantityProducts__massDeleteBtnContainer">
+                                <input
+                                type="checkbox"
+                                checked={selectAllTickets}
+                                onChange={(e) => handleSelectAllTickets(e.target.checked)}
+                                />
+                                <span>Seleccionar todos</span>
+                            </div>
+                            <div className='binContainer__quantityProducts__prop'>Cantidad de tickets: {tickets.length}</div>        
+                        </div>
+                    </>
+                }
+
+                {
+                    tickets.length != 0 &&
+                    <div className='cPanelSalesContainer__headerTableCPanelSalesContainer'>
+
+                        <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable">
+
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}></div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Fecha y hora</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Código</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Productos</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Precio</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Operador</div>
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Rol</div>
+
+                        </div>
+
+                    </div>
+                }
+
+                <div className="cPanelSalesContainer__salesTable">
+
+                    {
+                        isLoadingTickets ? 
+                            <>
+                                <div className="cPanelSalesContainer__salesTable__isLoadingLabel">
+                                    Cargando tickets&nbsp;&nbsp;<Spinner/>
+                                </div>
+                            </>
+                        : tickets.length > 0 ?
+                            tickets.map((ticket) => {
+                                const currentDate = new Date(ticket.purchase_datetime);
+                                const formattedDate = currentDate.toLocaleDateString('es-AR', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+
+                                const formattedTime = currentDate.toLocaleTimeString('es-AR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false
+                                });
+                                return(
+                                <>
+                                    <ItemBinTicket
+                                    ticket={ticket}
+                                    fetchDeletedTickets={fetchDeletedTickets}
+                                    fechaHora={`${formattedDate} ${formattedTime}`}
+                                    //categories={categories}
+                                    selectedTickets={selectedTickets}
+                                    setSelectedTickets={setSelectedTickets}
+                                    toggleSelectTicket={toggleSelectTicket}
+                                    />
+                                </>
+                                )
+                                
+                            })
+                        :
+                        <>
+                            <div className="catalogContainer__grid__catalog__isLoadingLabel">
+                                Aún no existen tickets eliminados   
+                            </div>
+                        </>
+                    }
 
                 </div>
 

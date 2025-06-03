@@ -42,6 +42,20 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
     };
 
     const addToCartAndSave = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para agregar productos al carrito", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
+        }
         if(stock == 0) {
             toast("No hay stock disponible en este producto!", {
                 position: "top-right",
@@ -69,20 +83,6 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
                 className: "custom-toast",
             });
             return;
-        }
-        if (!user_id) {
-            toast("Debes iniciar sesión para agregar productos al carrito", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return false;
         }
     
         const newItem = {
@@ -139,6 +139,20 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
     };
 
     const addToCartAndContinue = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para realizar una compra", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
         if(stock == 0) {
             toast("No hay stock disponible en este producto!", {
                 position: "top-right",
@@ -155,20 +169,6 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
         }
         if (count > cantidadDisponible) {
             toast(`No quedan más unidades disponibles para agregar!`, {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return;
-        }
-        if (!user_id) {
-            toast("Debes iniciar sesión para realizar una compra", {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,

@@ -17,8 +17,7 @@ const ItemDetailContainer = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const {id} = useParams()
-    const [productById, setProductById] = useState({});
-    //console.log(productById)
+    const [productById, setProductById] = useState({ images: [] });
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [sellerAddresses, setSellerAddresses] = useState([]);
@@ -208,7 +207,10 @@ const ItemDetailContainer = () => {
             setIsLoadingProducts(true); 
             const response = await fetch(`http://localhost:8081/api/products/${id}`)
             const productById = await response.json();
-            setProductById(productById.data)
+            //console.log(productById)
+            if(response.ok) {
+                setProductById(productById.data)
+            }
         } catch (error) {
             console.error('Error al obtener datos:', error);
         } finally {

@@ -21,6 +21,20 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
     };
 
     const addToCartAndSave = async () => {
+        if (!user_id) {
+            toast("Debes iniciar sesión para agregar productos al carrito", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return false;
+        }
         if(stock == 0) {
             toast("No hay stock disponible en este producto!", {
                 position: "top-right",
@@ -48,20 +62,6 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
                 className: "custom-toast",
             });
             return;
-        }
-        if (!user_id) {
-            toast("Debes iniciar sesión para agregar productos al carrito", {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return false;
         }
     
         const newItem = {
@@ -163,10 +163,6 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
                 </div>
 
                 <div className='itemProduct__btnContainer'>
-
-                    {/* <Link className='itemProduct__btnContainer__btn' to={`/item/${id}`}>
-                        Ver Detalle
-                    </Link> */}
 
                     <button 
                         onClick={handleAddToCart} 

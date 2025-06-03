@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
+const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role,selectedTickets,setSelectedTickets,toggleSelectTicket}) => {
     const [loading, setLoading] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
@@ -12,7 +12,39 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
     };
 
-    const handleBtnDeleteProduct = async () => {
+    const handleBtnDeleteTicket = async () => {
+        setLoading(true);
+        
+        try {
+            const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}/soft-delete`, {
+                method: 'PUT',  // Usamos PUT o PATCH para actualizar, no DELETE
+            });
+
+            if (res.ok) {
+                toast('Has eliminado el ticket con éxito (soft delete)', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+                fetchTickets(1, "", email);
+                setSelectedTickets([])
+            } else {
+                toast('No se ha podido borrar el ticket, intente nuevamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /* const handleBtnDeleteTicket = async () => {
 
         setLoading(true);
             
@@ -42,7 +74,7 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
             setLoading(false);
         }
         
-    };
+    }; */
 
     const handleBtnHiddenProduct = async () => {
 
@@ -84,6 +116,14 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                 <div className="cPanelSalesContainer__salesTable__itemContainer">
 
                     <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                        <input
+                            type="checkbox"
+                            checked={selectedTickets.includes(ticket._id)}
+                            onChange={() => toggleSelectTicket(ticket._id)}
+                            />
+                    </div>
+
+                    <div className="cPanelSalesContainer__salesTable__itemContainer__item">
                         <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{fechaHora}</div>
                     </div>
 
@@ -98,13 +138,6 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                             }
 
                             const product = item.product;
-                            /* const title = product?.title
-                                ? product.title.charAt(0).toUpperCase() + product.title.slice(1).toLowerCase()
-                                : '-';
-
-                            const relativePath = Array.isArray(product?.images) && product.images.length > 0
-                                ? product.images[0]
-                                : null; */
                             const snapshot = item.snapshot;
 
                             const title = product?.title
@@ -127,20 +160,19 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                                 <div
                                     key={index}
                                     onClick={product?._id ? handleLinkToProductDetail : undefined}
-                                    className="myPurchasesContainer__purchasesTable__itemContainer__itemProduct__products__productLine"
+                                    className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine"
                                     style={{ cursor: product?._id ? 'pointer' : 'default' }}
                                 >
-                                {/* <div key={index} onClick={handleLinkToProductDetail} className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine"> */}
-                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img">
-                                        <img className='cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__img__prop' src={imageUrl} alt='#image' />
+                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img">
+                                        <img className='cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img__prop' src={imageUrl} alt='#image' />
                                     </div>
-                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__title">
+                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__title">
                                         {title}
                                     </div>
-                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity">
+                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
                                         x {item.quantity}
                                     </div>
-                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__quantity">
+                                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
                                         ${item.snapshot.price}
                                     </div>
                                 </div>
@@ -169,18 +201,11 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                             >
                             <Spinner/>
                             </button>
-                        ) : role == 'user' ? (
-                            <button
-                            onClick={handleBtnHiddenProduct}
-                            className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'
-                            >
-                            Borrar
-                            </button>
-                        )
+                        ) 
                         : role == 'admin' &&
                         (
                             <button
-                            onClick={handleBtnDeleteProduct}
+                            onClick={handleBtnDeleteTicket}
                             className='cPanelSalesContainer__salesTable__itemContainer__btnsContainer__btn'
                             >
                             Borrar
@@ -269,24 +294,14 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role}) => {
                             >
                             <Spinner/>
                             </button>
-                        ) : role == 'user' ? (
+                        ) : role == 'user' && (
                             <button
                             onClick={handleBtnHiddenProduct}
                             className='myPurchasesContainer__purchasesTable__itemContainer__btnsContainer__btn'
                             >
                             Borrar
                             </button>
-                        )
-                        : role == 'admin' &&
-                        (
-                            <button
-                            onClick={handleBtnDeleteProduct}
-                            className='myPurchasesContainer__purchasesTable__itemContainer__btnsContainer__btn'
-                            >
-                            Borrar
-                            </button>
                         )}
-
                     </div>
 
                 </div>

@@ -6,6 +6,8 @@ import ItemTicket from './ItemTicket';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Tickets = () => {
+    const [selectedTickets, setSelectedTickets] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
 
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [storeSettings, setStoreSettings] = useState({});
@@ -316,6 +318,72 @@ const Tickets = () => {
         }
     };
 
+    const handleMassDelete = async () => {
+        const confirm = window.confirm('¿Estás seguro que querés eliminar los tickets seleccionados?');
+        if (!confirm) return;
+
+        try {
+            const res = await fetch('http://localhost:8081/api/tickets/mass-delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedTickets })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setSelectedTickets([]);
+                fetchTickets(1,"", user.email)
+                toast('Tickets eliminados correctamente', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            } 
+        } catch (error) {
+            console.error(error);
+            toast('Error al eliminar tickets', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
+
+    const handleSelectAll = (checked) => {
+        setSelectAll(checked);
+
+        if (checked) {
+            const allIds = filteredByDate.map(ticket => ticket._id);
+            setSelectedTickets(allIds);
+        } else {
+            setSelectedTickets([]);
+        }
+    };
+
+    useEffect(() => {
+        setSelectAll(selectedTickets.length === tickets.length && tickets.length > 0);
+    }, [selectedTickets, tickets]);
+
+    const toggleSelectTicket = (id) => {
+        setSelectedTickets(prev =>
+            prev.includes(id)
+            ? prev.filter(pId => pId !== id)
+            : [...prev, id]
+        );
+    };
+
     return (
 
         <>
@@ -373,10 +441,36 @@ const Tickets = () => {
 
                 {
                     ticketsOrdenados.length != 0 &&
+                    <div className='cPanelSalesContainer__btnDeleteSelected'>
+                        <div className='cPanelSalesContainer__btnDeleteSelected__btnContainer'>
+                            <input
+                            type="checkbox"
+                            checked={selectAll}
+                            onChange={(e) => handleSelectAll(e.target.checked)}
+                            />
+                            <span className='cPanelSalesContainer__btnDeleteSelected__btnContainer__span'>Seleccionar todos</span>
+                            {selectedTickets.length > 0 ? (
+                            <button
+                            onClick={handleMassDelete}
+                            className='cPanelSalesContainer__btnDeleteSelected__btnContainer__btn'
+                            >
+                            Eliminar seleccionados ({selectedTickets.length})
+                            </button>
+                            )
+                            :
+                            <><div></div></>
+                            }
+                        </div>
+                    </div>
+                }
+
+                {
+                    ticketsOrdenados.length != 0 &&
                     <div className='cPanelSalesContainer__headerTableCPanelSalesContainer'>
 
                         <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable">
 
+                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}></div>
                             <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Fecha y hora</div>
                             <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Código</div>
                             <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Productos</div>
@@ -424,6 +518,9 @@ const Tickets = () => {
                                                 fetchTickets={fetchTickets}
                                                 email={user.email}
                                                 role={user.role}
+                                                selectedTickets={selectedTickets}
+                                                setSelectedTickets={setSelectedTickets}
+                                                toggleSelectTicket={toggleSelectTicket}
                                             />
                                         );
                                         
