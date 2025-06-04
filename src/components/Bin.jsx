@@ -551,7 +551,7 @@ const Bin = () => {
                     </div>
                 }
 
-                <div className="cPanelProductsContainer__productsTable">
+                <div className="binContainer__productsTable">
 
                     {
                         isLoadingProducts ? 
@@ -621,24 +621,24 @@ const Bin = () => {
 
                 {
                     tickets.length != 0 &&
-                    <div className='cPanelSalesContainer__headerTableCPanelSalesContainer'>
+                    <div className='binContainer__headerSalesTableContainer'>
 
-                        <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable">
+                        <div className="binContainer__headerSalesTableContainer__headerTable">
 
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}></div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Fecha y hora</div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Código</div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Productos</div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Precio</div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Operador</div>
-                            <div className="cPanelSalesContainer__headerTableCPanelSalesContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Rol</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}></div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Fecha y hora</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Código</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Productos</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Precio</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Operador</div>
+                            <div className="binContainer__headerSalesTableContainer__headerTable__item" style={{borderRight:'0.3vh solid black'}}>Rol</div>
 
                         </div>
 
                     </div>
                 }
 
-                <div className="cPanelSalesContainer__salesTable">
+                <div className="binContainer__salesTable">
 
                     {
                         isLoadingTickets ? 

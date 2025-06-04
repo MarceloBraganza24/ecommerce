@@ -197,14 +197,14 @@ const ItemDetailContainer = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } finally {
+        } /* finally {
             setIsLoadingProducts(false);
-        }
+        } */
     };
     
     const fetchProducts = async () => {
         try {
-            setIsLoadingProducts(true); 
+            //setIsLoadingProducts(true); 
             const response = await fetch(`http://localhost:8081/api/products/${id}`)
             const productById = await response.json();
             //console.log(productById)
@@ -290,7 +290,7 @@ const ItemDetailContainer = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                setIsLoadingProducts(false)
+                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {

@@ -75,7 +75,7 @@ const CPanelProducts = () => {
         all: 'Todos'
     };
 
-    function filtrarProductos(valorIngresado) {
+    /* function filtrarProductos(valorIngresado) {
         const valorMinusculas = valorIngresado.toLowerCase();
 
         const camposParaFiltrar = ['title', 'description', 'category', 'state', 'price'];
@@ -95,15 +95,15 @@ const CPanelProducts = () => {
         });
     }
 
-    const objetosFiltrados = filtrarProductos(inputFilteredProducts);
+    const objetosFiltrados = filtrarProductos(inputFilteredProducts); */
 
-    const productosOrdenados = [...objetosFiltrados].sort((a, b) => {
+    /* const productosOrdenados = [...objetosFiltrados].sort((a, b) => {
         if (a.category < b.category) return -1;
         if (a.category > b.category) return 1;
         if (a.title < b.title) return -1;
         if (a.title > b.title) return 1;
         return 0; // Si son iguales
-    });
+    }); */
 
     const handleInputFilteredProducts = (e) => {
         const value = e.target.value;

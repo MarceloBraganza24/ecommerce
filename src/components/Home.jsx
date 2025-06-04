@@ -1,4 +1,4 @@
-import { useEffect,useState,useContext } from "react";
+import { useEffect,useState,useContext,useRef } from "react";
 import NavBar from './NavBar'
 import ItemProduct from './ItemProduct';
 import { Link, useLocation,useNavigate } from "react-router-dom";
@@ -15,17 +15,18 @@ import BtnGoUp from "./BtnGoUp";
 import Spinner from "./Spinner";
 
 const Home = () => {
+    const catalogRef = useRef(null);
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
     const [sellerAddresses, setSellerAddresses] = useState([]);
-    //console.log(storeSettings)
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState("");
     const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [pageInfo, setPageInfo] = useState({
@@ -41,24 +42,33 @@ const Home = () => {
     const [categories, setCategories] = useState([]);
     const [userCart, setUserCart] = useState({});
     const SERVER_URL = "http://localhost:8081/";
+    const [selectedField, setSelectedField] = useState('title');
+
+    const fieldLabels = {
+        title: 'Título',
+        description: 'Descripción',
+        category: 'Categoría',
+        state: 'Estado',
+        price: 'Precio',
+        all: 'Todos'
+    };
     
     const navigate = useNavigate();
     const location = useLocation();
 
     const handleInputFilteredProducts = (e) => {
-        setInputFilteredProducts(e.target.value);
-        setPageInfo((prev) => ({ ...prev, page: 1 })); // Reiniciar a la primera página
+        const value = e.target.value;
+        const soloLetrasYNumeros = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '');
+        setInputFilteredProducts(soloLetrasYNumeros);
     };
 
-    function filtrarPorTitle(valorIngresado) {
-        const valorMinusculas = valorIngresado.toLowerCase();
-        const objetosFiltrados = paginatedProducts.filter(objeto => {
-            const nombreMinusculas = objeto.title.toLowerCase();
-            return nombreMinusculas.includes(valorMinusculas);
-        });
-        return objetosFiltrados;
-    }
-    const objetosFiltrados = filtrarPorTitle(inputFilteredProducts);
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            fetchProducts(1, inputFilteredProducts, selectedField);
+        }, 500); // Espera 500ms para evitar llamadas excesivas
+
+        return () => clearTimeout(delayDebounce);
+    }, [inputFilteredProducts, selectedField]);
     
     const groupedProducts = products.reduce((acc, product) => {
         acc[product.category] = acc[product.category] || [];
@@ -78,6 +88,11 @@ const Home = () => {
         return brightness > 128; // <-- usar el mismo umbral que en getContrastingTextColor
     }
 
+    useEffect(() => {
+        if (catalogRef.current) {
+            catalogRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [pageInfo.page]);
 
     useEffect(() => {
         if (storeSettings?.primaryColor) {
@@ -173,25 +188,13 @@ const Home = () => {
         }
     };
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1, search = "",field = "") => {
         try {
-            setIsLoadingProducts(true);
-            const response = await fetch(`http://localhost:8081/api/products`)
+            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&field=${field}`)
             const productsAll = await response.json();
-            setProducts(productsAll.data)
-        } catch (error) {
-            console.error('Error al obtener datos:', error);
-        } finally {
-            setIsLoadingProducts(false);  
-        }
-    };
-
-    const fetchPaginatedProducts = async (page = 1, search = '') => {
-        try {
-            setIsLoadingProducts(true);
-            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&limit=9`)
-            const productsAll = await response.json();
-            setPaginatedProducts(productsAll.data.docs)
+            //console.log(productsAll)
+            setTotalProducts(productsAll.data.totalDocs)
+            setProducts(productsAll.data.docs)
             setPageInfo({
                 page: productsAll.data.page,
                 totalPages: productsAll.data.totalPages,
@@ -206,10 +209,6 @@ const Home = () => {
             setIsLoadingProducts(false)
         }
     };
-
-    useEffect(() => {
-        fetchPaginatedProducts(pageInfo.page, inputFilteredProducts);
-    }, [pageInfo.page, inputFilteredProducts]);
 
     const fetchCurrentUser = async () => {
         try {
@@ -267,7 +266,6 @@ const Home = () => {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -297,7 +295,6 @@ const Home = () => {
         fetchProducts();
         fetchStoreSettings();
         fetchSellerAddresses();
-        fetchPaginatedProducts();
         const toggleVisibility = () => {
             if (window.scrollY > 300) {
               setIsVisible(true);
@@ -384,6 +381,9 @@ const Home = () => {
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
+    
+    
+
     return (
 
         <>
@@ -436,7 +436,7 @@ const Home = () => {
                 </div>
             }
 
-            <div className='catalogContainer' id='catalog'>
+            <div className='catalogContainer' id='catalog' ref={catalogRef}>
 
                 <div className="catalogContainer__titleContainer">
                     <div className='catalogContainer__titleContainer__title'>
@@ -446,7 +446,21 @@ const Home = () => {
 
                 <div className='catalogContainer__inputSearchProduct'>
                     <div className="catalogContainer__inputSearchProduct__searchProductsLabel">Buscar productos</div>
-                    <input type="text" onChange={handleInputFilteredProducts} value={inputFilteredProducts} placeholder='Ingrese un titulo' className='catalogContainer__inputSearchProduct__input' name="" id="" />
+                    <div className="catalogContainer__inputSearchProduct__inputContainer">
+                        <div className="catalogContainer__inputSearchProduct__inputContainer__selectContainer">
+                            <label>Buscar por:</label>
+                            <select
+                                className='catalogContainer__inputSearchProduct__inputContainer__selectContainer__select'
+                                value={selectedField}
+                                onChange={(e) => setSelectedField(e.target.value)}
+                                >
+                                {Object.entries(fieldLabels).map(([key, label]) => (
+                                    <option key={key} value={key}>{label}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <input type="text" onChange={handleInputFilteredProducts} value={inputFilteredProducts} placeholder={`Buscar por ${fieldLabels[selectedField]}`} className='catalogContainer__inputSearchProduct__inputContainer__input' name="" id="" />
+                    </div>
                 </div>
 
                 <div className="catalogContainer__grid">
@@ -465,7 +479,7 @@ const Home = () => {
                             inputFilteredProducts != '' ?
 
                             <div className="catalogContainer__grid__catalog__filteredProductsList">
-                                {objetosFiltrados.map((product) => (
+                                {products.map((product) => (
                                     <ItemProduct
                                     user_id={user._id} 
                                     fetchCartByUserId={fetchCartByUserId}
@@ -481,7 +495,7 @@ const Home = () => {
                                 <div className='cPanelProductsContainer__btnsPagesContainer'>
                                     <button className='cPanelProductsContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasPrevPage}
-                                        onClick={() => fetchPaginatedProducts(pageInfo.prevPage)}
+                                        onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
                                         >
                                         Anterior
                                     </button>
@@ -490,7 +504,7 @@ const Home = () => {
 
                                     <button className='cPanelProductsContainer__btnsPagesContainer__btn'
                                         disabled={!pageInfo.hasNextPage}
-                                        onClick={() => fetchPaginatedProducts(pageInfo.nextPage)}
+                                        onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
                                         >
                                         Siguiente
                                     </button>

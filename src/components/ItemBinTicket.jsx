@@ -3,10 +3,9 @@ import UpdateProductModal from './UpdateProductModal'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selectedTickets,setSelectedTickets,toggleSelectTicket}) => {
+const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,selectedTickets,setSelectedTickets,toggleSelectTicket}) => {
     const [loading, setLoading] = useState(false);
     const [loadingBtnRestore, setLoadingBtnRestore] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
@@ -79,9 +78,9 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selected
 
     return (
         <>
-            <div className="cPanelSalesContainer__salesTable__itemContainer">
+            <div className="binContainer__salesTable__itemContainer">
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
+                <div className="binContainer__salesTable__itemContainer__item">
                     <input
                         type="checkbox"
                         checked={selectedTickets.includes(ticket._id)}
@@ -89,15 +88,15 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selected
                         />
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{fechaHora}</div>
+                <div className="binContainer__salesTable__itemContainer__item">
+                    <div className="binContainer__salesTable__itemContainer__item__label">{fechaHora}</div>
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis">
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis__item">{ticket.code}</div>
+                <div className="binContainer__salesTable__itemContainer__itemEllipsis">
+                    <div className="binContainer__salesTable__itemContainer__itemEllipsis__item">{ticket.code}</div>
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products">
+                <div className="binContainer__salesTable__itemContainer__itemProduct__products">
                     {ticket.items.map((item, index) => {
                         const handleLinkToProductDetail = () => {
                             window.location.href = `/item/${item.product._id}`
@@ -126,19 +125,19 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selected
                             <div
                                 key={index}
                                 onClick={product?._id ? handleLinkToProductDetail : undefined}
-                                className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine"
+                                className="binContainer__salesTable__itemContainer__itemProduct__products__productLine"
                                 style={{ cursor: product?._id ? 'pointer' : 'default' }}
                             >
-                                <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img">
-                                    <img className='cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__img__prop' src={imageUrl} alt='#image' />
+                                <div className="binContainer__salesTable__itemContainer__itemProduct__products__productLine__img">
+                                    <img className='binContainer__salesTable__itemContainer__itemProduct__products__productLine__img__prop' src={imageUrl} alt='#image' />
                                 </div>
-                                <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__title">
+                                <div className="binContainer__salesTable__itemContainer__itemProduct__products__productLine__title">
                                     {title}
                                 </div>
-                                <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
+                                <div className="binContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
                                     x {item.quantity}
                                 </div>
-                                <div className="cPanelSalesContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
+                                <div className="binContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity">
                                     ${item.snapshot.price}
                                 </div>
                             </div>
@@ -146,30 +145,30 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selected
                     })}
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">$ {ticket.amount}</div>
+                <div className="binContainer__salesTable__itemContainer__item">
+                    <div className="binContainer__salesTable__itemContainer__item__label">$ {ticket.amount}</div>
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis">
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__itemEllipsis__item">{ticket.payer_email}</div>
+                <div className="binContainer__salesTable__itemContainer__itemEllipsis">
+                    <div className="binContainer__salesTable__itemContainer__itemEllipsis__item">{ticket.payer_email}</div>
                 </div>
 
-                <div className="cPanelSalesContainer__salesTable__itemContainer__item">
-                    <div className="cPanelSalesContainer__salesTable__itemContainer__item__label">{ticket.user_role}</div>
+                <div className="binContainer__salesTable__itemContainer__item">
+                    <div className="binContainer__salesTable__itemContainer__item__label">{ticket.user_role}</div>
                 </div>
 
-                <div className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer'>
+                <div className='binContainer__salesTable__itemContainer__btnsContainer'>
                     {loadingBtnRestore ? (
                         <button
                         disabled
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         <Spinner/>
                         </button>
                     ) : (
                         <button
                         onClick={handleBtnRestoreTicket}
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         Restaurar
                         </button>
@@ -178,14 +177,14 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,categories,selected
                     {loading ? (
                         <button
                         disabled
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         <Spinner/>
                         </button>
                     ) : (
                         <button
                         onClick={handleBtnDeleteTicket}
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
                         Borrar
                         </button>

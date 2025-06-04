@@ -899,6 +899,7 @@ h2 {
 .binContainer {
   background-color: rgba(183, 183, 183, 0.85);
   width: 100%;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   padding-bottom: 15vh;
@@ -920,7 +921,7 @@ h2 {
 }
 .binContainer__subTitle__prop {
   font-size: 25px;
-  padding-left: 4vh;
+  padding-left: 6vh;
 }
 .binContainer__quantityProducts {
   width: 100%;
@@ -930,6 +931,7 @@ h2 {
 }
 .binContainer__quantityProducts__prop {
   font-size: 18px;
+  text-align: center;
 }
 .binContainer__quantityProducts__massDeleteBtnContainer {
   display: flex;
@@ -1032,6 +1034,153 @@ h2 {
 .binContainer__productsTable__itemContainer__btnsContainer__btn:hover {
   background-color: var(--secondary-color);
   color: var(--secondary-text-color);
+}
+.binContainer__headerSalesTableContainer {
+  background-color: whitesmoke;
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  border-top-left-radius: 0.5vh;
+  border-top-right-radius: 0.5vh;
+}
+.binContainer__headerSalesTableContainer__headerTable {
+  width: 95%;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+  border-bottom: 0.3vh solid #d6d5d5;
+  padding: 2vh 0vh;
+}
+.binContainer__headerSalesTableContainer__headerTable__item {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+.binContainer__salesTable {
+  background-color: whitesmoke;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  gap: 0.5vh;
+}
+.binContainer__salesTable__dayContainer {
+  background-color: rgb(214, 213, 213);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2vh 0vh;
+}
+.binContainer__salesTable__itemContainer {
+  width: 95%;
+  display: grid;
+  align-self: center;
+  grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 1fr 1fr 1fr;
+  padding: 1vh 0vh;
+  border-radius: 1vh;
+}
+.binContainer__salesTable__itemContainer__item {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.binContainer__salesTable__itemContainer__item__img {
+  width: 60px;
+  height: 50px;
+}
+.binContainer__salesTable__itemContainer__item__label {
+  text-align: center;
+  font-size: 16px;
+}
+.binContainer__salesTable__itemContainer__item__labelLong {
+  text-align: center;
+  font-size: 14px;
+}
+.binContainer__salesTable__itemContainer__itemEllipsis {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.binContainer__salesTable__itemContainer__itemEllipsis::-webkit-scrollbar {
+  display: none; /* Oculta la barra de desplazamiento */
+}
+.binContainer__salesTable__itemContainer__itemEllipsis__item {
+  display: inline-block;
+  font-size: 16px;
+}
+.binContainer__salesTable__itemContainer__itemProduct {
+  width: 100%;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5vh;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 3fr 1fr 2fr;
+  cursor: pointer;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__title::-webkit-scrollbar {
+  display: none; /* Oculta la barra de desplazamiento */
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__title__prop {
+  display: inline-block;
+  font-size: 16px;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__img__prop {
+  width: 50%;
+}
+.binContainer__salesTable__itemContainer__itemProduct__products__productLine__quantity {
+  justify-self: end;
+}
+.binContainer__salesTable__itemContainer__btnsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.binContainer__salesTable__itemContainer__btnsContainer__btn {
+  padding: 0.5vh 1vh;
+  border-radius: 0.5vh;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+}
+.binContainer__salesTable__itemContainer__btnsContainer__btn:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
+.binContainer__salesTable__isLoadingLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2vh;
+}
+.binContainer__salesTable__isLoadingLabel__label {
+  font-size: 22px;
+  color: black;
+  padding-top: 1vh;
 }
 
 .cPanelProductsContainer {
@@ -2502,18 +2651,42 @@ h2 {
 .catalogContainer__inputSearchProduct__searchProductsLabel {
   font-size: 25px;
 }
-.catalogContainer__inputSearchProduct__input {
-  width: 50%;
-  height: 35px;
+.catalogContainer__inputSearchProduct__inputContainer {
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.catalogContainer__inputSearchProduct__inputContainer__selectContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2vh;
+}
+.catalogContainer__inputSearchProduct__inputContainer__selectContainer__select {
+  width: 40%;
+  height: 30px;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  border-radius: 0.5vh;
+  text-align: center;
+  font-size: 16px;
+}
+.catalogContainer__inputSearchProduct__inputContainer__selectContainer__select:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
+.catalogContainer__inputSearchProduct__inputContainer__input {
+  width: 100%;
+  height: 30px;
   border-radius: 0.5vh;
   text-align: center;
   font-size: 22px;
 }
-.catalogContainer__inputSearchProduct__input::-moz-placeholder {
+.catalogContainer__inputSearchProduct__inputContainer__input::-moz-placeholder {
   text-align: center;
   font-size: 18px;
 }
-.catalogContainer__inputSearchProduct__input::placeholder {
+.catalogContainer__inputSearchProduct__inputContainer__input::placeholder {
   text-align: center;
   font-size: 18px;
 }

@@ -3,10 +3,9 @@ import UpdateProductModal from './UpdateProductModal'
 import Spinner from './Spinner';
 import { toast } from 'react-toastify';
 
-const ItemBinProduct = ({product,fetchDeletedProducts,categories,selectedProducts,setSelectedProducts}) => {
+const ItemBinProduct = ({product,fetchDeletedProducts,selectedProducts,setSelectedProducts}) => {
     const [loading, setLoading] = useState(false);
     const [loadingBtnRestore, setLoadingBtnRestore] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const capitalizeFirstLetter = (text) => {
         return text.charAt(0).toUpperCase() + text.slice(1);
@@ -79,9 +78,9 @@ const ItemBinProduct = ({product,fetchDeletedProducts,categories,selectedProduct
 
     return (
         <>
-            <div className="cPanelProductsContainer__productsTable__itemContainer">
+            <div className="binContainer__productsTable__itemContainer">
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
+                <div className="binContainer__productsTable__itemContainer__item">
                     <input
                         type="checkbox"
                         checked={selectedProducts.includes(product._id)}
@@ -96,60 +95,58 @@ const ItemBinProduct = ({product,fetchDeletedProducts,categories,selectedProduct
                 </div>
 
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <img className="cPanelProductsContainer__productsTable__itemContainer__item__img" src={`http://localhost:8081/${product.images[0]}`} alt="" />
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <img className="binContainer__productsTable__itemContainer__item__img" src={`http://localhost:8081/${product.images[0]}`} alt="" />
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(product.title)}</div>
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <div className="binContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(product.title)}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__description">{capitalizeFirstLetter(product.description)}</div>
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <div className="binContainer__productsTable__itemContainer__item__description">{capitalizeFirstLetter(product.description)}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">$ {product.price}</div>
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <div className="binContainer__productsTable__itemContainer__item__label">$ {product.price}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{product.stock}</div>
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <div className="binContainer__productsTable__itemContainer__item__label">{product.stock}</div>
                 </div>
 
-                <div className="cPanelProductsContainer__productsTable__itemContainer__item">
-                    <div className="cPanelProductsContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(product.category)}</div>
+                <div className="binContainer__productsTable__itemContainer__item">
+                    <div className="binContainer__productsTable__itemContainer__item__label">{capitalizeFirstLetter(product.category)}</div>
                 </div>
 
-                <div className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer'>
-                    {/* <button onClick={handleBtnRestoreProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Restaurar</button> */}
+                <div className='binContainer__productsTable__itemContainer__btnsContainer'>
                     {loadingBtnRestore ? (
                         <button
                         disabled
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__productsTable__itemContainer__btnsContainer__btn'
                         >
                         <Spinner/>
                         </button>
                     ) : (
                         <button
                         onClick={handleBtnRestoreProduct}
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__productsTable__itemContainer__btnsContainer__btn'
                         >
                         Restaurar
                         </button>
                     )}
-                    {/* <button onClick={handleBtnDeleteProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Borrar</button> */}
 
                     {loading ? (
                         <button
                         disabled
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__productsTable__itemContainer__btnsContainer__btn'
                         >
                         <Spinner/>
                         </button>
                     ) : (
                         <button
                         onClick={handleBtnDeleteProduct}
-                        className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'
+                        className='binContainer__productsTable__itemContainer__btnsContainer__btn'
                         >
                         Borrar
                         </button>
@@ -159,15 +156,6 @@ const ItemBinProduct = ({product,fetchDeletedProducts,categories,selectedProduct
 
             </div>
 
-            {/* {
-                showUpdateModal &&
-                <UpdateProductModal
-                product={product}
-                fetchProducts={fetchProducts}
-                setShowUpdateModal={setShowUpdateModal}
-                categories={categories}
-                />
-            } */}
         </>
     )
 
