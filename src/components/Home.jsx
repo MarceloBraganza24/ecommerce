@@ -295,6 +295,10 @@ const Home = () => {
         fetchProducts();
         fetchStoreSettings();
         fetchSellerAddresses();
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
         const toggleVisibility = () => {
             if (window.scrollY > 300) {
               setIsVisible(true);
@@ -314,11 +318,11 @@ const Home = () => {
 
     useEffect(() => {
         if (location.hash) {
-        const id = location.hash.replace("#", "");
-        const elemento = document.getElementById(id);
-        if (elemento) {
-            elemento.scrollIntoView({ behavior: "smooth" });
-        }
+            const id = location.hash.replace("#", "");
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.scrollIntoView({ behavior: "smooth" });
+            }
         }
     }, [location]);
 

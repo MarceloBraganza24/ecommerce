@@ -148,7 +148,7 @@ const ItemBinProduct = ({product,fetchDeletedProducts,selectedProducts,setSelect
                         onClick={handleBtnDeleteProduct}
                         className='binContainer__productsTable__itemContainer__btnsContainer__btn'
                         >
-                        Borrar
+                        Borrar <br /> permanentemente
                         </button>
                     )}
 

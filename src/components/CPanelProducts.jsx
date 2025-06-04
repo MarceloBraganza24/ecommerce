@@ -32,9 +32,7 @@ const CPanelProducts = () => {
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [categories, setCategories] = useState([]);
     const [isLoadingCategories, setIsLoadingCategories] = useState(true);
-    //console.log(categories)
     const [selectedField, setSelectedField] = useState('title');
-
 
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [showCreateProductModal, setShowCreateProductModal] = useState(false);
@@ -75,36 +73,6 @@ const CPanelProducts = () => {
         all: 'Todos'
     };
 
-    /* function filtrarProductos(valorIngresado) {
-        const valorMinusculas = valorIngresado.toLowerCase();
-
-        const camposParaFiltrar = ['title', 'description', 'category', 'state', 'price'];
-
-        return products.filter((producto) => {
-            if (selectedField === 'all') {
-            return camposParaFiltrar.some((campo) => {
-                const valorCampo = producto[campo];
-                return valorCampo !== undefined && valorCampo !== null &&
-                    valorCampo.toString().toLowerCase().includes(valorMinusculas);
-            });
-            } else {
-            const valorCampo = producto[selectedField];
-            return valorCampo !== undefined && valorCampo !== null &&
-                    valorCampo.toString().toLowerCase().includes(valorMinusculas);
-            }
-        });
-    }
-
-    const objetosFiltrados = filtrarProductos(inputFilteredProducts); */
-
-    /* const productosOrdenados = [...objetosFiltrados].sort((a, b) => {
-        if (a.category < b.category) return -1;
-        if (a.category > b.category) return 1;
-        if (a.title < b.title) return -1;
-        if (a.title > b.title) return 1;
-        return 0; // Si son iguales
-    }); */
-
     const handleInputFilteredProducts = (e) => {
         const value = e.target.value;
         const soloLetrasYNumeros = value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '');
@@ -127,7 +95,6 @@ const CPanelProducts = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&field=${field}`)
             const productsAll = await response.json();
-            //console.log(productsAll)
             setTotalProducts(productsAll.data.totalDocs)
             setProducts(productsAll.data.docs)
             setPageInfo({
@@ -703,26 +670,27 @@ const CPanelProducts = () => {
                                 toggleSelectProduct={toggleSelectProduct}
                                 />
                             </>
-                        ))}
-                            <div className='cPanelProductsContainer__btnsPagesContainer'>
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasPrevPage}
-                                    //onClick={() => fetchProducts(pageInfo.prevPage)}
-                                    onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
-                                    >
-                                    Anterior
-                                </button>
-                                
-                                <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
+                        ))
+                    }
+                    <div className='cPanelProductsContainer__btnsPagesContainer'>
+                        <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                            disabled={!pageInfo.hasPrevPage}
+                            //onClick={() => fetchProducts(pageInfo.prevPage)}
+                            onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
+                            >
+                            Anterior
+                        </button>
+                        
+                        <span>Página {pageInfo.page} de {pageInfo.totalPages}</span>
 
-                                <button className='cPanelProductsContainer__btnsPagesContainer__btn'
-                                    disabled={!pageInfo.hasNextPage}
-                                    //onClick={() => fetchProducts(pageInfo.nextPage)}
-                                    onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
-                                    >
-                                    Siguiente
-                                </button>
-                            </div>
+                        <button className='cPanelProductsContainer__btnsPagesContainer__btn'
+                            disabled={!pageInfo.hasNextPage}
+                            //onClick={() => fetchProducts(pageInfo.nextPage)}
+                            onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
+                            >
+                            Siguiente
+                        </button>
+                    </div>
 
                 </div>
 

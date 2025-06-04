@@ -186,7 +186,7 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,selectedTickets,set
                         onClick={handleBtnDeleteTicket}
                         className='binContainer__salesTable__itemContainer__btnsContainer__btn'
                         >
-                        Borrar
+                        Borrar <br /> permamentemente
                         </button>
                     )}
 

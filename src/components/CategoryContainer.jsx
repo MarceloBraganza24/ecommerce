@@ -165,9 +165,9 @@ const CategoryContainer = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } finally {
+        }/*  finally {
             setIsLoadingProducts(false);
-        }
+        } */
     };
 
     const fetchCategories = async () => {
@@ -287,7 +287,7 @@ const CategoryContainer = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                setIsLoadingProducts(false)
+                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {

@@ -83,7 +83,6 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
 
                 <div className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer'>
                     <button onClick={() => setShowUpdateModal(true)} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Editar</button>
-                    {/* <button onClick={handleBtnDeleteProduct} className='cPanelProductsContainer__productsTable__itemContainer__btnsContainer__btn'>Borrar</button> */}
 
                     {loading ? (
                         <button

@@ -4,16 +4,32 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 import ItemTicket from './ItemTicket';
 import { Link, useNavigate } from 'react-router-dom';
+import CreateSaleModal from './CreateSaleModal';
 
 const Tickets = () => {
     const [selectedTickets, setSelectedTickets] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [createSaleModal, setCreateSaleModal] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState("");
+    const [pageInfoProducts, setPageInfoProducts] = useState({
+        page: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        nextPage: null,
+        prevPage: null
+    });   
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    
 
+    const [selectedField, setSelectedField] = useState('title');
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [tickets, setTickets] = useState([]);
+    const [totalTickets, setTotalTickets] = useState("");
     const [pageInfo, setPageInfo] = useState({
         page: 1,
         totalPages: 1,
@@ -33,20 +49,26 @@ const Tickets = () => {
     const [inputFilteredTickets, setInputFilteredTickets] = useState('');
     const [isLoadingTickets, setIsLoadingTickets] = useState(true);
 
-    function filtrarPorTitle(valorIngresado) {
-        const valorMinusculas = valorIngresado.toLowerCase();
+    const fieldLabels = {
+        title: 'Título',
+        code: 'Código',
+        amount: 'Precio',
+        payer_email: "Operador",
+        user_role: "Rol",
+        all: 'Todos'
+    };
 
-        const objetosFiltrados = tickets.filter(ticket => {
-            return ticket.items.some(item => {
-                const tituloProducto = item.product?.title || item.snapshot?.title || '';
-                return tituloProducto.toLowerCase().includes(valorMinusculas);
-            });
-        });
+    useEffect(() => {
+        setSelectAll(selectedProducts.length === products.length && products.length > 0);
+    }, [selectedProducts, products]);
 
-        return objetosFiltrados;
-    }
-
-    const objetosFiltrados = filtrarPorTitle(inputFilteredTickets);
+    const toggleSelectProduct = (id) => {
+        setSelectedProducts(prev =>
+            prev.includes(id)
+            ? prev.filter(pId => pId !== id)
+            : [...prev, id]
+        );
+    };
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -96,7 +118,7 @@ const Tickets = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const filteredByDate = objetosFiltrados.filter(ticket => {
+    const filteredByDate = tickets.filter(ticket => {
         const ticketDate = new Date(ticket.purchase_datetime);
         return (
             ticketDate.getFullYear() === selectedDate.getFullYear() &&
@@ -112,6 +134,27 @@ const Tickets = () => {
             fetchTickets(1, "", user.email);
         }
     }, [user]);
+
+    const fetchProducts = async (page = 1, search = "",field = "") => {
+        try {
+            const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&field=${field}`)
+            const productsAll = await response.json();
+            setTotalProducts(productsAll.data.totalDocs)
+            setProducts(productsAll.data.docs)
+            setPageInfoProducts({
+                page: productsAll.data.page,
+                totalPages: productsAll.data.totalPages,
+                hasNextPage: productsAll.data.hasNextPage,
+                hasPrevPage: productsAll.data.hasPrevPage,
+                nextPage: productsAll.data.nextPage,
+                prevPage: productsAll.data.prevPage
+            });
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        } finally {
+            setIsLoadingProducts(false)
+        }
+    };
 
     const fetchCategories = async () => {
         try {
@@ -149,13 +192,25 @@ const Tickets = () => {
         }
     };
 
-    const fetchTickets = async (page = 1, search = "") => {
+    const fetchTickets = async (page = 1, search = "",field = "") => {
         try {
             setIsLoadingTickets(true)
-            const response = await fetch(`http://localhost:8081/api/tickets/byPage?page=${page}&search=${search}`)
+            const response = await fetch(`http://localhost:8081/api/tickets/byPage?page=${page}&search=${search}&field=${field}`)
             const ticketsAll = await response.json();
             if (response.ok) {
-                setTickets(ticketsAll.data.docs); 
+                //console.log(ticketsAll.data.docs)
+                /* setTickets(ticketsAll.data.docs); 
+                setPageInfo({
+                    page: ticketsAll.data.page,
+                    totalPages: ticketsAll.data.totalPages,
+                    hasNextPage: ticketsAll.data.hasNextPage,
+                    hasPrevPage: ticketsAll.data.hasPrevPage,
+                    nextPage: ticketsAll.data.nextPage,
+                    prevPage: ticketsAll.data.prevPage
+                }); */
+
+                setTotalTickets(ticketsAll.data.totalDocs)
+                setTickets(ticketsAll.data.docs)
                 setPageInfo({
                     page: ticketsAll.data.page,
                     totalPages: ticketsAll.data.totalPages,
@@ -384,6 +439,18 @@ const Tickets = () => {
         );
     };
 
+    const handleBtnCreateSale = () => {
+        setCreateSaleModal(true)
+    };
+
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            fetchTickets(1, inputFilteredTickets, selectedField);
+        }, 300); // debounce
+
+        return () => clearTimeout(delay);
+    }, [inputFilteredTickets, selectedField]);
+
     return (
 
         <>
@@ -410,13 +477,25 @@ const Tickets = () => {
                 </div>
 
                 <div className='cPanelSalesContainer__inputSearchSale'>
-                    <input type="text" onChange={handleInputFilteredSales} value={inputFilteredTickets} placeholder='Buscar por título' className='cPanelSalesContainer__inputSearchSale__input' name="" id="" />
+                    <div className='cPanelSalesContainer__inputSearchSale__selectContainer'>
+                        <div>Buscar por:</div>
+                        <select
+                            className='cPanelSalesContainer__inputSearchSale__selectContainer__select'
+                            value={selectedField}
+                            onChange={(e) => setSelectedField(e.target.value)}
+                            >
+                            {Object.entries(fieldLabels).map(([key, label]) => (
+                                <option key={key} value={key}>{label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="cPanelSalesContainer__inputSearchSale__inputContainer">
+                        <input type="text" onChange={handleInputFilteredSales} value={inputFilteredTickets} placeholder={`Buscar por ${fieldLabels[selectedField]}`} className='cPanelSalesContainer__inputSearchSale__inputContainer__input' name="" id="" />
+                    </div>
                 </div>
 
                 <div className='cPanelSalesContainer__btnCreateSale'>
-                    <Link to={'/#catalog'} className='cPanelSalesContainer__btnCreateSale__btn'>
-                        Crear venta
-                    </Link>
+                    <button className='cPanelSalesContainer__btnCreateSale__btn' onClick={handleBtnCreateSale}>Crear venta</button>
                 </div>
 
                 {
@@ -555,6 +634,19 @@ const Tickets = () => {
                 </div>
 
             </div>  
+
+            {
+                !createSaleModal &&
+                <CreateSaleModal
+                products={products}
+                totalProducts={totalProducts}
+                pageInfoProducts={pageInfoProducts}
+                selectedProducts={selectedProducts}
+                setSelectedProducts={setSelectedProducts}
+                toggleSelectProduct={toggleSelectProduct}
+                />
+                
+            }
 
         </>
 
