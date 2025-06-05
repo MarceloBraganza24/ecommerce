@@ -2,9 +2,12 @@ import React, {useState,useEffect,useRef } from 'react'
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
-const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadingProducts,totalProducts,pageInfoProducts,selectedProducts,setSelectedProducts,toggleSelectProduct}) => {
+const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchProducts,isLoadingProducts,totalProducts,pageInfoProducts}) => {
     const [selectedField, setSelectedField] = useState('title');
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [selectedProductData, setSelectedProductData] = useState([]); // Objetos completos
+    const [allProducts, setAllProducts] = useState([]); // todos los productos sin filtrar
     const [addedProducts, setAddedProducts] = useState([]);
     const [loadingBtnConfirmSale, setLoadingBtnConfirmSale] = useState(false);
     const headerRef = useRef(null);
@@ -23,6 +26,35 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
     const handleBtnCreateSale = () => {
         setCreateSaleModal(false)
     };
+
+    useEffect(() => {
+        setAllProducts(products);
+    }, []);
+
+    /* const toggleSelectProduct = (productId) => {
+        setSelectedProducts((prev) =>
+            prev.includes(productId)
+            ? prev.filter((id) => id !== productId)
+            : [...prev, productId]
+        );
+    }; */
+    const toggleSelectProduct = (productId) => {
+        const product = products.find(p => p._id === productId);
+        if (!product) return;
+
+        setSelectedProducts((prevIds) =>
+            prevIds.includes(productId)
+                ? prevIds.filter((id) => id !== productId)
+                : [...prevIds, productId]
+        );
+
+        setSelectedProductData((prevData) =>
+            prevData.some((p) => p._id === productId)
+                ? prevData.filter((p) => p._id !== productId)
+                : [...prevData, product]
+        );
+    };
+
 
     const handleBtnAddDiscount = () => {
         if(showInputDiscountContainer) {
@@ -128,6 +160,7 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
                 });
                 setTimeout(() => {
                     setCreateSaleModal(false)
+                    fetchTickets(1, "", "");
                 }, 2500);
             } else {
                 toast('Ha ocurrido un error, intente nuevamente!', {
@@ -209,95 +242,6 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
             }
         });
     };
-
-
-    /* const handleAddProduct = (product) => {
-        if (product.stock < 1) {
-            toast('No hay stock disponible en este producto!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return;
-        }
-
-        setAddedProducts(prev => {
-            const existingProduct = prev.find(p => p._id === product._id);
-
-            if (existingProduct) {
-                // Aumentar quantity si ya existe
-                toast('Has añadido un producto a la venta!', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                return prev.map(p =>
-                    p._id === product._id
-                        ? { ...p, quantity: p.quantity + 1 }
-                        : p
-                );
-            } else {
-                // Agregar nuevo producto con quantity: 1
-                toast('Has añadido un producto a la venta!', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                return [...prev, { ...product, quantity: 1 }];
-            }
-        });
-    }; */
-
-
-    /* const handleAddProduct = (product) => {
-        if(product.stock < 1) {
-            toast('No hay stock disponible en este producto!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        } else if (!addedProducts.some(p => p._id === product._id)) {
-            setAddedProducts(prev => {
-            if (prev.find(p => p._id === product._id)) return prev;
-                return [...prev, { ...product, quantity: 1 }];
-            });
-            toast('Has añadido un producto a la venta!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-        }
-    }; */
 
     const handleIncreaseQuantity = (productId) => {
         setAddedProducts(prev =>
@@ -382,12 +326,73 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
         }
     }, [pageInfoProducts.page]);
 
-    /* useEffect(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-    }, []); */
+    const handleAddSelectedProducts = () => {
+        if (selectedProducts.length === 0) {
+            toast('Debes seleccionar al menos 1 producto!', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+            return;
+        }
+
+        const selectedToAdd = selectedProductData; // Usar los productos seleccionados completos
+
+        const productsWithStock = selectedToAdd.filter(p => p.stock > 0);
+        const productsWithoutStock = selectedToAdd.filter(p => p.stock < 1);
+
+        if (productsWithStock.length > 0) {
+            setAddedProducts(prev => {
+                const updated = [...prev];
+
+                for (const product of productsWithStock) {
+                    const existingIndex = updated.findIndex(p => p._id === product._id);
+                    const existingProduct = updated[existingIndex];
+                    const cantidadEnLista = existingProduct?.quantity || 0;
+                    const cantidadDisponible = product.stock - cantidadEnLista;
+
+                    if (cantidadDisponible <= 0) {
+                        toast('No quedan más unidades disponibles para agregar!', {
+                            position: "top-right",
+                            autoClose: 2000,
+                            theme: "dark",
+                            className: "custom-toast",
+                        });
+                        // No agregamos más unidades para este producto, seguimos con el siguiente
+                        continue;
+                    }
+
+                    if (existingIndex !== -1) {
+                        updated[existingIndex].quantity += 1;
+                    } else {
+                        updated.push({ ...product, quantity: 1 });
+                    }
+                }
+
+                return updated;
+            });
+        }
+
+        setSelectedProducts([]);
+        setSelectedProductData([]);
+
+        if (productsWithoutStock.length === selectedToAdd.length) {
+            toast('Ninguno de los productos seleccionados tiene stock disponible.', {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        } else if (productsWithoutStock.length > 0) {
+            toast(`${productsWithoutStock.length} producto(s) no fueron añadidos por falta de stock.`, {
+                position: "top-right",
+                autoClose: 2000,
+                theme: "dark",
+                className: "custom-toast",
+            });
+        }
+    };
 
 
     return (
@@ -559,6 +564,12 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
 
                             </div>
                             <div className='createSaleModalContainer__createSaleModal__addedProducts__btnContainer'>
+                                <button
+                                    className="createSaleModalContainer__createSaleModal__addedProducts__btnContainer__btn"
+                                    onClick={() => setAddedProducts([])}
+                                >
+                                    Vaciar productos añadidos
+                                </button>
                                 <button 
                                     onClick={handleBtnConfirmSale} 
                                     className='createSaleModalContainer__createSaleModal__addedProducts__btnContainer__btn'
@@ -569,6 +580,18 @@ const CreateSaleModal = ({setCreateSaleModal,user,products,fetchProducts,isLoadi
                             </div>
                         </div>
                     }
+
+                    <div className='createSaleModalContainer__createSaleModal__btnAddSelected'>
+                        <button
+                            className='createSaleModalContainer__createSaleModal__btnAddSelected__btn'
+                            onClick={handleAddSelectedProducts}
+                        >
+                            {selectedProducts.length === 0
+                            ? 'Añadir seleccionados'
+                            : `Añadir seleccionados (${selectedProducts.length})`}
+                        </button>
+                    </div>
+
 
 
                     {

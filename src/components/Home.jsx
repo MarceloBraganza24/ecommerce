@@ -26,6 +26,7 @@ const Home = () => {
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [products, setProducts] = useState([]);
+    console.log(products)
     const [totalProducts, setTotalProducts] = useState("");
     const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);

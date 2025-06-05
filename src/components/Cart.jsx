@@ -561,11 +561,11 @@ const Cart = () => {
 
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__label'>Envío</div>
 
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__value'>$ 0</div>
+                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__value'>Coordinar con vendedor</div>
 
                             </div>
 
-                            {
+                            {/* {
                                 showLabelAddCoupon && user.role == 'admin' &&
                                 <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
                                     <div onClick={handleBtnAddDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop'>Ingresar descuento</div>
@@ -628,10 +628,10 @@ const Cart = () => {
 
                                         </div>
                                     </>
-                            }
+                            } */}
 
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
-                                {
+                                {/* {
                                     user.role == 'admin' ?
                                         <button 
                                             onClick={handleBtnConfirmSale} 
@@ -644,7 +644,10 @@ const Cart = () => {
                                         <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
                                             Continuar compra
                                         </Link>
-                                }
+                                } */}
+                                <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
+                                    Continuar compra
+                                </Link>
                             </div>
 
                         </div>

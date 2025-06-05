@@ -131,7 +131,7 @@ const Tickets = () => {
 
     useEffect(() => {
         if (user?.email) {
-            fetchTickets(1, "", user.email);
+            fetchTickets(1, "", "");
         }
     }, [user]);
 
@@ -377,7 +377,7 @@ const Tickets = () => {
             const data = await res.json();
             if (res.ok) {
                 setSelectedTickets([]);
-                fetchTickets(1,"", user.email)
+                fetchTickets(1,"", "")
                 toast('Tickets eliminados correctamente', {
                     position: "top-right",
                     autoClose: 2000,
@@ -632,12 +632,10 @@ const Tickets = () => {
                 products={products}
                 user={user}
                 fetchProducts={fetchProducts}
+                fetchTickets={fetchTickets}
                 isLoadingProducts={isLoadingProducts}
                 totalProducts={totalProducts}
                 pageInfoProducts={pageInfoProducts}
-                selectedProducts={selectedProducts}
-                setSelectedProducts={setSelectedProducts}
-                toggleSelectProduct={toggleSelectProduct}
                 />
                 
             }

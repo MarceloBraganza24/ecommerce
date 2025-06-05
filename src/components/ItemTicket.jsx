@@ -27,7 +27,7 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role,selectedTickets,se
                     theme: "dark",
                     className: "custom-toast",
                 });
-                fetchTickets(1, "", email);
+                fetchTickets(1, "", "");
                 setSelectedTickets([])
             } else {
                 toast('No se ha podido borrar el ticket, intente nuevamente', {

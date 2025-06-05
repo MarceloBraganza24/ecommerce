@@ -1968,6 +1968,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   padding-top: 2vh;
 }
 .myPurchasesContainer__purchasesTable__isLoadingLabel__label {
@@ -1976,7 +1977,7 @@ h2 {
   padding-top: 1vh;
 }
 .myPurchasesContainer__purchasesTable__isLoadingLabel__label:hover {
-  color: var(--secondary-color);
+  color: var(--secondary-text-color);
 }
 .myPurchasesContainer__btnsPagesContainer {
   width: 100%;
@@ -2322,7 +2323,7 @@ h2 {
 .createSaleModalContainer__createSaleModal {
   background-color: whitesmoke;
   width: 65%;
-  height: 85%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   border-radius: 0.5vh;
@@ -2507,7 +2508,6 @@ h2 {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding-top: 1vh;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__itemGrid__label {
   font-size: 16px;
@@ -2521,10 +2521,10 @@ h2 {
   align-self: center;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__itemGrid__labelTotal {
-  font-size: 22px;
+  font-size: 20px;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__itemGrid__valueTotal {
-  font-size: 22px;
+  font-size: 20px;
   justify-self: end;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__itemDiscount {
@@ -2550,7 +2550,6 @@ h2 {
   align-items: center;
   align-self: center;
   gap: 2vh;
-  padding: 1vh;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__inputCouponContainer__input {
   width: 20%;
@@ -2609,7 +2608,8 @@ h2 {
 .createSaleModalContainer__createSaleModal__addedProducts__btnContainer {
   display: flex;
   justify-content: end;
-  padding: 2vh 0vh 1vh 0vh;
+  padding: 1vh 0vh 1vh 0vh;
+  gap: 2vh;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__btnContainer__btn {
   background-color: var(--primary-color);
@@ -2619,6 +2619,21 @@ h2 {
   cursor: pointer;
 }
 .createSaleModalContainer__createSaleModal__addedProducts__btnContainer__btn:hover {
+  background-color: var(--secondary-color);
+  color: var(--secondary-text-color);
+}
+.createSaleModalContainer__createSaleModal__btnAddSelected {
+  display: flex;
+  padding: 1vh 0vh 0vh 2vh;
+}
+.createSaleModalContainer__createSaleModal__btnAddSelected__btn {
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  border-radius: 0.5vh;
+  padding: 0.5vh 2vh;
+  cursor: pointer;
+}
+.createSaleModalContainer__createSaleModal__btnAddSelected__btn:hover {
   background-color: var(--secondary-color);
   color: var(--secondary-text-color);
 }

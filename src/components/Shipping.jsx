@@ -312,8 +312,7 @@ const Shipping = () => {
             });
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
-                setIsLoading(false)
-                setIsLoadingProducts(false)
+                navigate('/')
             } else {
                 const user = data.data
                 if(user) {
@@ -529,7 +528,7 @@ const Shipping = () => {
 
                             <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__option">Enviar a domicilio</div>
 
-                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__state">$ 7500</div>
+                            <div className="shippingContainer__deliveryMethodContainer__deliveryMethod__grid__state"></div>
 
                         </div>
 

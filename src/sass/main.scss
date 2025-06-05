@@ -1723,13 +1723,14 @@ h2 {
         }
         &__isLoadingLabel {
             @include disFC();
+            flex-direction: column;
             padding-top: 2vh;
             &__label {
                 font-size: 22px;
                 color: black;
                 padding-top: 1vh;
                 &:hover {
-                    color: var(--secondary-color);
+                    color: var(--secondary-text-color);
                 }
             }
         }
@@ -2052,7 +2053,7 @@ h2 {
     &__createSaleModal {
         background-color: whitesmoke;
         width: 65%;
-        height: 85%;
+        height: 90%;
         //overflow: auto;
         display: flex;
         flex-direction: column;
@@ -2209,7 +2210,7 @@ h2 {
                 width: 100%;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                padding-top: 1vh;
+                //padding-top: 1vh;
                 &__label {
                     font-size: 16px;
                 }
@@ -2222,10 +2223,10 @@ h2 {
                     align-self: center;
                 }
                 &__labelTotal {
-                    font-size: 22px;
+                    font-size: 20px;
                 }
                 &__valueTotal {
-                    font-size: 22px;
+                    font-size: 20px;
                     justify-self: end;
                 }
             }
@@ -2252,7 +2253,7 @@ h2 {
                 @include disFC();
                 align-self: center;
                 gap: 2vh;
-                padding: 1vh;
+                //padding: 1vh;
                 &__input {
                     width: 20%;
                     height: 25px;
@@ -2292,13 +2293,24 @@ h2 {
             &__btnContainer {
                 display: flex;
                 justify-content: end;
-                padding: 2vh 0vh 1vh 0vh;
+                padding: 1vh 0vh 1vh 0vh;
+                gap: 2vh;
                 &__btn {
                     @include btn();
                     padding: 0.5vh 4vh;
                     border-radius: 0.5vh;
                     cursor: pointer;
                 }
+            }
+        }
+        &__btnAddSelected {
+            display: flex;
+            padding: 1vh 0vh 0vh 2vh;
+            &__btn {
+                @include btn();
+                border-radius: 0.5vh;
+                padding: 0.5vh 2vh;
+                cursor: pointer;
             }
         }
         &__headerTableContainer {

@@ -63,21 +63,13 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCa
 
                 <div className='itemCart__quantity'>
 
-                    {/* <button
-                        className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
-                        onClick={() => handleUpdateQuantity(quantity + 1)}
-                        disabled={loadingQuantity}
-                    >
-                        +
-                    </button> */}
                     <button
                         className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
-                        onClick={handleIncrement}
-                        disabled={loadingQuantity}
+                        onClick={() => quantity > 1 && handleUpdateQuantity(quantity - 1)}
+                        disabled={loadingQuantity} 
                     >
-                        +
+                        -
                     </button>
-
 
                     <div className="itemCart__quantity">
                         {loadingQuantity ? <Spinner/> : quantity} 
@@ -85,10 +77,10 @@ const ItemCart = ({user_id,id,title,description,stock,quantity,img,price,fetchCa
 
                     <button
                         className="itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus"
-                        onClick={() => quantity > 1 && handleUpdateQuantity(quantity - 1)}
-                        disabled={loadingQuantity} 
+                        onClick={handleIncrement}
+                        disabled={loadingQuantity}
                     >
-                        -
+                        +
                     </button>
 
                 </div>
