@@ -10,6 +10,7 @@ const Tickets = () => {
     const [selectedTickets, setSelectedTickets] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [createSaleModal, setCreateSaleModal] = useState(false);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState("");
     const [pageInfoProducts, setPageInfoProducts] = useState({
@@ -21,7 +22,6 @@ const Tickets = () => {
         prevPage: null
     });   
     const [selectedProducts, setSelectedProducts] = useState([]);
-    
 
     const [selectedField, setSelectedField] = useState('title');
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
@@ -194,21 +194,10 @@ const Tickets = () => {
 
     const fetchTickets = async (page = 1, search = "",field = "") => {
         try {
-            setIsLoadingTickets(true)
+            //setIsLoadingTickets(true)
             const response = await fetch(`http://localhost:8081/api/tickets/byPage?page=${page}&search=${search}&field=${field}`)
             const ticketsAll = await response.json();
             if (response.ok) {
-                //console.log(ticketsAll.data.docs)
-                /* setTickets(ticketsAll.data.docs); 
-                setPageInfo({
-                    page: ticketsAll.data.page,
-                    totalPages: ticketsAll.data.totalPages,
-                    hasNextPage: ticketsAll.data.hasNextPage,
-                    hasPrevPage: ticketsAll.data.hasPrevPage,
-                    nextPage: ticketsAll.data.nextPage,
-                    prevPage: ticketsAll.data.prevPage
-                }); */
-
                 setTotalTickets(ticketsAll.data.totalDocs)
                 setTickets(ticketsAll.data.docs)
                 setPageInfo({
@@ -309,7 +298,7 @@ const Tickets = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                setIsLoadingTickets(false)
+                //setIsLoadingTickets(false)
                 navigate('/')
             } else {
                 const user = data.data
@@ -328,6 +317,7 @@ const Tickets = () => {
         fetchCurrentUser();
         fetchStoreSettings();
         fetchCategories();
+        fetchProducts();
     }, []);
 
     const handleInputFilteredSales = (e) => {
@@ -636,9 +626,13 @@ const Tickets = () => {
             </div>  
 
             {
-                !createSaleModal &&
+                createSaleModal &&
                 <CreateSaleModal
+                setCreateSaleModal={setCreateSaleModal}
                 products={products}
+                user={user}
+                fetchProducts={fetchProducts}
+                isLoadingProducts={isLoadingProducts}
                 totalProducts={totalProducts}
                 pageInfoProducts={pageInfoProducts}
                 selectedProducts={selectedProducts}

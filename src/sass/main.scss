@@ -2051,16 +2051,25 @@ h2 {
     z-index: 3;
     &__createSaleModal {
         background-color: whitesmoke;
-        width: 50%;
-        height: 70%;
-        overflow: auto;
+        width: 65%;
+        height: 85%;
+        //overflow: auto;
         display: flex;
         flex-direction: column;
         border-radius: 0.5vh;
-        padding: 0vh 4vh 4vh 4vh;
+        padding: 0vh 4vh;
+        &__btnCloseModal {
+            display: flex;
+            justify-content: end;
+            padding-top: 1vh;
+            &__prop {
+                font-size: 20px;
+                cursor: pointer;
+            }
+        }
         &__title {
             @include disFC();
-            padding: 2vh 0vh;
+            padding-bottom: 1vh;
             &__prop {
                 font-size: 30px;
             }
@@ -2069,8 +2078,8 @@ h2 {
             width: 100%;
             //@include disFC();
             display: grid;
-            grid-template-columns: 1fr 1.3fr 1fr;
-            padding-bottom: 2vh;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            padding-bottom: 1vh;
             &__selectContainer {
                 @include disFC();
                 gap: 2vh;
@@ -2079,7 +2088,7 @@ h2 {
                 }
                 &__select { 
                     width: 50%;
-                    height: 30px;
+                    height: 25px;
                     border-radius: 0.5vh;
                     text-align: center;
                     font-size: 14px;
@@ -2093,20 +2102,208 @@ h2 {
                 @include disFC();
                 &__input {
                     width: 100%;
-                    height: 30px;
+                    height: 25px;
                     border-radius: 0.5vh;
                     text-align: center;
+                    font-size: 16px;
+                    &::placeholder {
+                        //@include disFC();
+                        text-align: center;
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+        &__addedProducts {
+            //background-color: #b0b7c2;
+            background-color: rgba(183, 183, 183, 0.85); // blanco translúcido
+            display: flex;
+            flex-direction: column;
+            border-radius: 0.5vh;
+            padding: 1vh;
+            &__title {
+                text-align: center;
+                font-size: 20px;
+            }
+            &__headerTableContainer {
+                //background-color: whitesmoke;
+                width: 100%;
+                @include disFC();
+                align-self: center;
+                border-top-left-radius: 0.5vh;
+                border-top-right-radius: 0.5vh;
+                &__headerTable {
+                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 1fr 1fr;
+                    border-bottom: 0.3vh solid #d6d5d5;
+                    padding: 2vh 0vh 1vh 0vh;
+                    &__item {
+                        font-size: 12px;
+                        font-weight: bold;
+                        text-align: center;
+                    }
+                }
+            }
+            &__list {
+                width: 100%;
+                max-height: 15vh;
+                display: flex;
+                flex-direction: column;
+                align-self: center;
+                overflow: auto;
+                &__itemContainer {
+                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 1fr 1fr;
+                    border-bottom: 0.3vh solid #d6d5d5;
+                    padding: 0.5vh 0vh;
+                    &__item {
+                        width: 100%;
+                        @include disFC();
+                        &__img {
+                            width: 40px;
+                            height: 30px;
+                        }
+                        &__quantity {
+                            @include disFC();
+                            gap: 0.5vh;
+                            &__btn {
+                                @include btn();
+                                width: 20px;
+                                height: 20px;
+                                font-size: 10px;
+                                border-radius: 0.5vh;
+                                cursor: pointer;
+                            }
+                        }
+                        &__label {
+                            text-align: center;
+                            font-size: 14px;
+                        }
+                        &__labelLong {
+                            text-align: center;
+                            font-size: 14px;
+                        }
+                        &__description {
+                            text-align: center;
+                            font-size: 12px;
+                        }
+                    }
+                    &__btnsContainer {
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        &__btn {
+                            padding: 0.5vh 1vh;
+                            border-radius: 0.5vh;
+                            text-align: center;
+                            cursor: pointer;
+                            @include btn();
+                        }
+                    }
+                }
+            }
+            &__itemGrid {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                padding-top: 1vh;
+                &__label {
+                    font-size: 16px;
+                }
+                &__value {
+                    font-size: 16px;
+                    justify-self: end;
+                }
+                &__labelTotalBefore {
+                    font-size: 16px;
+                    align-self: center;
+                }
+                &__labelTotal {
                     font-size: 22px;
+                }
+                &__valueTotal {
+                    font-size: 22px;
+                    justify-self: end;
+                }
+            }
+            &__itemDiscount {
+                width: 100%;
+                display: flex;
+                align-self: center;
+                &__prop {
+                    padding-top: 1vh;
+                    //color: black;
+                    text-decoration: underline;
+                    &:hover {
+                        color: var(--secondary-text-color);
+                        cursor: pointer;
+                    }
+                }
+                &__labelDiscount {
+                    padding-top: 1vh;
+
+                }
+            }
+            &__inputCouponContainer {
+                width: 90%;
+                @include disFC();
+                align-self: center;
+                gap: 2vh;
+                padding: 1vh;
+                &__input {
+                    width: 20%;
+                    height: 25px;
+                    align-self: center;
+                    text-align: center;
                     &::placeholder {
                         text-align: center;
-                        font-size: 18px;
                     }
+                }
+                &__btn {
+                    width: 15%;
+                    padding: 0.5vh 1vh;
+                    border-radius: 0.5vh;
+                    font-size: 12px;
+                    @include disFC();
+                    cursor: pointer;
+                    @include btn();
+                }
+            }
+            &__btn {
+                width: 100%;
+                @include disFC();
+                padding-top: 2vh;
+                &__prop {
+                    width: 60%;
+                    @include disFC();
+                    padding: 1vh;
+                    border-radius: 0.5vh;
+                    font-size: 16px;
+                    cursor: pointer;
+                    text-align: center;
+                    text-decoration: none;
+                    @include btn();
+                    border: 0.3vh solid black;
+                }
+            }
+            &__btnContainer {
+                display: flex;
+                justify-content: end;
+                padding: 2vh 0vh 1vh 0vh;
+                &__btn {
+                    @include btn();
+                    padding: 0.5vh 4vh;
+                    border-radius: 0.5vh;
+                    cursor: pointer;
                 }
             }
         }
         &__headerTableContainer {
             background-color: whitesmoke;
-            width: 95%;
+            width: 100%;
             @include disFC();
             align-self: center;
             border-top-left-radius: 0.5vh;
@@ -2118,7 +2315,7 @@ h2 {
                 border-bottom: 0.3vh solid #d6d5d5;
                 padding: 2vh 0vh;
                 &__item {
-                    font-size: 18px;
+                    font-size: 14px;
                     font-weight: bold;
                     text-align: center;
                 }
@@ -2126,11 +2323,12 @@ h2 {
         }
         &__productsTable {
             background-color: whitesmoke;
-            width: 95%;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-self: center;
-            margin-bottom: 4vh;
+            overflow: auto;
+            margin-bottom: 2vh;
             border-bottom-left-radius: 0.5vh;
             border-bottom-right-radius: 0.5vh;
             &__itemContainer {
