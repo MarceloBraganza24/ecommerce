@@ -7,8 +7,6 @@ const NavBar = ({cartIcon,hexToRgba,primaryColor,userCart,logo_store,isLoggedIn,
     const [quantity, setQuantity] = useState(null);
     const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-    //console.log(primaryColor)
-
     useEffect(() => {
         const timeout = setTimeout(() => {
             if (!userCart || !Array.isArray(userCart.products)) {

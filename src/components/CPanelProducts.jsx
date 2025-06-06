@@ -10,10 +10,8 @@ import Spinner from './Spinner';
 const CPanelProducts = () => {
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
-
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const navigate = useNavigate();
-    const {isLoggedIn,login,logout} = useContext(IsLoggedContext);
     const [user, setUser] = useState('');
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState("");
@@ -114,10 +112,8 @@ const CPanelProducts = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -342,7 +338,6 @@ const CPanelProducts = () => {
             setPercentage('');
             setSelectedCategories([]);
             fetchProducts()
-            //setMensaje(`✅ ${result.modifiedCount} productos actualizados correctamente.`);
         } else {
             toast('Ha ocurrido un error al aplicar los cambios, intente nuevamente!', {
                 position: "top-right",
@@ -355,7 +350,6 @@ const CPanelProducts = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
-            //setMensaje(`❌ Error: ${result.error}`);
         }
     };
 
@@ -675,7 +669,6 @@ const CPanelProducts = () => {
                     <div className='cPanelProductsContainer__btnsPagesContainer'>
                         <button className='cPanelProductsContainer__btnsPagesContainer__btn'
                             disabled={!pageInfo.hasPrevPage}
-                            //onClick={() => fetchProducts(pageInfo.prevPage)}
                             onClick={() => fetchProducts(pageInfo.prevPage, inputFilteredProducts, selectedField)}
                             >
                             Anterior
@@ -685,7 +678,6 @@ const CPanelProducts = () => {
 
                         <button className='cPanelProductsContainer__btnsPagesContainer__btn'
                             disabled={!pageInfo.hasNextPage}
-                            //onClick={() => fetchProducts(pageInfo.nextPage)}
                             onClick={() => fetchProducts(pageInfo.nextPage, inputFilteredProducts, selectedField)}
                             >
                             Siguiente

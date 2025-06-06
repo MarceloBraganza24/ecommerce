@@ -28,7 +28,6 @@ const CPanel = () => {
     const [loadingAddresses, setLoadingAddresses] = useState(false);
     const [loadingCoupons, setLoadingCoupons] = useState(false);
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
-    const [storeSettings, setStoreSettings] = useState({});
     const navigate = useNavigate();
 
     const SERVER_URL = "http://localhost:8081/";
@@ -116,7 +115,6 @@ const CPanel = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setLoadingAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -133,8 +131,8 @@ const CPanel = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setLoadingAddresses(false)
             }
-            setLoadingAddresses(false)
         } catch (error) {
             console.error(error);
             toast('Error en la conexión', {
@@ -148,12 +146,13 @@ const CPanel = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setLoadingAddresses(false)
         }
     };
 
     const fetchCategories = async () => {
         try {
-            setLoadingCategories(true)
             const response = await fetch('http://localhost:8081/api/categories');
             const data = await response.json();
             if (response.ok) {
@@ -170,8 +169,8 @@ const CPanel = () => {
                     theme: "dark",
                     className: "custom-toast",
                 });
+                setLoadingCategories(false)
             }
-            setLoadingCategories(false)
         } catch (error) {
             console.error(error);
             toast('Error en la conexión', {
@@ -185,12 +184,13 @@ const CPanel = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setLoadingCategories(false)
         }
     };
 
     const fetchCoupons = async () => {
         try {
-            setLoadingCoupons(true)
             const response = await fetch('http://localhost:8081/api/coupons');
             const data = await response.json();
             if (response.ok) {
@@ -222,6 +222,8 @@ const CPanel = () => {
                 theme: "dark",
                 className: "custom-toast",
             });
+        } finally {
+            setLoadingCoupons(false)
         }
     };
 
@@ -669,12 +671,21 @@ const CPanel = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
-                setConfigurationSiteformData(data); 
+                setConfigurationSiteformData(prev => ({
+                    ...prev,
+                    ...data,
+                    socialNetworks: Array.isArray(data.socialNetworks)
+                        ? data.socialNetworks.map(item => ({
+                            name: item.name || '',
+                            url: item.url || '',
+                            logo: typeof item.logo === 'string' ? SERVER_URL + item.logo : null,
+                            prevLogoPath: typeof item.logo === 'string' ? item.logo : null, // guardo la ruta relativa para backend
+                        }))
+                        : [],
+                }));
                 setColorSelectFormData((prev) => ({
                     ...prev,
                     primaryColor: data.primaryColor || prev.primaryColor,
@@ -771,6 +782,7 @@ const CPanel = () => {
         aboutText: '',
         footerLogoText: '',
         sliderLogos: [],
+        socialNetworks: []
     });
 
     useEffect(() => {
@@ -779,6 +791,53 @@ const CPanel = () => {
             setCartIcon(claro ? '/src/assets/cart_black.png' : '/src/assets/cart_white.png');
         }
     }, [configurationSiteformData]);
+
+    const handleSocialChange = (index, field, value) => {
+        setConfigurationSiteformData(prev => {
+            const updatedNetworks = [...prev.socialNetworks];
+            const current = updatedNetworks[index];
+
+            updatedNetworks[index] = {
+                ...current,
+                [field]: value,
+                // Asegura que se mantenga prevLogoPath si ya existía
+                prevLogoPath: current.prevLogoPath || current.logo || ''
+            };
+
+            return { ...prev, socialNetworks: updatedNetworks };
+        });
+    };
+
+
+    const handleSocialLogoChange = (index, file) => {
+        setConfigurationSiteformData(prev => {
+            const updatedNetworks = [...prev.socialNetworks];
+            updatedNetworks[index] = {
+            ...updatedNetworks[index],
+            logo: file,
+            // prevLogoPath no se toca aquí
+            };
+            return { ...prev, socialNetworks: updatedNetworks };
+        });
+    };
+
+    const addSocialNetwork = () => {
+        setConfigurationSiteformData(prev => ({
+            ...prev,
+            socialNetworks: [
+            ...prev.socialNetworks,
+            { name: '', url: '', logo: null }
+            ]
+        }));
+    };
+
+    const removeSocialNetwork = (index) => {
+        setConfigurationSiteformData(prev => {
+            const updatedNetworks = [...prev.socialNetworks];
+            updatedNetworks.splice(index, 1);
+            return { ...prev, socialNetworks: updatedNetworks };
+        });
+    };
 
     const handleSliderImagesUpload = (e) => {
         const files = Array.from(e.target.files);
@@ -822,7 +881,6 @@ const CPanel = () => {
         accentColor: '#fccf03',
         colorInputMode: 'pallete'
     });
-    //console.log(colorSelectFormData)
 
     const handleColorSelect = (field, color) => {
         setColorSelectFormData((prev) => ({
@@ -889,13 +947,29 @@ const CPanel = () => {
             }
         });
 
+        const processedSocialNetworks = configurationSiteformData.socialNetworks.map((network, index) => {
+            if (network.logo instanceof File) {
+                formData.append('socialNetworkLogos', network.logo);
+                return {
+                ...network,
+                logo: `__upload__${index}`,
+                prevLogoPath: network.prevLogoPath || null,
+                };
+            }
+            return {
+                ...network,
+                prevLogoPath: network.prevLogoPath || null,
+            };
+        });
+
         // Armar el objeto completo con los demás campos
         const configData = {
             ...configurationSiteformData,
             primaryColor: colorSelectFormData.primaryColor,
             secondaryColor: colorSelectFormData.secondaryColor,
             accentColor: colorSelectFormData.accentColor,
-            sliderLogos: configurationSiteformData.sliderLogos.filter(logo => typeof logo === 'string' && logo.trim() !== '')
+            sliderLogos: configurationSiteformData.sliderLogos.filter(logo => typeof logo === 'string' && logo.trim() !== ''),
+            socialNetworks: processedSocialNetworks
         };
 
         // Convertir a JSON y añadirlo
@@ -1224,15 +1298,6 @@ const CPanel = () => {
                         colorOptions={colorOptions}
                         />
 
-                        {/* <ColorInput
-                        label="Color terciario"
-                        name="accentColor"
-                        value={colorSelectFormData.accentColor}
-                        inputMode={colorSelectFormData.colorInputMode}
-                        onChange={handleColorSelect}
-                        colorOptions={colorOptions}
-                        /> */}
-
                         <div className="cPanelContainer__siteConfiguration__form__images" style={{marginTop: '2vh'}}>
                             <div className="cPanelContainer__siteConfiguration__form__images__title">Imágenes del sitio</div>
                             {[
@@ -1290,7 +1355,6 @@ const CPanel = () => {
                                         }
                                         alt={`logo-${index}`}
                                     />
-                                    {/* <img className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__img' src={typeof logo === 'string' ? logo : URL.createObjectURL(logo)} alt={`logo-${index}`} /> */}
                                     <button className='cPanelContainer__siteConfiguration__form__gridImages__preview__imgBtn__btn' type="button" onClick={() => removeLogo(index)}>Eliminar</button>
                                 </div>
                                 ))}
@@ -1319,6 +1383,62 @@ const CPanel = () => {
                                 placeholder="Escribí aquí el texto que aparecerá abajo del logo en el footer"
                                 rows={5}
                             />
+                        </div>
+
+                        <div className='cPanelContainer__siteConfiguration__form__socialNetworks'>
+
+                            <div className="cPanelContainer__siteConfiguration__form__socialNetworks__title">Redes sociales</div>
+
+                            {configurationSiteformData?.socialNetworks?.map((network, index) => (
+                                <div key={index} className="cPanelContainer__siteConfiguration__form__socialNetworks__grid">
+                                    <div className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__inputContainer">
+                                        <input
+                                        type="text"
+                                        placeholder="(nombre usuario, n° telefono)"
+                                        value={network.name}
+                                        onChange={(e) => handleSocialChange(index, 'name', e.target.value)}
+                                        className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__inputContainer__input"
+                                        />
+                                    </div>
+
+                                    <div className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__inputContainer">
+                                        <input
+                                        type="url"
+                                        placeholder="URL (ej. https://instagram.com/tu-cuenta)"
+                                        value={network.url}
+                                        onChange={(e) => handleSocialChange(index, 'url', e.target.value)}
+                                        className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__inputContainer__input"
+                                        />
+                                    </div>
+                                    
+                                    <div className='cPanelContainer__siteConfiguration__form__socialNetworks__grid__imgContainer'>
+                                        {/* Vista previa de la imagen si ya se subió */}
+                                        {network.logo && (
+                                        <img
+                                            src={typeof network.logo === 'string' ? network.logo : URL.createObjectURL(network.logo)}
+                                            alt="Logo de red social"
+                                            className='cPanelContainer__siteConfiguration__form__socialNetworks__grid__imgContainer__img'
+                                        />
+                                        )}
+                                        <div className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__imgContainer__inputContainer">
+                                            <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleSocialLogoChange(index, e.target.files[0])}
+                                            className="cPanelContainer__siteConfiguration__form__socialNetworks__grid__imgContainer__inputContainer__input"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className='cPanelContainer__siteConfiguration__form__socialNetworks__grid__btnContainer'>
+                                        <button className='cPanelContainer__siteConfiguration__form__socialNetworks__grid__btnContainer__btn' type="button" onClick={() => removeSocialNetwork(index)}>Eliminar</button>
+                                    </div>
+                                </div>
+                            ))}
+                            <div className='cPanelContainer__siteConfiguration__form__socialNetworks__btnAddSocialNetworkContianer'>
+                                <button type="button" className='cPanelContainer__siteConfiguration__form__socialNetworks__btnAddSocialNetworkContianer__btn' onClick={addSocialNetwork}>Agregar red social</button>
+                            </div>
+
                         </div>
 
                         <div className='cPanelContainer__siteConfiguration__form__btnContainer'>

@@ -7,14 +7,8 @@ const ItemBinTicket = ({ticket,fechaHora,fetchDeletedTickets,selectedTickets,set
     const [loading, setLoading] = useState(false);
     const [loadingBtnRestore, setLoadingBtnRestore] = useState(false);
 
-    const capitalizeFirstLetter = (text) => {
-        return text.charAt(0).toUpperCase() + text.slice(1);
-    };
-
     const handleBtnDeleteTicket = async () => {
-
         setLoading(true);
-            
         try {
             const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}`, {
                 method: 'DELETE'

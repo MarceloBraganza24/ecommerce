@@ -12,9 +12,7 @@ const ItemBinProduct = ({product,fetchDeletedProducts,selectedProducts,setSelect
     };
 
     const handleBtnDeleteProduct = async () => {
-
         setLoading(true);
-            
         try {
             const res = await fetch(`http://localhost:8081/api/products/${product._id}`, {
                 method: 'DELETE'
@@ -41,7 +39,6 @@ const ItemBinProduct = ({product,fetchDeletedProducts,selectedProducts,setSelect
         } finally {
             setLoading(false);
         }
-        
     };
 
     const handleBtnRestoreProduct = async () => {

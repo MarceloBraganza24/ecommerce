@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,phoneNumbers,contactEmail}) => {
+const Footer = ({sellerAddresses,socialNetworks,isLoadingSellerAddresses,logo_store,aboutText,phoneNumbers,contactEmail}) => {
 
     const scrollToTop = () => {
         window.scrollTo({
@@ -9,6 +9,10 @@ const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,p
             behavior: 'smooth'
         });
     };
+
+    const handleGoToUrl = (url) => {
+        window.open(url, "_blank");
+    }
 
     return (
 
@@ -104,6 +108,33 @@ const Footer = ({sellerAddresses,isLoadingSellerAddresses,logo_store,aboutText,p
 
                 </div>
 
+            </div>
+
+            <div className='separatorContainer'>
+                <div className='separatorContainer__separator'></div>
+            </div>
+
+            <div className='footerContainer__socialNetworks'>
+                <div className='footerContainer__socialNetworks__title'>
+                    <div className='footerContainer__socialNetworks__title__prop'>Redes sociales</div>
+                </div>
+                <div className='footerContainer__socialNetworks__list'>
+                    {socialNetworks?.map(({ name,logo, url, _id }) => (
+                        <>
+                            <div className='footerContainer__socialNetworks__list__socialNetwork'>
+
+                                <div className='footerContainer__socialNetworks__list__socialNetwork__logo'>
+                                    <img onClick={() => handleGoToUrl(url)} class="footerContainer__socialNetworks__list__socialNetwork__logo__prop" src={`http://localhost:8081/${logo}`} alt={'.'}/>
+                                </div>
+
+                                <div className='footerContainer__socialNetworks__list__socialNetwork__labelContainer'>
+                                    <div onClick={() => handleGoToUrl(url)} className='footerContainer__socialNetworks__list__socialNetwork__labelContainer__label'>{name}</div>
+                                </div>
+
+                            </div>
+                        </>
+                    ))}
+                </div>
             </div>
 
         </>

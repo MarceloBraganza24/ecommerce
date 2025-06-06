@@ -74,10 +74,8 @@ const MyPurchases = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {

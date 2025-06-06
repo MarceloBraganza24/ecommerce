@@ -152,8 +152,6 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts,categories
     
         setNuevoCampo({ key: '', value: '' });
     };
-    
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -258,37 +256,6 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts,categories
     
         // Eliminar la propiedad del objeto
         delete nuevosCampos[key.toLowerCase()];
-    
-        setFormData(prev => ({
-            ...prev,
-            camposDinamicos: nuevosCampos
-        }));
-    };
-
-    const handleValueChange = (index, newValue) => {
-        const regex = /^[A-Za-z0-9 ,]*$/;
-        if (!regex.test(newValue)) {
-            toast('Solo se permiten letras, números y espacios.', {
-              position: "top-right",
-              autoClose: 2000,
-              theme: "dark",
-              className: "custom-toast",
-            });
-            return;
-        }
-
-        if (newValue.length > 100) {
-            toast('Máximo 100 caracteres en el valor del campo.', {
-              position: "top-right",
-              autoClose: 2000,
-              theme: "dark",
-              className: "custom-toast",
-            });
-            return;
-        }
-
-        const nuevosCampos = [...formData.camposDinamicos];
-        nuevosCampos[index].value = newValue;
     
         setFormData(prev => ({
             ...prev,
@@ -472,23 +439,6 @@ const UpdateProductModal = ({product,setShowUpdateModal,fetchProducts,categories
                             </div>
 
                         </div>
-
-                        {/* <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct'>
-
-                            <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__label'>Categoría</div>
-                            <div className='updateProductModalContainer__updateProductModal__propsContainer__propProduct__input'>
-                                <input
-                                    name='category'
-                                    placeholder='Categoría'
-                                    type="text"
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="updateProductModalContainer__updateProductModal__propsContainer__propProduct__input__prop"
-                                    required
-                                />
-                            </div>
-
-                        </div> */}
 
                         <div className='createProductModalContainer__createProductModal__propsContainer__propProduct'>
 

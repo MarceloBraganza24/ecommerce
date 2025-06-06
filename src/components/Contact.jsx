@@ -71,10 +71,8 @@ const Contact = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -207,10 +205,8 @@ const Contact = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setSellerAddresses(data.data); 
             } else {
@@ -435,6 +431,7 @@ const Contact = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

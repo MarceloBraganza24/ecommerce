@@ -4,17 +4,9 @@ import { toast } from 'react-toastify';
 
 const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role,selectedTickets,setSelectedTickets,toggleSelectTicket}) => {
     const [loading, setLoading] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
-
-    //console.log(ticket)
-
-    const capitalizeFirstLetter = (text) => {
-        return text.charAt(0).toUpperCase() + text.slice(1);
-    };
 
     const handleBtnDeleteTicket = async () => {
         setLoading(true);
-        
         try {
             const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}/soft-delete`, {
                 method: 'PUT',  // Usamos PUT o PATCH para actualizar, no DELETE
@@ -44,42 +36,8 @@ const ItemTicket = ({ticket,fetchTickets,fechaHora,email,role,selectedTickets,se
         }
     };
 
-    /* const handleBtnDeleteTicket = async () => {
-
-        setLoading(true);
-            
-        try {
-            const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}`, {
-                method: 'DELETE'
-            });
-            if (res.ok) {
-                toast('Has eliminado la venta con éxito', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                fetchTickets(1, "", email);
-            } else {
-                toast('No se ha podido borrar la venta, intente nuevamente', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            setLoading(false);
-        }
-        
-    }; */
-
     const handleBtnHiddenProduct = async () => {
-
         setLoading(true);
-            
         try {
             const res = await fetch(`http://localhost:8081/api/tickets/${ticket._id}`, {
                 method: 'PUT'

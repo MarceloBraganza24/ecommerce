@@ -40,7 +40,6 @@ const CategoryContainer = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     
-    const [productsByCategory, setProductsByCategory] = useState([]);
     const {category} = useParams()
 
     function esColorClaro(hex) {
@@ -92,7 +91,6 @@ const CategoryContainer = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -120,7 +118,6 @@ const CategoryContainer = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            //setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
     
@@ -165,9 +162,7 @@ const CategoryContainer = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        }/*  finally {
-            setIsLoadingProducts(false);
-        } */
+        }
     };
 
     const fetchCategories = async () => {
@@ -212,7 +207,6 @@ const CategoryContainer = () => {
 
     const fetchDeliveryForm = async () => {
         try {
-            setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -287,7 +281,6 @@ const CategoryContainer = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {
@@ -500,6 +493,7 @@ const CategoryContainer = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

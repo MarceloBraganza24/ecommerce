@@ -31,11 +31,6 @@ const ItemDetailContainer = () => {
     const [selectedOptions, setSelectedOptions] = useState({});
     const [categories, setCategories] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
-    const [formData, setFormData] = useState({
-        street: "",
-        street_number: "",
-        locality: ""
-    });
 
     const [zoomActive, setZoomActive] = useState(false);
     const [zoomPosition, setZoomPosition] = useState({ x: "50%", y: "50%" });
@@ -124,7 +119,6 @@ const ItemDetailContainer = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
             if (response.ok) {
@@ -152,7 +146,6 @@ const ItemDetailContainer = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            //setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
     
@@ -197,17 +190,13 @@ const ItemDetailContainer = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } /* finally {
-            setIsLoadingProducts(false);
-        } */
+        } 
     };
     
     const fetchProducts = async () => {
         try {
-            //setIsLoadingProducts(true); 
             const response = await fetch(`http://localhost:8081/api/products/${id}`)
             const productById = await response.json();
-            //console.log(productById)
             if(response.ok) {
                 setProductById(productById.data)
             }
@@ -256,7 +245,6 @@ const ItemDetailContainer = () => {
 
     const fetchDeliveryForm = async () => {
         try {
-            setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -290,7 +278,6 @@ const ItemDetailContainer = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {
@@ -306,7 +293,6 @@ const ItemDetailContainer = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -473,7 +459,6 @@ const ItemDetailContainer = () => {
                                                     value={selectedOptions[key] || ''} // valor seleccionado o vacío
                                                     onChange={(e) => handleSelectChange(key, e.target.value)}
                                                     >
-                                                    {/* <option value="" disabled>Seleccione una opción</option> */}
                                                     {opciones.map((opcion, i) => (
                                                         <option key={i} value={opcion}>
                                                         {capitalizeFirstLetter(opcion)}
@@ -518,6 +503,7 @@ const ItemDetailContainer = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

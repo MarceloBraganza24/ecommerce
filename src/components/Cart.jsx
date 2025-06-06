@@ -9,23 +9,16 @@ import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 
 const Cart = () => {
-    const navigate = useNavigate();
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
     const [user, setUser] = useState('');
-    const [inputDiscount, setInputDiscount] = useState('');
-    const [discountApplied, setDiscountApplied] = useState('');
     const [userCart, setUserCart] = useState({});
     const [categories, setCategories] = useState([]);
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
-    const [showLabelAddCoupon, setShowLabelAddDiscount] = useState(true);
-    const [showLabelDiscountApplied, setShowLabelApplyDiscount] = useState(false);
-    const [showInputDiscountContainer, setShowInputDiscountContainer] = useState(false);
-    const [isLoadingValidateCoupon, setIsLoadingValidateCoupon] = useState(false);
     const [sellerAddresses, setSellerAddresses] = useState([]);
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [selectedAddress, setSelectedAddress] = useState(null);
@@ -42,8 +35,6 @@ const Cart = () => {
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [loadingBtnDeleteAllItemCart, setLoadingBtnDeleteAllItemCart] = useState(false);
 
-    const [loadingBtnConfirmSale, setLoadingBtnConfirmSale] = useState(false);
-    
     const handleDeleteAll = async () => {
         setLoadingBtnDeleteAllItemCart(true); // 👈 Activamos el "vaciando..."
         await deleteAllItemCart(userCart?.user_id, fetchCartByUserId);
@@ -77,7 +68,6 @@ const Cart = () => {
 
     const [total, setTotal] = useState('');
     const [totalQuantity, setTotalQuantity] = useState('');
-    const [totalWithDiscount, setTotalWithDiscount] = useState('');
     
     useEffect(() => {
         
@@ -116,10 +106,8 @@ const Cart = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -217,8 +205,6 @@ const Cart = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } finally {
-            setIsLoadingProducts(false);
         }
     };
     
@@ -261,7 +247,6 @@ const Cart = () => {
 
     const fetchDeliveryForm = async () => {
         try {
-            setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -310,8 +295,6 @@ const Cart = () => {
         }
     };
 
-    
-
     useEffect(() => {
         fetchCurrentUser();
         fetchCategories();
@@ -330,100 +313,6 @@ const Cart = () => {
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
-    const handleBtnConfirmSale = async () => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const currentDate = `${year}-${month}-${day} ${hours}:${minutes}`;
-        const purchase_datetime = currentDate;
-
-        const newTicket = {
-            amount: showLabelDiscountApplied?totalWithDiscount:total,
-            payer_email: user.email,
-            items: userCart.products,
-            deliveryMethod: 'vendedor',
-            purchase_datetime,
-            user_role: user.role,
-            user_cart_id: userCart._id,
-        }
-        try {
-            setLoadingBtnConfirmSale(true)
-            const response = await fetch(`http://localhost:8081/api/tickets/saveSale`, {
-                method: 'POST',         
-                credentials: 'include', // 👈 necesario para recibir cookies
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newTicket)
-            })
-            const data = await response.json();
-            if (response.ok) {
-                toast('Has registrado la venta con éxito!', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-                setTimeout(() => {
-                    navigate('/tickets')
-                }, 2500);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            setLoadingBtnConfirmSale(false)
-        }/*  finally {
-            setLoadingBtnConfirmSale(false)
-        } */
-    }
-
-    const handleBtnAddDiscount = () => {
-        if(showInputDiscountContainer) {
-            setShowInputDiscountContainer(false)
-        } else {
-            setShowInputDiscountContainer(true)
-            //setTotalWithDiscount('')
-        }
-    }
-
-    const handleInputDiscount = (e) => {
-        setInputDiscount(e.target.value)
-    }
-
-    const handleBtnChangeDiscount = () => {
-        setShowInputDiscountContainer(true)
-        setShowLabelAddDiscount(true)
-        setShowLabelApplyDiscount(false)
-    }
-
-    const handleBtnApplyDiscount = async () => {
-        if(!inputDiscount) {
-            toast('Debes ingresar un descuento!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                className: "custom-toast",
-            });
-            return
-        }
-        setShowLabelAddDiscount(false)
-        setShowInputDiscountContainer(false)
-        setShowLabelApplyDiscount(true)
-        setTotalWithDiscount(total - (total * inputDiscount / 100))
-    }
-  
     return (
 
         <>
@@ -565,86 +454,7 @@ const Cart = () => {
 
                             </div>
 
-                            {/* {
-                                showLabelAddCoupon && user.role == 'admin' &&
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
-                                    <div onClick={handleBtnAddDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__prop'>Ingresar descuento</div>
-                                </div>
-                            }
-
-                            {
-                                showInputDiscountContainer &&
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer'>
-                                    <input placeholder='Descuento (%)' value={inputDiscount} onChange={handleInputDiscount} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__input' type="text" />
-                                    
-                                    <button onClick={handleBtnApplyDiscount} className='cartContainer__accountSummaryContainer__accountSummary__inputCouponContainer__btn'>
-                                        {isLoadingValidateCoupon ? (
-                                            <>
-                                                <Spinner />
-                                            </>
-                                        ) : (
-                                            'Aplicar'
-                                        )}
-                                    </button>
-                                </div>
-                            }
-
-                            {
-                                showLabelDiscountApplied &&
-                                <>
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount'>Has aplicado un descuento del <strong>{inputDiscount}%</strong></div>
-                                </div>
-                                <div className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount'>
-                                    <div onClick={handleBtnChangeDiscount} className='cartContainer__accountSummaryContainer__accountSummary__itemDiscount__labelDiscount' style={{cursor: 'pointer', textDecoration: 'underline'}}>Cambiar descuento</div>
-                                </div>
-                                </>
-                            }
-
-
-                            {
-                                !showLabelDiscountApplied ?
-                                    <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL</div>
-
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {total}</div>
-
-                                    </div>
-                                :
-                                    <>
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotalBefore'></div>
-
-                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'><span style={{fontSize:'14px',alignSelf:'center'}}>antes</span> <span style={{textDecoration:'line-through'}}>$ {total}</span></div>
-
-                                        </div>
-                                        <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid'>
-
-                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__labelTotal'>TOTAL <span style={{fontSize:'14px'}}>(con descuento)</span></div>
-
-                                            <div className='cartContainer__accountSummaryContainer__accountSummary__itemGrid__valueTotal'>$ {totalWithDiscount}</div>
-
-                                        </div>
-                                    </>
-                            } */}
-
                             <div className='cartContainer__accountSummaryContainer__accountSummary__btn'>
-                                {/* {
-                                    user.role == 'admin' ?
-                                        <button 
-                                            onClick={handleBtnConfirmSale} 
-                                            className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'
-                                            disabled={loadingBtnConfirmSale}
-                                        >
-                                            {loadingBtnConfirmSale ? <Spinner/> : 'Confirmar venta'}
-                                        </button>
-                                    :
-                                        <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
-                                            Continuar compra
-                                        </Link>
-                                } */}
                                 <Link to={'/shipping'} className='cartContainer__accountSummaryContainer__accountSummary__btn__prop'>
                                     Continuar compra
                                 </Link>
@@ -681,6 +491,7 @@ const Cart = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

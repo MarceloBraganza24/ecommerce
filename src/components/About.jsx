@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 const About = () => {
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
     const [user, setUser] = useState('');
-    const [cookieValue, setCookieValue] = useState('');
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userCart, setUserCart] = useState({});
@@ -75,7 +74,6 @@ const About = () => {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -254,6 +252,7 @@ const About = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

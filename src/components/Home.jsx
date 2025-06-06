@@ -3,7 +3,6 @@ import NavBar from './NavBar'
 import ItemProduct from './ItemProduct';
 import { Link, useLocation,useNavigate } from "react-router-dom";
 import Footer from "./Footer";
-import {IsLoggedContext} from '../context/IsLoggedContext';
 import { toast } from 'react-toastify';
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,7 +16,6 @@ import Spinner from "./Spinner";
 const Home = () => {
     const catalogRef = useRef(null);
     const [cartIcon, setCartIcon] = useState('/src/assets/cart_black.png');
-    const [logosSlider, setLogosSlider] = useState([]);
     const [inputFilteredProducts, setInputFilteredProducts] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [user, setUser] = useState('');
@@ -25,10 +23,10 @@ const Home = () => {
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [storeSettings, setStoreSettings] = useState({});
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
+    const [isLoadingProductsByCategory, setIsLoadingProductsByCategory] = useState(true);
     const [products, setProducts] = useState([]);
-    console.log(products)
+    const [productsByCategory, setProductsByCategory] = useState([]);
     const [totalProducts, setTotalProducts] = useState("");
-    const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [showLogOutContainer, setShowLogOutContainer] = useState(false);
     const [pageInfo, setPageInfo] = useState({
         page: 1,
@@ -54,7 +52,6 @@ const Home = () => {
         all: 'Todos'
     };
     
-    const navigate = useNavigate();
     const location = useLocation();
 
     const handleInputFilteredProducts = (e) => {
@@ -70,12 +67,6 @@ const Home = () => {
 
         return () => clearTimeout(delayDebounce);
     }, [inputFilteredProducts, selectedField]);
-    
-    const groupedProducts = products.reduce((acc, product) => {
-        acc[product.category] = acc[product.category] || [];
-        acc[product.category].push(product);
-        return acc;
-    }, {});
 
     function esColorClaro(hex) {
         if (!hex) return true;
@@ -104,7 +95,6 @@ const Home = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
             if (!response.ok) {
@@ -148,8 +138,6 @@ const Home = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } finally {
-            setIsLoadingProducts(false);
         }
     };
 
@@ -193,7 +181,6 @@ const Home = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/products/byPage?page=${page}&search=${search}&field=${field}`)
             const productsAll = await response.json();
-            //console.log(productsAll)
             setTotalProducts(productsAll.data.totalDocs)
             setProducts(productsAll.data.docs)
             setPageInfo({
@@ -236,7 +223,6 @@ const Home = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -264,7 +250,6 @@ const Home = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
             if (response.ok) {
@@ -290,8 +275,36 @@ const Home = () => {
         }
     };
 
+    const fetchProductsByCategory = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/products/grouped-by-category');
+            const data = await response.json();
+            if (response.ok) {
+                setProductsByCategory(data.data); 
+            } else {
+                toast('Error al cargar configuraciones', {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    className: "custom-toast",
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingProductsByCategory(false)
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
+        fetchProductsByCategory();
         fetchCurrentUser();
         fetchProducts();
         fetchStoreSettings();
@@ -518,9 +531,9 @@ const Home = () => {
 
                             :
 
-                            products.length ?
+                            !isLoadingProductsByCategory ?
                         
-                            Object.entries(groupedProducts).map(([category, items]) => (
+                            Object.entries(productsByCategory).map(([category, items]) => (
 
                                 <div className='catalogContainer__grid__catalog__categorieContainer' key={category}>
 
@@ -595,6 +608,7 @@ const Home = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}

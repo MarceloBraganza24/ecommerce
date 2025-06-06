@@ -6,7 +6,6 @@ const BtnGoUp = ({isVisible,scrollToTop}) => {
             {isVisible && (
                 <button
                     onClick={scrollToTop}
-                    //style={styles.scrollToTopButton}
                     className='btnGoUp'
                     aria-label="Volver arriba"
                 >

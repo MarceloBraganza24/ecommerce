@@ -3,7 +3,7 @@ import NavBar from './NavBar';
 import { toast } from 'react-toastify';
 import Spinner from './Spinner';
 import ItemTicket from './ItemTicket';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CreateSaleModal from './CreateSaleModal';
 
 const Tickets = () => {
@@ -61,14 +61,6 @@ const Tickets = () => {
     useEffect(() => {
         setSelectAll(selectedProducts.length === products.length && products.length > 0);
     }, [selectedProducts, products]);
-
-    const toggleSelectProduct = (id) => {
-        setSelectedProducts(prev =>
-            prev.includes(id)
-            ? prev.filter(pId => pId !== id)
-            : [...prev, id]
-        );
-    };
 
     useEffect(() => {
         if(user.isLoggedIn) {
@@ -194,7 +186,6 @@ const Tickets = () => {
 
     const fetchTickets = async (page = 1, search = "",field = "") => {
         try {
-            //setIsLoadingTickets(true)
             const response = await fetch(`http://localhost:8081/api/tickets/byPage?page=${page}&search=${search}&field=${field}`)
             const ticketsAll = await response.json();
             if (response.ok) {
@@ -244,7 +235,6 @@ const Tickets = () => {
         try {
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
-    
             if (!response.ok) {
                 console.error("Error al obtener el carrito:", data);
                 toast('Error al cargar el carrito del usuario actual', {
@@ -298,7 +288,6 @@ const Tickets = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                //setIsLoadingTickets(false)
                 navigate('/')
             } else {
                 const user = data.data
@@ -336,10 +325,8 @@ const Tickets = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {

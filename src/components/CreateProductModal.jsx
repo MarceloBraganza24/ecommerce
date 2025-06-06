@@ -245,21 +245,13 @@ const CreateProductModal = ({setShowCreateProductModal,categories,fetchProducts}
                 });
                 fetchProducts();
                 setShowCreateProductModal(false);
-            } /* else {
-                toast('No se ha podido ingresar el producto, intente nuevamente', {
-                    position: "top-right",
-                    autoClose: 2000,
-                    theme: "dark",
-                    className: "custom-toast",
-                });
-            } */
+            } 
         } catch (error) {
             console.error('Error:', error);
         } finally {
             setLoading(false);
         }
     };
-    
 
     const handleClickUpload = () => {
         fileInputRef.current.click(); // Abre el diálogo de selección de archivos

@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import { Link } from 'react-router-dom';
 import Spinner from './Spinner';
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -141,7 +140,6 @@ const ItemProduct = ({user_id,fetchCartByUserId,id,stock,images,title,descriptio
                             //src={img}
                             src={`http://localhost:8081/${img}`}
                             alt={`Imagen ${index + 1} de ${title}`}
-                            //className="w-full h-full object-cover rounded-lg"
                             className="itemProduct__imgContainer__img"
                             />
                         </SwiperSlide>

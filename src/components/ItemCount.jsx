@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Spinner from './Spinner';
 
 const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fetchCartByUserId,userCart}) => {
-
     const productoEnCarrito = userCart?.products?.find(p => p.product._id === id);
     const cantidadEnCarrito = productoEnCarrito?.quantity || 0;
     const cantidadDisponible = stock - cantidadEnCarrito;
@@ -209,7 +208,9 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
 
             <h2 className='itemDetailContainer__itemDetail__infoContainer__info__count__quantityLabel'>Cantidad:</h2>
 
-            <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
+            { count != 1 ?
+                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button> : <button disabled className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button>
+            }
 
             { stock > 0 ?
                 <div className='itemDetailContainer__itemDetail__infoContainer__info__count__prop'>{count}</div>
@@ -217,9 +218,7 @@ const ItemCount = ({user_id,roleUser,id,images,title,description,price,stock,fet
                 <div className='itemDetailContainer__itemDetail__infoContainer__info__count__prop'>0</div>
             }
 
-            { count != 1 ?
-                <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button> : <button disabled className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={decrement}>-</button>
-            }
+            <button className='itemDetailContainer__itemDetail__infoContainer__info__count__plusMinus' onClick={increment}>+</button>
 
             <div className='itemDetailContainer__itemDetail__infoContainer__info__count__availability'>({stock} Disponibles)</div>
 

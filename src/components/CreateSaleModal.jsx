@@ -11,7 +11,6 @@ const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchPro
     const [addedProducts, setAddedProducts] = useState([]);
     const [loadingBtnConfirmSale, setLoadingBtnConfirmSale] = useState(false);
     const headerRef = useRef(null);
-
     const [inputDiscount, setInputDiscount] = useState('');
     const [showLabelAddCoupon, setShowLabelAddDiscount] = useState(true);
     const [showInputDiscountContainer, setShowInputDiscountContainer] = useState(false);
@@ -21,8 +20,6 @@ const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchPro
     const [totalWithDiscount, setTotalWithDiscount] = useState('');
     const [isLoadingValidateCoupon, setIsLoadingValidateCoupon] = useState(false);
 
-    //console.log(addedProducts)
-
     const handleBtnCreateSale = () => {
         setCreateSaleModal(false)
     };
@@ -31,13 +28,6 @@ const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchPro
         setAllProducts(products);
     }, []);
 
-    /* const toggleSelectProduct = (productId) => {
-        setSelectedProducts((prev) =>
-            prev.includes(productId)
-            ? prev.filter((id) => id !== productId)
-            : [...prev, productId]
-        );
-    }; */
     const toggleSelectProduct = (productId) => {
         const product = products.find(p => p._id === productId);
         if (!product) return;
@@ -54,7 +44,6 @@ const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchPro
                 : [...prevData, product]
         );
     };
-
 
     const handleBtnAddDiscount = () => {
         if(showInputDiscountContainer) {
@@ -262,7 +251,6 @@ const CreateSaleModal = ({fetchTickets,setCreateSaleModal,user,products,fetchPro
             )
         );
     };
-
 
     const handleRemoveProduct = (productId) => {
         setAddedProducts(addedProducts.filter(product => product._id !== productId));

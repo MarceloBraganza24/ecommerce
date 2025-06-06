@@ -19,7 +19,6 @@ const Shipping = () => {
     const [isLoadingSellerAddresses, setIsLoadingSellerAddresses] = useState(true);
     const [isLoadingGeneralData, setIsLoadingGeneralData] = useState(true);
     const [sellerAddresses, setSellerAddresses] = useState([]);
-    const [cookieValue, setCookieValue] = useState('');
     const [deliveryForms, setDeliveryForms] = useState([]);
     const [isLoadingDeliveryForm, setIsLoadingDeliveryForm] = useState(true);
     const [selectedSellerAddress, setSelectedSellerAddress] = useState("");
@@ -145,10 +144,8 @@ const Shipping = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -221,7 +218,6 @@ const Shipping = () => {
 
     const fetchDeliveryForm = async () => {
         try {
-            setIsLoadingDeliveryForm(true)
             const response = await fetch('http://localhost:8081/api/deliveryForm');
             const deliveryForm = await response.json();
             if (response.ok) {
@@ -248,7 +244,6 @@ const Shipping = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -510,7 +505,6 @@ const Shipping = () => {
                     :
 
                     <>
-                
 
                 <div className="shippingContainer__deliveryMethodContainer">
 
@@ -607,7 +601,6 @@ const Shipping = () => {
                         {
                             loadingCheckOut ?
                                 <button 
-                                    //onClick={handleBtnContinuePurchase}
                                     disabled={loadingCheckOut}
                                     className='shippingContainer__deliveryMethodContainer__btnContinue__propRedirectBtn'
                                 >

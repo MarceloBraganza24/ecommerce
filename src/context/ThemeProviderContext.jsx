@@ -18,14 +18,6 @@ export const ThemeProvider = ({ children }) => {
 
     const [isLoadingStoreSettings, setIsLoadingStoreSettings] = useState(true);
 
-    /* function getContrastingTextColor(hexColor) {
-        const r = parseInt(hexColor.substr(1, 2), 16);
-        const g = parseInt(hexColor.substr(3, 2), 16);
-        const b = parseInt(hexColor.substr(5, 2), 16);
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        return brightness > 128 ? '#000000' : '#FFFFFF'; // texto negro o blanco
-    } */
-
     function esColorClaro(hex) {
         if (!hex) return true;
 
@@ -77,8 +69,6 @@ export const ThemeProvider = ({ children }) => {
         root.style.setProperty('--secondary-color', colorSelectFormData.secondaryColor);
         root.style.setProperty('--accent-color', colorSelectFormData.accentColor);
 
-        // const contrastPrimaryColorText = esColorClaro(colorSelectFormData.primaryColor);
-        // const contrastSecondaryColorText = esColorClaro(colorSelectFormData.secondaryColor);
         const contrastPrimaryColorText = esColorClaro(colorSelectFormData.primaryColor) ? '#000000' : '#FFFFFF';
         const contrastSecondaryColorText = esColorClaro(colorSelectFormData.secondaryColor) ? '#000000' : '#FFFFFF';
 

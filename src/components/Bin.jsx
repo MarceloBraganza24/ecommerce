@@ -23,7 +23,6 @@ const Bin = () => {
     const [isLoadingTickets, setIsLoadingTickets] = useState(true);
     const [products, setProducts] = useState([]);
     const [tickets, setTickets] = useState([]);
-    //console.log(tickets)
     const navigate = useNavigate();
 
     function hexToRgba(hex, opacity) {
@@ -51,7 +50,6 @@ const Bin = () => {
         try {
             const response = await fetch('http://localhost:8081/api/products/deleted');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setProducts(data.payload);
             } else {
@@ -78,7 +76,6 @@ const Bin = () => {
         try {
             const response = await fetch('http://localhost:8081/api/tickets/deleted');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setTickets(data.payload);
             } else {
@@ -129,7 +126,6 @@ const Bin = () => {
             setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -155,7 +151,6 @@ const Bin = () => {
 
     const fetchCartByUserId = async (user_id) => {
         try {
-            setIsLoadingProducts(true);
             const response = await fetch(`http://localhost:8081/api/carts/byUserId/${user_id}`);
             const data = await response.json();
             if (!response.ok) {
@@ -199,8 +194,6 @@ const Bin = () => {
             });
             setUserCart({ user_id, products: [] }); // 👈 cambio clave
             return [];
-        } finally {
-            setIsLoadingProducts(false);
         }
     };
 
@@ -566,7 +559,6 @@ const Bin = () => {
                                     <ItemBinProduct
                                     product={product}
                                     fetchDeletedProducts={fetchDeletedProducts}
-                                    //categories={categories}
                                     selectedProducts={selectedProducts}
                                     setSelectedProducts={setSelectedProducts}
                                     />
@@ -667,7 +659,6 @@ const Bin = () => {
                                     ticket={ticket}
                                     fetchDeletedTickets={fetchDeletedTickets}
                                     fechaHora={`${formattedDate} ${formattedTime}`}
-                                    //categories={categories}
                                     selectedTickets={selectedTickets}
                                     setSelectedTickets={setSelectedTickets}
                                     toggleSelectTicket={toggleSelectTicket}

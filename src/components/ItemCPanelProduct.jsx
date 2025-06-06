@@ -13,7 +13,6 @@ const ItemCPanelProduct = ({product,fetchProducts,categories,selectedProducts,se
 
     const handleBtnDeleteProduct = async () => {
         setLoading(true);
-        
         try {
             const res = await fetch(`http://localhost:8081/api/products/${product._id}/soft-delete`, {
                 method: 'PUT',  // Usamos PUT o PATCH para actualizar, no DELETE

@@ -106,10 +106,8 @@ const DeliveryForm = () => {
 
     const fetchStoreSettings = async () => {
         try {
-            setIsLoadingStoreSettings(true)
             const response = await fetch('http://localhost:8081/api/settings');
             const data = await response.json();
-            //console.log(data)
             if (response.ok) {
                 setStoreSettings(data); 
             } else {
@@ -418,7 +416,6 @@ const DeliveryForm = () => {
             const data = await response.json();
             if(data.error === 'jwt must be provided') { 
                 setIsLoading(false)
-                //setIsLoadingProducts(false)
             } else {
                 const user = data.data
                 if(user) {
@@ -434,7 +431,6 @@ const DeliveryForm = () => {
 
     const fetchSellerAddresses = async () => {
         try {
-            setIsLoadingSellerAddresses(true)
             const response = await fetch('http://localhost:8081/api/sellerAddresses');
             const data = await response.json();
             if (response.ok) {
@@ -757,6 +753,7 @@ const DeliveryForm = () => {
             aboutText={storeSettings?.footerLogoText || ""}
             phoneNumbers={storeSettings.phoneNumbers}
             contactEmail={storeSettings.contactEmail}
+            socialNetworks={storeSettings.socialNetworks}
             sellerAddresses={sellerAddresses}
             isLoadingSellerAddresses={isLoadingSellerAddresses}
             isLoadingStoreSettings={isLoadingStoreSettings}
